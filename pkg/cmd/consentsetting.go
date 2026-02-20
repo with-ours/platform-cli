@@ -7,26 +7,26 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/apiquery"
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/requestflag"
-	"github.com/stainless-sdks/ours-privacy-platform-go"
-	"github.com/stainless-sdks/ours-privacy-platform-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
+	"github.com/with-ours/platform-cli/internal/apiquery"
+	"github.com/with-ours/platform-cli/internal/requestflag"
+	"github.com/with-ours/platform-sdk-go"
+	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var restV1DestinationsCreate = cli.Command{
+var consentSettingsCreate = cli.Command{
 	Name:            "create",
-	Usage:           "Create a new destination. Requires scope: destination:create",
+	Usage:           "Create a new consent setting. Requires scope: consentSettings:create",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleRestV1DestinationsCreate,
+	Action:          handleConsentSettingsCreate,
 	HideHelpCommand: true,
 }
 
-var restV1DestinationsRetrieve = cli.Command{
+var consentSettingsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single destination by ID. Requires scope: destination:find",
+	Usage:   "Find a single consent setting by ID. Requires scope: consentSettings:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -34,13 +34,13 @@ var restV1DestinationsRetrieve = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1DestinationsRetrieve,
+	Action:          handleConsentSettingsRetrieve,
 	HideHelpCommand: true,
 }
 
-var restV1DestinationsUpdate = cli.Command{
+var consentSettingsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a destination. Requires scope: destination:update",
+	Usage:   "Update a consent setting. Requires scope: consentSettings:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -48,22 +48,22 @@ var restV1DestinationsUpdate = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1DestinationsUpdate,
+	Action:          handleConsentSettingsUpdate,
 	HideHelpCommand: true,
 }
 
-var restV1DestinationsList = cli.Command{
+var consentSettingsList = cli.Command{
 	Name:            "list",
-	Usage:           "List all destinations. Requires scope: destination:list",
+	Usage:           "List all consent settings. Requires scope: consentSettings:list",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleRestV1DestinationsList,
+	Action:          handleConsentSettingsList,
 	HideHelpCommand: true,
 }
 
-var restV1DestinationsDelete = cli.Command{
+var consentSettingsDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a destination. Requires scope: destination:delete",
+	Usage:   "Delete a consent setting. Requires scope: consentSettings:delete",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -71,19 +71,19 @@ var restV1DestinationsDelete = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1DestinationsDelete,
+	Action:          handleConsentSettingsDelete,
 	HideHelpCommand: true,
 }
 
-func handleRestV1DestinationsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleConsentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := oursprivacyplatform.RestV1DestinationNewParams{}
+	params := githubcomwithoursplatformsdkgo.ConsentSettingNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -98,7 +98,7 @@ func handleRestV1DestinationsCreate(ctx context.Context, cmd *cli.Command) error
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Destinations.New(ctx, params, options...)
+	_, err = client.ConsentSettings.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -106,11 +106,11 @@ func handleRestV1DestinationsCreate(ctx context.Context, cmd *cli.Command) error
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:destinations create", obj, format, transform)
+	return ShowJSON(os.Stdout, "consent-settings create", obj, format, transform)
 }
 
-func handleRestV1DestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleConsentSettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -133,7 +133,7 @@ func handleRestV1DestinationsRetrieve(ctx context.Context, cmd *cli.Command) err
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Destinations.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ConsentSettings.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -141,11 +141,11 @@ func handleRestV1DestinationsRetrieve(ctx context.Context, cmd *cli.Command) err
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:destinations retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, "consent-settings retrieve", obj, format, transform)
 }
 
-func handleRestV1DestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleConsentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -155,7 +155,7 @@ func handleRestV1DestinationsUpdate(ctx context.Context, cmd *cli.Command) error
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := oursprivacyplatform.RestV1DestinationUpdateParams{}
+	params := githubcomwithoursplatformsdkgo.ConsentSettingUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -170,7 +170,7 @@ func handleRestV1DestinationsUpdate(ctx context.Context, cmd *cli.Command) error
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Destinations.Update(
+	_, err = client.ConsentSettings.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -183,11 +183,11 @@ func handleRestV1DestinationsUpdate(ctx context.Context, cmd *cli.Command) error
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:destinations update", obj, format, transform)
+	return ShowJSON(os.Stdout, "consent-settings update", obj, format, transform)
 }
 
-func handleRestV1DestinationsList(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleConsentSettingsList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -207,7 +207,7 @@ func handleRestV1DestinationsList(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Destinations.List(ctx, options...)
+	_, err = client.ConsentSettings.List(ctx, options...)
 	if err != nil {
 		return err
 	}
@@ -215,11 +215,11 @@ func handleRestV1DestinationsList(ctx context.Context, cmd *cli.Command) error {
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:destinations list", obj, format, transform)
+	return ShowJSON(os.Stdout, "consent-settings list", obj, format, transform)
 }
 
-func handleRestV1DestinationsDelete(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleConsentSettingsDelete(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -242,7 +242,7 @@ func handleRestV1DestinationsDelete(ctx context.Context, cmd *cli.Command) error
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Destinations.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ConsentSettings.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -250,5 +250,5 @@ func handleRestV1DestinationsDelete(ctx context.Context, cmd *cli.Command) error
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:destinations delete", obj, format, transform)
+	return ShowJSON(os.Stdout, "consent-settings delete", obj, format, transform)
 }

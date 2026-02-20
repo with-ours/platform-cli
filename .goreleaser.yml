@@ -1,20 +1,20 @@
-project_name: ours-privacy-platform
+project_name: oursprivacy
 version: 2
 
 before:
   hooks:
     - mkdir -p completions
-    - sh -c "go run ./cmd/ours-privacy-platform/main.go @completion bash > completions/ours-privacy-platform.bash"
-    - sh -c "go run ./cmd/ours-privacy-platform/main.go @completion zsh > completions/ours-privacy-platform.zsh"
-    - sh -c "go run ./cmd/ours-privacy-platform/main.go @completion fish > completions/ours-privacy-platform.fish"
-    - sh -c "go run ./cmd/ours-privacy-platform/main.go @manpages -o man"
+    - sh -c "go run ./cmd/oursprivacy/main.go @completion bash > completions/oursprivacy.bash"
+    - sh -c "go run ./cmd/oursprivacy/main.go @completion zsh > completions/oursprivacy.zsh"
+    - sh -c "go run ./cmd/oursprivacy/main.go @completion fish > completions/oursprivacy.fish"
+    - sh -c "go run ./cmd/oursprivacy/main.go @manpages -o man"
 
 builds:
   - id: macos
     goos: [darwin]
     goarch: [amd64, arm64]
     binary: '{{ .ProjectName }}'
-    main: ./cmd/ours-privacy-platform/main.go
+    main: ./cmd/oursprivacy/main.go
     mod_timestamp: '{{ .CommitTimestamp }}'
     ldflags:
       - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
@@ -25,7 +25,7 @@ builds:
     env:
       - CGO_ENABLED=0
     binary: '{{ .ProjectName }}'
-    main: ./cmd/ours-privacy-platform/main.go
+    main: ./cmd/oursprivacy/main.go
     mod_timestamp: '{{ .CommitTimestamp }}'
     ldflags:
       - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
@@ -34,7 +34,7 @@ builds:
     goos: [windows]
     goarch: ['386', amd64, arm64]
     binary: '{{ .ProjectName }}'
-    main: ./cmd/ours-privacy-platform/main.go
+    main: ./cmd/oursprivacy/main.go
     mod_timestamp: '{{ .CommitTimestamp }}'
     ldflags:
       - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
@@ -67,7 +67,7 @@ snapshot:
 
 nfpms:
   - license: Apache-2.0
-    maintainer: 
+    maintainer: support@oursprivacy.com
     bindir: /usr
     formats:
       - apk

@@ -4,5 +4,5 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-echo "==> Building ours-privacy-platform"
-go build ./cmd/ours-privacy-platform
+echo "==> Building oursprivacy"
+go build ./cmd/oursprivacy

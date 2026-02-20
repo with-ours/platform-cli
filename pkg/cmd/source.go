@@ -7,26 +7,26 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/apiquery"
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/requestflag"
-	"github.com/stainless-sdks/ours-privacy-platform-go"
-	"github.com/stainless-sdks/ours-privacy-platform-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
+	"github.com/with-ours/platform-cli/internal/apiquery"
+	"github.com/with-ours/platform-cli/internal/requestflag"
+	"github.com/with-ours/platform-sdk-go"
+	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var restV1GlobalDispatchCentersCreate = cli.Command{
+var sourcesCreate = cli.Command{
 	Name:            "create",
-	Usage:           "Create a new global dispatch center. Requires scope: globalDispatch:create",
+	Usage:           "Create a new source. Requires scope: source:create",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleRestV1GlobalDispatchCentersCreate,
+	Action:          handleSourcesCreate,
 	HideHelpCommand: true,
 }
 
-var restV1GlobalDispatchCentersRetrieve = cli.Command{
+var sourcesRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single global dispatch center by ID. Requires scope: globalDispatch:find",
+	Usage:   "Find a single source by ID. Requires scope: source:view",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -34,13 +34,13 @@ var restV1GlobalDispatchCentersRetrieve = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1GlobalDispatchCentersRetrieve,
+	Action:          handleSourcesRetrieve,
 	HideHelpCommand: true,
 }
 
-var restV1GlobalDispatchCentersUpdate = cli.Command{
+var sourcesUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a global dispatch center. Requires scope: globalDispatch:update",
+	Usage:   "Update a source. Requires scope: source:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -48,22 +48,22 @@ var restV1GlobalDispatchCentersUpdate = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1GlobalDispatchCentersUpdate,
+	Action:          handleSourcesUpdate,
 	HideHelpCommand: true,
 }
 
-var restV1GlobalDispatchCentersList = cli.Command{
+var sourcesList = cli.Command{
 	Name:            "list",
-	Usage:           "List all global dispatch centers. Requires scope: globalDispatch:list",
+	Usage:           "List all sources. Requires scope: source:list",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleRestV1GlobalDispatchCentersList,
+	Action:          handleSourcesList,
 	HideHelpCommand: true,
 }
 
-var restV1GlobalDispatchCentersDelete = cli.Command{
+var sourcesDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a global dispatch center. Requires scope: globalDispatch:delete",
+	Usage:   "Delete a source. Requires scope: source:delete",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -71,19 +71,19 @@ var restV1GlobalDispatchCentersDelete = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1GlobalDispatchCentersDelete,
+	Action:          handleSourcesDelete,
 	HideHelpCommand: true,
 }
 
-func handleRestV1GlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := oursprivacyplatform.RestV1GlobalDispatchCenterNewParams{}
+	params := githubcomwithoursplatformsdkgo.SourceNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -98,7 +98,7 @@ func handleRestV1GlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Comma
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.GlobalDispatchCenters.New(ctx, params, options...)
+	_, err = client.Sources.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -106,11 +106,11 @@ func handleRestV1GlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Comma
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:global-dispatch-centers create", obj, format, transform)
+	return ShowJSON(os.Stdout, "sources create", obj, format, transform)
 }
 
-func handleRestV1GlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -133,7 +133,7 @@ func handleRestV1GlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Com
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.GlobalDispatchCenters.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.Sources.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -141,11 +141,11 @@ func handleRestV1GlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Com
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:global-dispatch-centers retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, "sources retrieve", obj, format, transform)
 }
 
-func handleRestV1GlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -155,7 +155,7 @@ func handleRestV1GlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Comma
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := oursprivacyplatform.RestV1GlobalDispatchCenterUpdateParams{}
+	params := githubcomwithoursplatformsdkgo.SourceUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -170,7 +170,7 @@ func handleRestV1GlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Comma
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.GlobalDispatchCenters.Update(
+	_, err = client.Sources.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -183,11 +183,11 @@ func handleRestV1GlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Comma
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:global-dispatch-centers update", obj, format, transform)
+	return ShowJSON(os.Stdout, "sources update", obj, format, transform)
 }
 
-func handleRestV1GlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -207,7 +207,7 @@ func handleRestV1GlobalDispatchCentersList(ctx context.Context, cmd *cli.Command
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.GlobalDispatchCenters.List(ctx, options...)
+	_, err = client.Sources.List(ctx, options...)
 	if err != nil {
 		return err
 	}
@@ -215,11 +215,11 @@ func handleRestV1GlobalDispatchCentersList(ctx context.Context, cmd *cli.Command
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:global-dispatch-centers list", obj, format, transform)
+	return ShowJSON(os.Stdout, "sources list", obj, format, transform)
 }
 
-func handleRestV1GlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -242,7 +242,7 @@ func handleRestV1GlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Comma
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.GlobalDispatchCenters.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.Sources.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -250,5 +250,5 @@ func handleRestV1GlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Comma
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:global-dispatch-centers delete", obj, format, transform)
+	return ShowJSON(os.Stdout, "sources delete", obj, format, transform)
 }

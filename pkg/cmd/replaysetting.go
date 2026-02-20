@@ -7,24 +7,24 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/apiquery"
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/requestflag"
-	"github.com/stainless-sdks/ours-privacy-platform-go"
-	"github.com/stainless-sdks/ours-privacy-platform-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
+	"github.com/with-ours/platform-cli/internal/apiquery"
+	"github.com/with-ours/platform-cli/internal/requestflag"
+	"github.com/with-ours/platform-sdk-go"
+	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var restV1ReplaySettingsCreate = cli.Command{
+var replaySettingsCreate = cli.Command{
 	Name:            "create",
 	Usage:           "Create a new replay setting. Requires scope: replaySettings:create",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleRestV1ReplaySettingsCreate,
+	Action:          handleReplaySettingsCreate,
 	HideHelpCommand: true,
 }
 
-var restV1ReplaySettingsRetrieve = cli.Command{
+var replaySettingsRetrieve = cli.Command{
 	Name:    "retrieve",
 	Usage:   "Find a single replay setting by ID. Requires scope: replaySettings:find",
 	Suggest: true,
@@ -34,11 +34,11 @@ var restV1ReplaySettingsRetrieve = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1ReplaySettingsRetrieve,
+	Action:          handleReplaySettingsRetrieve,
 	HideHelpCommand: true,
 }
 
-var restV1ReplaySettingsUpdate = cli.Command{
+var replaySettingsUpdate = cli.Command{
 	Name:    "update",
 	Usage:   "Update a replay setting. Requires scope: replaySettings:update",
 	Suggest: true,
@@ -48,20 +48,20 @@ var restV1ReplaySettingsUpdate = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1ReplaySettingsUpdate,
+	Action:          handleReplaySettingsUpdate,
 	HideHelpCommand: true,
 }
 
-var restV1ReplaySettingsList = cli.Command{
+var replaySettingsList = cli.Command{
 	Name:            "list",
 	Usage:           "List all replay settings. Requires scope: replaySettings:list",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleRestV1ReplaySettingsList,
+	Action:          handleReplaySettingsList,
 	HideHelpCommand: true,
 }
 
-var restV1ReplaySettingsDelete = cli.Command{
+var replaySettingsDelete = cli.Command{
 	Name:    "delete",
 	Usage:   "Delete a replay setting. Requires scope: replaySettings:delete",
 	Suggest: true,
@@ -71,19 +71,19 @@ var restV1ReplaySettingsDelete = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1ReplaySettingsDelete,
+	Action:          handleReplaySettingsDelete,
 	HideHelpCommand: true,
 }
 
-func handleRestV1ReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := oursprivacyplatform.RestV1ReplaySettingNewParams{}
+	params := githubcomwithoursplatformsdkgo.ReplaySettingNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -98,7 +98,7 @@ func handleRestV1ReplaySettingsCreate(ctx context.Context, cmd *cli.Command) err
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.ReplaySettings.New(ctx, params, options...)
+	_, err = client.ReplaySettings.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -106,11 +106,11 @@ func handleRestV1ReplaySettingsCreate(ctx context.Context, cmd *cli.Command) err
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:replay-settings create", obj, format, transform)
+	return ShowJSON(os.Stdout, "replay-settings create", obj, format, transform)
 }
 
-func handleRestV1ReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -133,7 +133,7 @@ func handleRestV1ReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) e
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.ReplaySettings.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ReplaySettings.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -141,11 +141,11 @@ func handleRestV1ReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) e
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:replay-settings retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, "replay-settings retrieve", obj, format, transform)
 }
 
-func handleRestV1ReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -155,7 +155,7 @@ func handleRestV1ReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) err
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := oursprivacyplatform.RestV1ReplaySettingUpdateParams{}
+	params := githubcomwithoursplatformsdkgo.ReplaySettingUpdateParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -170,7 +170,7 @@ func handleRestV1ReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) err
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.ReplaySettings.Update(
+	_, err = client.ReplaySettings.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -183,11 +183,11 @@ func handleRestV1ReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) err
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:replay-settings update", obj, format, transform)
+	return ShowJSON(os.Stdout, "replay-settings update", obj, format, transform)
 }
 
-func handleRestV1ReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -207,7 +207,7 @@ func handleRestV1ReplaySettingsList(ctx context.Context, cmd *cli.Command) error
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.ReplaySettings.List(ctx, options...)
+	_, err = client.ReplaySettings.List(ctx, options...)
 	if err != nil {
 		return err
 	}
@@ -215,11 +215,11 @@ func handleRestV1ReplaySettingsList(ctx context.Context, cmd *cli.Command) error
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:replay-settings list", obj, format, transform)
+	return ShowJSON(os.Stdout, "replay-settings list", obj, format, transform)
 }
 
-func handleRestV1ReplaySettingsDelete(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleReplaySettingsDelete(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -242,7 +242,7 @@ func handleRestV1ReplaySettingsDelete(ctx context.Context, cmd *cli.Command) err
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.ReplaySettings.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ReplaySettings.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -250,5 +250,5 @@ func handleRestV1ReplaySettingsDelete(ctx context.Context, cmd *cli.Command) err
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:replay-settings delete", obj, format, transform)
+	return ShowJSON(os.Stdout, "replay-settings delete", obj, format, transform)
 }

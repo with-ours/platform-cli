@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -exuo pipefail
 
-BINARY_NAME="ours-privacy-platform"
+BINARY_NAME="oursprivacy"
 DIST_DIR="dist"
 FILENAME="dist.zip"
 

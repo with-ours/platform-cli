@@ -1,8 +1,10 @@
 # Ours Privacy Platform CLI
 
-The official CLI for the Ours Privacy Platform REST API.
+The official CLI for the [Ours Privacy Platform REST API](https://docs.oursprivacy.com/docs/api).
 
 It is generated with [Stainless](https://www.stainless.com/).
+
+<!-- x-release-please-start-version -->
 
 ## Installation
 
@@ -11,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 To test or install the CLI locally, you need [Go](https://go.dev/doc/install) version 1.22 or later installed.
 
 ```sh
-go install 'github.com/stainless-sdks/ours-privacy-platform-cli/cmd/ours-privacy-platform@latest'
+go install 'github.com/with-ours/platform-cli/cmd/oursprivacy@latest'
 ```
 
 Once you have run `go install`, the binary is placed in your Go bin directory:
@@ -25,6 +27,8 @@ If commands aren't found after installation, add the Go bin directory to your PA
 # Add to your shell profile (.zshrc, .bashrc, etc.)
 export PATH="$PATH:$(go env GOPATH)/bin"
 ```
+
+<!-- x-release-please-end -->
 
 ### Running Locally
 
@@ -40,11 +44,11 @@ After cloning the git repository for this project, you can use the
 The CLI follows a resource-based command structure:
 
 ```sh
-ours-privacy-platform [resource] <command> [flags...]
+oursprivacy [resource] <command> [flags...]
 ```
 
 ```sh
-ours-privacy-platform rest:v1:destinations list
+oursprivacy sources list
 ```
 
 For details about specific commands, use the `--help` flag.
@@ -65,15 +69,15 @@ For details about specific commands, use the `--help` flag.
 To pass files to your API, you can use the `@myfile.ext` syntax:
 
 ```bash
-ours-privacy-platform <command> --arg @abe.jpg
+oursprivacy <command> --arg @abe.jpg
 ```
 
 Files can also be passed inside JSON or YAML blobs:
 
 ```bash
-ours-privacy-platform <command> --arg '{image: "@abe.jpg"}'
+oursprivacy <command> --arg '{image: "@abe.jpg"}'
 # Equivalent:
-ours-privacy-platform <command> <<YAML
+oursprivacy <command> <<YAML
 arg:
   image: "@abe.jpg"
 YAML
@@ -83,7 +87,7 @@ If you need to pass a string literal that begins with an `@` sign, you can
 escape the `@` sign to avoid accidentally passing a file.
 
 ```bash
-ours-privacy-platform <command> --username '\@abe'
+oursprivacy <command> --username '\@abe'
 ```
 
 #### Explicit encoding
@@ -97,5 +101,5 @@ base64-encoding). Note that absolute paths will begin with `@file://` or
 `@data://`, followed by a third `/` (for example, `@file:///tmp/file.txt`).
 
 ```bash
-ours-privacy-platform <command> --arg @data://file.txt
+oursprivacy <command> --arg @data://file.txt
 ```
