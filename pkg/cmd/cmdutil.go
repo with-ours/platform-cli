@@ -14,8 +14,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/jsonview"
-	"github.com/stainless-sdks/ours-privacy-platform-go/option"
+	"github.com/with-ours/platform-cli/internal/jsonview"
+	"github.com/with-ours/platform-sdk-go/option"
 
 	"github.com/charmbracelet/x/term"
 	"github.com/itchyny/json2yaml"

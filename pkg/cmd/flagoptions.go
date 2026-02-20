@@ -14,11 +14,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/apiform"
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/apiquery"
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/debugmiddleware"
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/requestflag"
-	"github.com/stainless-sdks/ours-privacy-platform-go/option"
+	"github.com/with-ours/platform-cli/internal/apiform"
+	"github.com/with-ours/platform-cli/internal/apiquery"
+	"github.com/with-ours/platform-cli/internal/debugmiddleware"
+	"github.com/with-ours/platform-cli/internal/requestflag"
+	"github.com/with-ours/platform-sdk-go/option"
 
 	"github.com/goccy/go-yaml"
 	"github.com/urfave/cli/v3"
