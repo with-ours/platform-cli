@@ -7,26 +7,26 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/apiquery"
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/requestflag"
-	"github.com/stainless-sdks/ours-privacy-platform-go"
-	"github.com/stainless-sdks/ours-privacy-platform-go/option"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
+	"github.com/with-ours/platform-cli/internal/apiquery"
+	"github.com/with-ours/platform-cli/internal/requestflag"
+	"github.com/with-ours/platform-sdk-go"
+	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var restV1VersionsCreate = cli.Command{
+var allowedEventsCreate = cli.Command{
 	Name:            "create",
-	Usage:           "Create a new version. Requires scope: version:publish",
+	Usage:           "Create a new allowed event. Requires scope: allowedEvent:create",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleRestV1VersionsCreate,
+	Action:          handleAllowedEventsCreate,
 	HideHelpCommand: true,
 }
 
-var restV1VersionsRetrieve = cli.Command{
+var allowedEventsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single version by ID. Requires scope: version:find",
+	Usage:   "Find a single allowed event by ID. Requires scope: allowedEvent:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -34,42 +34,42 @@ var restV1VersionsRetrieve = cli.Command{
 			Required: true,
 		},
 	},
-	Action:          handleRestV1VersionsRetrieve,
+	Action:          handleAllowedEventsRetrieve,
 	HideHelpCommand: true,
 }
 
-var restV1VersionsUpdate = cli.Command{
-	Name:    "update",
-	Usage:   "Update a version. Requires scope: version:update",
-	Suggest: true,
-	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
-		},
-	},
-	Action:          handleRestV1VersionsUpdate,
-	HideHelpCommand: true,
-}
-
-var restV1VersionsList = cli.Command{
+var allowedEventsList = cli.Command{
 	Name:            "list",
-	Usage:           "List all versions. Requires scope: version:list",
+	Usage:           "List all allowed events. Requires scope: allowedEvent:list",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleRestV1VersionsList,
+	Action:          handleAllowedEventsList,
 	HideHelpCommand: true,
 }
 
-func handleRestV1VersionsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+var allowedEventsDelete = cli.Command{
+	Name:    "delete",
+	Usage:   "Delete a allowed event. Requires scope: allowedEvent:delete",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:     "id",
+			Required: true,
+		},
+	},
+	Action:          handleAllowedEventsDelete,
+	HideHelpCommand: true,
+}
+
+func handleAllowedEventsCreate(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := oursprivacyplatform.RestV1VersionNewParams{}
+	params := githubcomwithoursplatformsdkgo.AllowedEventNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -84,7 +84,7 @@ func handleRestV1VersionsCreate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Versions.New(ctx, params, options...)
+	_, err = client.AllowedEvents.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -92,11 +92,11 @@ func handleRestV1VersionsCreate(ctx context.Context, cmd *cli.Command) error {
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:versions create", obj, format, transform)
+	return ShowJSON(os.Stdout, "allowed-events create", obj, format, transform)
 }
 
-func handleRestV1VersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleAllowedEventsRetrieve(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -119,7 +119,7 @@ func handleRestV1VersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Versions.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.AllowedEvents.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -127,11 +127,43 @@ func handleRestV1VersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:versions retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, "allowed-events retrieve", obj, format, transform)
 }
 
-func handleRestV1VersionsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
+func handleAllowedEventsList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.AllowedEvents.List(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(os.Stdout, "allowed-events list", obj, format, transform)
+}
+
+func handleAllowedEventsDelete(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -141,8 +173,6 @@ func handleRestV1VersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := oursprivacyplatform.RestV1VersionUpdateParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -156,12 +186,7 @@ func handleRestV1VersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Versions.Update(
-		ctx,
-		cmd.Value("id").(string),
-		params,
-		options...,
-	)
+	_, err = client.AllowedEvents.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -169,37 +194,5 @@ func handleRestV1VersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:versions update", obj, format, transform)
-}
-
-func handleRestV1VersionsList(ctx context.Context, cmd *cli.Command) error {
-	client := oursprivacyplatform.NewClient(getDefaultRequestOptions(cmd)...)
-	unusedArgs := cmd.Args().Slice()
-
-	if len(unusedArgs) > 0 {
-		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
-	}
-
-	options, err := flagOptions(
-		cmd,
-		apiquery.NestedQueryFormatBrackets,
-		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
-		false,
-	)
-	if err != nil {
-		return err
-	}
-
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Rest.V1.Versions.List(ctx, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
-	format := cmd.Root().String("format")
-	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "rest:v1:versions list", obj, format, transform)
+	return ShowJSON(os.Stdout, "allowed-events delete", obj, format, transform)
 }

@@ -10,10 +10,10 @@ import (
 	"os"
 	"slices"
 
-	"github.com/stainless-sdks/ours-privacy-platform-cli/pkg/cmd"
-	"github.com/stainless-sdks/ours-privacy-platform-go"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
+	"github.com/with-ours/platform-cli/pkg/cmd"
+	"github.com/with-ours/platform-sdk-go"
 )
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 			exitCode = exitErr.ExitCode()
 		}
 
-		var apierr *oursprivacyplatform.Error
+		var apierr *githubcomwithoursplatformsdkgo.Error
 		if errors.As(err, &apierr) {
 			fmt.Fprintf(os.Stderr, "%s %q: %d %s\n", apierr.Request.Method, apierr.Request.URL, apierr.Response.StatusCode, http.StatusText(apierr.Response.StatusCode))
 			format := app.String("format-error")

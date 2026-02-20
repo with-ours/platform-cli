@@ -11,9 +11,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/stainless-sdks/ours-privacy-platform-cli/internal/autocomplete"
 	docs "github.com/urfave/cli-docs/v3"
 	"github.com/urfave/cli/v3"
+	"github.com/with-ours/platform-cli/internal/autocomplete"
 )
 
 var (
@@ -22,7 +22,7 @@ var (
 
 func init() {
 	Command = &cli.Command{
-		Name:    "ours-privacy-platform",
+		Name:    "oursprivacy",
 		Usage:   "CLI for the ours-privacy-platform API",
 		Suggest: true,
 		Version: Version,
@@ -69,91 +69,91 @@ func init() {
 		},
 		Commands: []*cli.Command{
 			{
-				Name:     "rest:v1:destinations",
+				Name:     "destinations",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&restV1DestinationsCreate,
-					&restV1DestinationsRetrieve,
-					&restV1DestinationsUpdate,
-					&restV1DestinationsList,
-					&restV1DestinationsDelete,
+					&destinationsCreate,
+					&destinationsRetrieve,
+					&destinationsUpdate,
+					&destinationsList,
+					&destinationsDelete,
 				},
 			},
 			{
-				Name:     "rest:v1:sources",
+				Name:     "sources",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&restV1SourcesCreate,
-					&restV1SourcesRetrieve,
-					&restV1SourcesUpdate,
-					&restV1SourcesList,
-					&restV1SourcesDelete,
+					&sourcesCreate,
+					&sourcesRetrieve,
+					&sourcesUpdate,
+					&sourcesList,
+					&sourcesDelete,
 				},
 			},
 			{
-				Name:     "rest:v1:allowed-events",
+				Name:     "allowed-events",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&restV1AllowedEventsCreate,
-					&restV1AllowedEventsRetrieve,
-					&restV1AllowedEventsList,
-					&restV1AllowedEventsDelete,
+					&allowedEventsCreate,
+					&allowedEventsRetrieve,
+					&allowedEventsList,
+					&allowedEventsDelete,
 				},
 			},
 			{
-				Name:     "rest:v1:consent-settings",
+				Name:     "consent-settings",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&restV1ConsentSettingsCreate,
-					&restV1ConsentSettingsRetrieve,
-					&restV1ConsentSettingsUpdate,
-					&restV1ConsentSettingsList,
-					&restV1ConsentSettingsDelete,
+					&consentSettingsCreate,
+					&consentSettingsRetrieve,
+					&consentSettingsUpdate,
+					&consentSettingsList,
+					&consentSettingsDelete,
 				},
 			},
 			{
-				Name:     "rest:v1:global-dispatch-centers",
+				Name:     "global-dispatch-centers",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&restV1GlobalDispatchCentersCreate,
-					&restV1GlobalDispatchCentersRetrieve,
-					&restV1GlobalDispatchCentersUpdate,
-					&restV1GlobalDispatchCentersList,
-					&restV1GlobalDispatchCentersDelete,
+					&globalDispatchCentersCreate,
+					&globalDispatchCentersRetrieve,
+					&globalDispatchCentersUpdate,
+					&globalDispatchCentersList,
+					&globalDispatchCentersDelete,
 				},
 			},
 			{
-				Name:     "rest:v1:replay-settings",
+				Name:     "replay-settings",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&restV1ReplaySettingsCreate,
-					&restV1ReplaySettingsRetrieve,
-					&restV1ReplaySettingsUpdate,
-					&restV1ReplaySettingsList,
-					&restV1ReplaySettingsDelete,
+					&replaySettingsCreate,
+					&replaySettingsRetrieve,
+					&replaySettingsUpdate,
+					&replaySettingsList,
+					&replaySettingsDelete,
 				},
 			},
 			{
-				Name:     "rest:v1:versions",
+				Name:     "versions",
 				Category: "API RESOURCE",
 				Suggest:  true,
 				Commands: []*cli.Command{
-					&restV1VersionsCreate,
-					&restV1VersionsRetrieve,
-					&restV1VersionsUpdate,
-					&restV1VersionsList,
+					&versionsCreate,
+					&versionsRetrieve,
+					&versionsUpdate,
+					&versionsList,
 				},
 			},
 			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
-				UsageText:       "ours-privacy-platform @manpages [-o ours-privacy-platform.1] [--gzip]",
+				UsageText:       "oursprivacy @manpages [-o oursprivacy.1] [--gzip]",
 				Hidden:          true,
 				Action:          generateManpages,
 				HideHelpCommand: true,
@@ -206,7 +206,7 @@ func generateManpages(ctx context.Context, c *cli.Command) error {
 		// handle error
 	}
 	if c.Bool("text") {
-		file, err := os.Create(filepath.Join(dir, "man1", "ours-privacy-platform.1"))
+		file, err := os.Create(filepath.Join(dir, "man1", "oursprivacy.1"))
 		if err != nil {
 			return err
 		}
@@ -216,7 +216,7 @@ func generateManpages(ctx context.Context, c *cli.Command) error {
 		}
 	}
 	if c.Bool("gzip") {
-		file, err := os.Create(filepath.Join(dir, "man1", "ours-privacy-platform.1.gz"))
+		file, err := os.Create(filepath.Join(dir, "man1", "oursprivacy.1.gz"))
 		if err != nil {
 			return err
 		}
