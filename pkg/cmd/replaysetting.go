@@ -16,10 +16,27 @@ import (
 )
 
 var replaySettingsCreate = cli.Command{
-	Name:            "create",
-	Usage:           "Create a new replay setting. Requires scope: replaySettings:create",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "create",
+	Usage:   "Create a new replay setting. Requires scope: replaySettings:create",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[any]{
+			Name:     "custom-domain",
+			BodyPath: "customDomain",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "status",
+			BodyPath: "status",
+		},
+		&requestflag.Flag[any]{
+			Name:     "whitelist-domain",
+			BodyPath: "whitelistDomains",
+		},
+	},
 	Action:          handleReplaySettingsCreate,
 	HideHelpCommand: true,
 }
@@ -46,6 +63,22 @@ var replaySettingsUpdate = cli.Command{
 		&requestflag.Flag[string]{
 			Name:     "id",
 			Required: true,
+		},
+		&requestflag.Flag[any]{
+			Name:     "custom-domain",
+			BodyPath: "customDomain",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "status",
+			BodyPath: "status",
+		},
+		&requestflag.Flag[any]{
+			Name:     "whitelist-domain",
+			BodyPath: "whitelistDomains",
 		},
 	},
 	Action:          handleReplaySettingsUpdate,
@@ -89,7 +122,7 @@ func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {
@@ -161,7 +194,7 @@ func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {

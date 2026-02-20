@@ -16,10 +16,20 @@ import (
 )
 
 var destinationsCreate = cli.Command{
-	Name:            "create",
-	Usage:           "Create a new destination. Requires scope: destination:create",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "create",
+	Usage:   "Create a new destination. Requires scope: destination:create",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:     "type",
+			Required: true,
+			BodyPath: "type",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+	},
 	Action:          handleDestinationsCreate,
 	HideHelpCommand: true,
 }
@@ -46,6 +56,67 @@ var destinationsUpdate = cli.Command{
 		&requestflag.Flag[string]{
 			Name:     "id",
 			Required: true,
+		},
+		&requestflag.Flag[string]{
+			Name:     "status",
+			Required: true,
+			BodyPath: "status",
+		},
+		&requestflag.Flag[any]{
+			Name:     "facebook-conversion-api-key",
+			BodyPath: "facebookConversionAPIKey",
+		},
+		&requestflag.Flag[any]{
+			Name:     "facebook-pixel-id",
+			BodyPath: "facebookPixelId",
+		},
+		&requestflag.Flag[any]{
+			Name:     "g4-analytics-api-key",
+			BodyPath: "g4AnalyticsApiKey",
+		},
+		&requestflag.Flag[any]{
+			Name:     "g4-analytics-measurement-id",
+			BodyPath: "g4AnalyticsMeasurementId",
+		},
+		&requestflag.Flag[any]{
+			Name:     "g4-analytics-track-on-page",
+			BodyPath: "g4AnalyticsTrackOnPage",
+		},
+		&requestflag.Flag[any]{
+			Name:     "hashing-salt",
+			BodyPath: "hashingSalt",
+		},
+		&requestflag.Flag[any]{
+			Name:     "http-destination-url",
+			BodyPath: "httpDestinationUrl",
+		},
+		&requestflag.Flag[any]{
+			Name:     "limited-to-source-id",
+			BodyPath: "limitedToSourceIds",
+		},
+		&requestflag.Flag[any]{
+			Name:     "manager-google-customer-id",
+			BodyPath: "managerGoogleCustomerId",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "project-api-key",
+			BodyPath: "projectAPIKey",
+		},
+		&requestflag.Flag[any]{
+			Name:     "project-token",
+			BodyPath: "projectToken",
+		},
+		&requestflag.Flag[any]{
+			Name:     "selected-account-id",
+			BodyPath: "selectedAccountId",
+		},
+		&requestflag.Flag[any]{
+			Name:     "settings",
+			BodyPath: "settings",
 		},
 	},
 	Action:          handleDestinationsUpdate,
@@ -89,7 +160,7 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {
@@ -161,7 +232,7 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {

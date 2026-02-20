@@ -12,6 +12,8 @@ func TestSourcesCreate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"sources", "create",
+		"--type", "AlchemerWebhook",
+		"--name", "name",
 	)
 }
 
@@ -28,6 +30,15 @@ func TestSourcesUpdate(t *testing.T) {
 		t,
 		"sources", "update",
 		"--id", "id",
+		"--status", "Disabled",
+		"--bot-control-mode", "Allow",
+		"--exclude-request-context=true",
+		"--name", "name",
+		"--project-api-key", "projectAPIKey",
+		"--redirect-url", "redirectUrl",
+		"--selected-account-id", "selectedAccountId",
+		"--whitelist-domain", "[{}]",
+		"--whitelist-ip", "[string]",
 	)
 }
 

@@ -12,6 +12,8 @@ func TestAllowedEventsCreate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"allowed-events", "create",
+		"--name", "name",
+		"--destination-ids", "[string]",
 	)
 }
 

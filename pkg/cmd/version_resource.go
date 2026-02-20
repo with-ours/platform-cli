@@ -16,10 +16,63 @@ import (
 )
 
 var versionsCreate = cli.Command{
-	Name:            "create",
-	Usage:           "Create a new version. Requires scope: version:publish",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "create",
+	Usage:   "Create a new version. Requires scope: version:publish",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[any]{
+			Name:     "include-allowed-event",
+			BodyPath: "includeAllowedEvents",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-consent-setting",
+			BodyPath: "includeConsentSettings",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-destination",
+			BodyPath: "includeDestinations",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-external-allowed-event-data",
+			BodyPath: "includeExternalAllowedEventData",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-global-dispatch-center",
+			BodyPath: "includeGlobalDispatchCenters",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-mapping",
+			BodyPath: "includeMappings",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-replay-setting",
+			BodyPath: "includeReplaySettings",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-source",
+			BodyPath: "includeSources",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-tag-manager-tag",
+			BodyPath: "includeTagManagerTags",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-tag-manager-trigger",
+			BodyPath: "includeTagManagerTriggers",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-tag-manager-variable",
+			BodyPath: "includeTagManagerVariables",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "notes",
+			BodyPath: "notes",
+		},
+	},
 	Action:          handleVersionsCreate,
 	HideHelpCommand: true,
 }
@@ -46,6 +99,14 @@ var versionsUpdate = cli.Command{
 		&requestflag.Flag[string]{
 			Name:     "id",
 			Required: true,
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "notes",
+			BodyPath: "notes",
 		},
 	},
 	Action:          handleVersionsUpdate,
@@ -75,7 +136,7 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {
@@ -147,7 +208,7 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {
