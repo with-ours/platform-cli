@@ -16,10 +16,20 @@ import (
 )
 
 var allowedEventsCreate = cli.Command{
-	Name:            "create",
-	Usage:           "Create a new allowed event. Requires scope: allowedEvent:create",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "create",
+	Usage:   "Create a new allowed event. Requires scope: allowedEvent:create",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:     "name",
+			Required: true,
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "destination-ids",
+			BodyPath: "destinationIds",
+		},
+	},
 	Action:          handleAllowedEventsCreate,
 	HideHelpCommand: true,
 }
@@ -75,7 +85,7 @@ func handleAllowedEventsCreate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {

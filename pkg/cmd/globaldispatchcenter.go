@@ -38,7 +38,7 @@ var globalDispatchCentersRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var globalDispatchCentersUpdate = cli.Command{
+var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Update a global dispatch center. Requires scope: globalDispatch:update",
 	Suggest: true,
@@ -47,10 +47,49 @@ var globalDispatchCentersUpdate = cli.Command{
 			Name:     "id",
 			Required: true,
 		},
+		&requestflag.Flag[any]{
+			Name:     "category",
+			BodyPath: "categories",
+		},
+		&requestflag.Flag[any]{
+			Name:     "is-enabled",
+			BodyPath: "isEnabled",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "notes",
+			BodyPath: "notes",
+		},
 	},
 	Action:          handleGlobalDispatchCentersUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"category": {
+		&requestflag.InnerFlag[any]{
+			Name:       "category.description",
+			InnerField: "description",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "category.destination-ids",
+			InnerField: "destinationIds",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "category.logic",
+			InnerField: "logic",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "category.name",
+			InnerField: "name",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "category.priority",
+			InnerField: "priority",
+		},
+	},
+})
 
 var globalDispatchCentersList = cli.Command{
 	Name:            "list",
@@ -83,8 +122,6 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomwithoursplatformsdkgo.GlobalDispatchCenterNewParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -98,7 +135,7 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.GlobalDispatchCenters.New(ctx, params, options...)
+	_, err = client.GlobalDispatchCenters.New(ctx, options...)
 	if err != nil {
 		return err
 	}
@@ -161,7 +198,7 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {

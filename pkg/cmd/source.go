@@ -16,10 +16,20 @@ import (
 )
 
 var sourcesCreate = cli.Command{
-	Name:            "create",
-	Usage:           "Create a new source. Requires scope: source:create",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "create",
+	Usage:   "Create a new source. Requires scope: source:create",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:     "type",
+			Required: true,
+			BodyPath: "type",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+	},
 	Action:          handleSourcesCreate,
 	HideHelpCommand: true,
 }
@@ -46,6 +56,43 @@ var sourcesUpdate = cli.Command{
 		&requestflag.Flag[string]{
 			Name:     "id",
 			Required: true,
+		},
+		&requestflag.Flag[string]{
+			Name:     "status",
+			Required: true,
+			BodyPath: "status",
+		},
+		&requestflag.Flag[any]{
+			Name:     "bot-control-mode",
+			BodyPath: "botControlMode",
+		},
+		&requestflag.Flag[any]{
+			Name:     "exclude-request-context",
+			BodyPath: "excludeRequestContext",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "project-api-key",
+			BodyPath: "projectAPIKey",
+		},
+		&requestflag.Flag[any]{
+			Name:     "redirect-url",
+			BodyPath: "redirectUrl",
+		},
+		&requestflag.Flag[any]{
+			Name:     "selected-account-id",
+			BodyPath: "selectedAccountId",
+		},
+		&requestflag.Flag[any]{
+			Name:     "whitelist-domain",
+			BodyPath: "whitelistDomains",
+		},
+		&requestflag.Flag[any]{
+			Name:     "whitelist-ip",
+			BodyPath: "whitelistIps",
 		},
 	},
 	Action:          handleSourcesUpdate,
@@ -89,7 +136,7 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {
@@ -161,7 +208,7 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {

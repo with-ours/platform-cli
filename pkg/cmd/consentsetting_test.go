@@ -28,6 +28,18 @@ func TestConsentSettingsUpdate(t *testing.T) {
 		t,
 		"consent-settings", "update",
 		"--id", "id",
+		"--category", "{}",
+		"--name", "name",
+		"--region", "{}",
+		"--service", "{}",
+		"--status", "Disabled",
+		"--consent-cookie-name", "consentCookieName",
+		"--custom-domain", "{}",
+		"--default", "{}",
+		"--revision", "0",
+		"--skip-blocking-class-name", "[string]",
+		"--web-sdk-token", "webSDKToken",
+		"--whitelist-domain", "[{}]",
 	)
 }
 

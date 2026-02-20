@@ -12,6 +12,10 @@ func TestReplaySettingsCreate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"replay-settings", "create",
+		"--custom-domain", "customDomain",
+		"--name", "name",
+		"--status", "Disabled",
+		"--whitelist-domain", "[string]",
 	)
 }
 
@@ -28,6 +32,10 @@ func TestReplaySettingsUpdate(t *testing.T) {
 		t,
 		"replay-settings", "update",
 		"--id", "id",
+		"--custom-domain", "customDomain",
+		"--name", "name",
+		"--status", "Disabled",
+		"--whitelist-domain", "[string]",
 	)
 }
 

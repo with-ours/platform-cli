@@ -47,6 +47,59 @@ var consentSettingsUpdate = cli.Command{
 			Name:     "id",
 			Required: true,
 		},
+		&requestflag.Flag[[]any]{
+			Name:     "category",
+			Required: true,
+			BodyPath: "categories",
+		},
+		&requestflag.Flag[string]{
+			Name:     "name",
+			Required: true,
+			BodyPath: "name",
+		},
+		&requestflag.Flag[[]any]{
+			Name:     "region",
+			Required: true,
+			BodyPath: "regions",
+		},
+		&requestflag.Flag[[]any]{
+			Name:     "service",
+			Required: true,
+			BodyPath: "services",
+		},
+		&requestflag.Flag[string]{
+			Name:     "status",
+			Required: true,
+			BodyPath: "status",
+		},
+		&requestflag.Flag[any]{
+			Name:     "consent-cookie-name",
+			BodyPath: "consentCookieName",
+		},
+		&requestflag.Flag[any]{
+			Name:     "custom-domain",
+			BodyPath: "customDomain",
+		},
+		&requestflag.Flag[any]{
+			Name:     "default",
+			BodyPath: "default",
+		},
+		&requestflag.Flag[any]{
+			Name:     "revision",
+			BodyPath: "revision",
+		},
+		&requestflag.Flag[any]{
+			Name:     "skip-blocking-class-name",
+			BodyPath: "skipBlockingClassNames",
+		},
+		&requestflag.Flag[any]{
+			Name:     "web-sdk-token",
+			BodyPath: "webSDKToken",
+		},
+		&requestflag.Flag[any]{
+			Name:     "whitelist-domain",
+			BodyPath: "whitelistDomains",
+		},
 	},
 	Action:          handleConsentSettingsUpdate,
 	HideHelpCommand: true,
@@ -83,8 +136,6 @@ func handleConsentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomwithoursplatformsdkgo.ConsentSettingNewParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -98,7 +149,7 @@ func handleConsentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.ConsentSettings.New(ctx, params, options...)
+	_, err = client.ConsentSettings.New(ctx, options...)
 	if err != nil {
 		return err
 	}
@@ -161,7 +212,7 @@ func handleConsentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {

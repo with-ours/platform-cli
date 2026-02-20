@@ -12,6 +12,19 @@ func TestVersionsCreate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"versions", "create",
+		"--include-allowed-event", "[string]",
+		"--include-consent-setting", "[string]",
+		"--include-destination", "[string]",
+		"--include-external-allowed-event-data", "[string]",
+		"--include-global-dispatch-center", "[string]",
+		"--include-mapping", "[string]",
+		"--include-replay-setting", "[string]",
+		"--include-source", "[string]",
+		"--include-tag-manager-tag", "[string]",
+		"--include-tag-manager-trigger", "[string]",
+		"--include-tag-manager-variable", "[string]",
+		"--name", "name",
+		"--notes", "notes",
 	)
 }
 
@@ -28,6 +41,8 @@ func TestVersionsUpdate(t *testing.T) {
 		t,
 		"versions", "update",
 		"--id", "id",
+		"--name", "name",
+		"--notes", "notes",
 	)
 }
 
