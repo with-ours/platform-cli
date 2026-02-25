@@ -11,8 +11,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 ### Installing with Homebrew
 
 ```sh
-brew tap with-ours/tap
-brew install oursprivacy
+brew install with-ours/tap/oursprivacy
 ```
 
 ### Installing with Go
