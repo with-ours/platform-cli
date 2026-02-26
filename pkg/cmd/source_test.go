@@ -32,6 +32,7 @@ func TestSourcesUpdate(t *testing.T) {
 		"--id", "id",
 		"--status", "Disabled",
 		"--bot-control-mode", "Allow",
+		"--bot-score-threshold", "0",
 		"--exclude-request-context=true",
 		"--name", "name",
 		"--project-api-key", "projectAPIKey",

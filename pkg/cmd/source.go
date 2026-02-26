@@ -67,6 +67,10 @@ var sourcesUpdate = cli.Command{
 			BodyPath: "botControlMode",
 		},
 		&requestflag.Flag[any]{
+			Name:     "bot-score-threshold",
+			BodyPath: "botScoreThreshold",
+		},
+		&requestflag.Flag[any]{
 			Name:     "exclude-request-context",
 			BodyPath: "excludeRequestContext",
 		},
