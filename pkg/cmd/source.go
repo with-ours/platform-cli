@@ -48,7 +48,7 @@ var sourcesRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var sourcesUpdate = cli.Command{
+var sourcesUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Update a source. Requires scope: source:update",
 	Suggest: true,
@@ -79,6 +79,10 @@ var sourcesUpdate = cli.Command{
 			BodyPath: "name",
 		},
 		&requestflag.Flag[any]{
+			Name:     "probabilistic-identity",
+			BodyPath: "probabilisticIdentity",
+		},
+		&requestflag.Flag[any]{
 			Name:     "project-api-key",
 			BodyPath: "projectAPIKey",
 		},
@@ -101,7 +105,22 @@ var sourcesUpdate = cli.Command{
 	},
 	Action:          handleSourcesUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"probabilistic-identity": {
+		&requestflag.InnerFlag[bool]{
+			Name:       "probabilistic-identity.enabled",
+			InnerField: "enabled",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "probabilistic-identity.match-window-minutes",
+			InnerField: "matchWindowMinutes",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "probabilistic-identity.max-matches-per-ip",
+			InnerField: "maxMatchesPerIp",
+		},
+	},
+})
 
 var sourcesList = cli.Command{
 	Name:            "list",
