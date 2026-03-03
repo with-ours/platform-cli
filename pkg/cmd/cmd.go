@@ -14,6 +14,7 @@ import (
 	docs "github.com/urfave/cli-docs/v3"
 	"github.com/urfave/cli/v3"
 	"github.com/with-ours/platform-cli/internal/autocomplete"
+	"github.com/with-ours/platform-cli/internal/requestflag"
 )
 
 var (
@@ -65,6 +66,10 @@ func init() {
 			&cli.StringFlag{
 				Name:  "transform-error",
 				Usage: "The GJSON transformation for errors.",
+			},
+			&requestflag.Flag[string]{
+				Name:    "api-key",
+				Sources: cli.EnvVars("OURS_PRIVACY_API_KEY"),
 			},
 		},
 		Commands: []*cli.Command{

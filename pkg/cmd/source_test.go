@@ -13,6 +13,7 @@ func TestSourcesCreate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"sources", "create",
+		"--api-key", "string",
 		"--type", "AlchemerWebhook",
 		"--name", "name",
 	)
@@ -22,6 +23,7 @@ func TestSourcesRetrieve(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"sources", "retrieve",
+		"--api-key", "string",
 		"--id", "id",
 	)
 }
@@ -30,6 +32,7 @@ func TestSourcesUpdate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"sources", "update",
+		"--api-key", "string",
 		"--id", "id",
 		"--status", "Disabled",
 		"--bot-control-mode", "Allow",
@@ -72,6 +75,7 @@ func TestSourcesList(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"sources", "list",
+		"--api-key", "string",
 	)
 }
 
@@ -79,6 +83,7 @@ func TestSourcesDelete(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"sources", "delete",
+		"--api-key", "string",
 		"--id", "id",
 	)
 }
