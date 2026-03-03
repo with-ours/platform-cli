@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/with-ours/platform-cli/internal/mocktest"
+	"github.com/with-ours/platform-cli/internal/requestflag"
 )
 
 func TestSourcesCreate(t *testing.T) {
@@ -35,6 +36,30 @@ func TestSourcesUpdate(t *testing.T) {
 		"--bot-score-threshold", "0",
 		"--exclude-request-context=true",
 		"--name", "name",
+		"--probabilistic-identity", "{enabled: true, matchWindowMinutes: 1, maxMatchesPerIp: 1}",
+		"--project-api-key", "projectAPIKey",
+		"--redirect-url", "redirectUrl",
+		"--selected-account-id", "selectedAccountId",
+		"--whitelist-domain", "[{}]",
+		"--whitelist-ip", "[string]",
+	)
+
+	// Check that inner flags have been set up correctly
+	requestflag.CheckInnerFlags(sourcesUpdate)
+
+	// Alternative argument passing style using inner flags
+	mocktest.TestRunMockTestWithFlags(
+		t,
+		"sources", "update",
+		"--id", "id",
+		"--status", "Disabled",
+		"--bot-control-mode", "Allow",
+		"--bot-score-threshold", "0",
+		"--exclude-request-context=true",
+		"--name", "name",
+		"--probabilistic-identity.enabled=true",
+		"--probabilistic-identity.match-window-minutes", "1",
+		"--probabilistic-identity.max-matches-per-ip", "1",
 		"--project-api-key", "projectAPIKey",
 		"--redirect-url", "redirectUrl",
 		"--selected-account-id", "selectedAccountId",
