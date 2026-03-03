@@ -54,13 +54,21 @@ oursprivacy [resource] <command> [flags...]
 ```
 
 ```sh
-oursprivacy sources list
+oursprivacy sources list \
+  --api-key 'My API Key'
 ```
 
 For details about specific commands, use the `--help` flag.
 
-### Global Flags
+### Environment variables
 
+| Environment variable   | Required |
+| ---------------------- | -------- |
+| `OURS_PRIVACY_API_KEY` | yes      |
+
+### Global flags
+
+- `--api-key` (can also be set with `OURS_PRIVACY_API_KEY` env var)
 - `--help` - Show command line usage
 - `--debug` - Enable debug logging (includes HTTP request/response details)
 - `--version`, `-v` - Show the CLI version

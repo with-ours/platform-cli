@@ -12,6 +12,7 @@ func TestDestinationsCreate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"destinations", "create",
+		"--api-key", "string",
 		"--type", "AWSEventBridge",
 		"--name", "name",
 	)
@@ -21,6 +22,7 @@ func TestDestinationsRetrieve(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"destinations", "retrieve",
+		"--api-key", "string",
 		"--id", "id",
 	)
 }
@@ -29,6 +31,7 @@ func TestDestinationsUpdate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"destinations", "update",
+		"--api-key", "string",
 		"--id", "id",
 		"--status", "Disabled",
 		"--facebook-conversion-api-key", "facebookConversionAPIKey",
@@ -52,6 +55,7 @@ func TestDestinationsList(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"destinations", "list",
+		"--api-key", "string",
 	)
 }
 
@@ -59,6 +63,7 @@ func TestDestinationsDelete(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"destinations", "delete",
+		"--api-key", "string",
 		"--id", "id",
 	)
 }

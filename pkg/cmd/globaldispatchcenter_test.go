@@ -13,6 +13,7 @@ func TestGlobalDispatchCentersCreate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"global-dispatch-centers", "create",
+		"--api-key", "string",
 	)
 }
 
@@ -20,6 +21,7 @@ func TestGlobalDispatchCentersRetrieve(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"global-dispatch-centers", "retrieve",
+		"--api-key", "string",
 		"--id", "id",
 	)
 }
@@ -28,6 +30,7 @@ func TestGlobalDispatchCentersUpdate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"global-dispatch-centers", "update",
+		"--api-key", "string",
 		"--id", "id",
 		"--category", "[{description: description, destinationIds: [string], logic: {}, name: name, priority: 0}]",
 		"--is-enabled=true",
@@ -58,6 +61,7 @@ func TestGlobalDispatchCentersList(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"global-dispatch-centers", "list",
+		"--api-key", "string",
 	)
 }
 
@@ -65,6 +69,7 @@ func TestGlobalDispatchCentersDelete(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"global-dispatch-centers", "delete",
+		"--api-key", "string",
 		"--id", "id",
 	)
 }

@@ -12,6 +12,7 @@ func TestVersionsCreate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"versions", "create",
+		"--api-key", "string",
 		"--include-allowed-event", "[string]",
 		"--include-consent-setting", "[string]",
 		"--include-destination", "[string]",
@@ -32,6 +33,7 @@ func TestVersionsRetrieve(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"versions", "retrieve",
+		"--api-key", "string",
 		"--id", "id",
 	)
 }
@@ -40,6 +42,7 @@ func TestVersionsUpdate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"versions", "update",
+		"--api-key", "string",
 		"--id", "id",
 		"--name", "name",
 		"--notes", "notes",
@@ -50,5 +53,6 @@ func TestVersionsList(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"versions", "list",
+		"--api-key", "string",
 	)
 }
