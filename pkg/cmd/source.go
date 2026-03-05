@@ -16,10 +16,20 @@ import (
 )
 
 var sourcesCreate = cli.Command{
-	Name:            "create",
-	Usage:           "Create a new source. Requires scope: source:create",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "create",
+	Usage:   "Create a new source. Requires scope: source:create",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:     "type",
+			Required: true,
+			BodyPath: "type",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+	},
 	Action:          handleSourcesCreate,
 	HideHelpCommand: true,
 }
@@ -38,7 +48,7 @@ var sourcesRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var sourcesUpdate = cli.Command{
+var sourcesUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Update a source. Requires scope: source:update",
 	Suggest: true,
@@ -47,10 +57,70 @@ var sourcesUpdate = cli.Command{
 			Name:     "id",
 			Required: true,
 		},
+		&requestflag.Flag[string]{
+			Name:     "status",
+			Required: true,
+			BodyPath: "status",
+		},
+		&requestflag.Flag[any]{
+			Name:     "bot-control-mode",
+			BodyPath: "botControlMode",
+		},
+		&requestflag.Flag[any]{
+			Name:     "bot-score-threshold",
+			BodyPath: "botScoreThreshold",
+		},
+		&requestflag.Flag[any]{
+			Name:     "exclude-request-context",
+			BodyPath: "excludeRequestContext",
+		},
+		&requestflag.Flag[any]{
+			Name:     "name",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "probabilistic-identity",
+			BodyPath: "probabilisticIdentity",
+		},
+		&requestflag.Flag[any]{
+			Name:     "project-api-key",
+			BodyPath: "projectAPIKey",
+		},
+		&requestflag.Flag[any]{
+			Name:     "redirect-url",
+			BodyPath: "redirectUrl",
+		},
+		&requestflag.Flag[any]{
+			Name:     "selected-account-id",
+			BodyPath: "selectedAccountId",
+		},
+		&requestflag.Flag[any]{
+			Name:     "whitelist-domain",
+			BodyPath: "whitelistDomains",
+		},
+		&requestflag.Flag[any]{
+			Name:     "whitelist-ip",
+			BodyPath: "whitelistIps",
+		},
 	},
 	Action:          handleSourcesUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"probabilistic-identity": {
+		&requestflag.InnerFlag[bool]{
+			Name:       "probabilistic-identity.enabled",
+			InnerField: "enabled",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "probabilistic-identity.match-window-minutes",
+			InnerField: "matchWindowMinutes",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "probabilistic-identity.max-matches-per-ip",
+			InnerField: "maxMatchesPerIp",
+		},
+	},
+})
 
 var sourcesList = cli.Command{
 	Name:            "list",
@@ -89,7 +159,7 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {
@@ -161,7 +231,7 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {

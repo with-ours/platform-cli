@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.2.0 (2026-03-05)
+
+Full Changelog: [v1.1.0...v1.2.0](https://github.com/with-ours/platform-cli/compare/v1.1.0...v1.2.0)
+
+### Features
+
+* add `--max-items` flag for paginated/streaming endpoints ([22dfe08](https://github.com/with-ours/platform-cli/commit/22dfe08431cca5cef1120c519d04d2d3c97c9b39))
+* add support for file downloads from binary response endpoints ([7a981e5](https://github.com/with-ours/platform-cli/commit/7a981e5ba9df6e9ad738be2db20ffdb30e432047))
+* **api:** api update ([07ec71b](https://github.com/with-ours/platform-cli/commit/07ec71bff3aa3c867ab29bac24b35aeb2dc0d964))
+* **api:** api update ([af9d689](https://github.com/with-ours/platform-cli/commit/af9d689a29c51b81be093e3c23dc27131710f0b6))
+* **api:** api update ([16d9929](https://github.com/with-ours/platform-cli/commit/16d9929409f1d77750fdaaca6e6cd4dc97137408))
+* support passing required body params through pipes ([4126af6](https://github.com/with-ours/platform-cli/commit/4126af6a2ccffe6dff89bd976cf113f3fb1aa5fd))
+
+
+### Bug Fixes
+
+* add missing client parameter flags to test cases ([83072ed](https://github.com/with-ours/platform-cli/commit/83072ed08d34ae08e609ed4df0bd73ef9bcbb920))
+* avoid printing usage errors twice ([6fd4cbf](https://github.com/with-ours/platform-cli/commit/6fd4cbf4bb58ec2daa8e81bcca5a20e8f04b38c2))
+* more gracefully handle empty stdin input ([504e889](https://github.com/with-ours/platform-cli/commit/504e88903e014548694a2a7190e7c7166f33b730))
+* pin formatting for headers to always use repeat/dot formats ([5ae0d55](https://github.com/with-ours/platform-cli/commit/5ae0d55e53ac9b236601f8756b6eac02900c436e))
+
+
+### Chores
+
+* **internal:** codegen related update ([aeb2d05](https://github.com/with-ours/platform-cli/commit/aeb2d05c9da3bf4cb5a451aa3e83dcb8ba000270))
+* **internal:** codegen related update ([557d33c](https://github.com/with-ours/platform-cli/commit/557d33c0d71dc4bb74fa98cd396f55e7a498fd97))
+* **internal:** codegen related update ([b442265](https://github.com/with-ours/platform-cli/commit/b4422655bdd7f314bb76d82c327dd66d2fd99623))
+* **test:** do not count install time for mock server timeout ([8b9a668](https://github.com/with-ours/platform-cli/commit/8b9a668a7bcccb79944b1e9bde2eb1b01daaec5a))
+* update readme with better instructions for installing with homebrew ([0951857](https://github.com/with-ours/platform-cli/commit/09518570a3c01da7e3ece1d2788e73923a0824c0))
+* zip READMEs as part of build artifact ([d4ca0e7](https://github.com/with-ours/platform-cli/commit/d4ca0e7cadabdcb00a9a43e1c44c61de4a4766ca))
+
 ## 1.1.0 (2026-02-20)
 
 Full Changelog: [v1.0.0...v1.1.0](https://github.com/with-ours/platform-cli/compare/v1.0.0...v1.1.0)

@@ -3,6 +3,7 @@
 package cmd
 
 import (
+	"bytes"
 	"compress/gzip"
 	"context"
 	"fmt"
@@ -14,18 +15,21 @@ import (
 	docs "github.com/urfave/cli-docs/v3"
 	"github.com/urfave/cli/v3"
 	"github.com/with-ours/platform-cli/internal/autocomplete"
+	"github.com/with-ours/platform-cli/internal/requestflag"
 )
 
 var (
-	Command *cli.Command
+	Command            *cli.Command
+	CommandErrorBuffer bytes.Buffer
 )
 
 func init() {
 	Command = &cli.Command{
-		Name:    "oursprivacy",
-		Usage:   "CLI for the ours-privacy-platform API",
-		Suggest: true,
-		Version: Version,
+		Name:      "oursprivacy",
+		Usage:     "CLI for the ours-privacy-platform API",
+		Suggest:   true,
+		Version:   Version,
+		ErrWriter: &CommandErrorBuffer,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:  "debug",
@@ -65,6 +69,10 @@ func init() {
 			&cli.StringFlag{
 				Name:  "transform-error",
 				Usage: "The GJSON transformation for errors.",
+			},
+			&requestflag.Flag[string]{
+				Name:    "api-key",
+				Sources: cli.EnvVars("OURS_PRIVACY_API_KEY"),
 			},
 		},
 		Commands: []*cli.Command{
