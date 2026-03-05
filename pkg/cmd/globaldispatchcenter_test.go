@@ -45,6 +45,7 @@ func TestGlobalDispatchCentersUpdate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"global-dispatch-centers", "update",
+		"--api-key", "string",
 		"--id", "id",
 		"--category.description", "description",
 		"--category.destination-ids", "[string]",

@@ -54,6 +54,7 @@ func TestSourcesUpdate(t *testing.T) {
 	mocktest.TestRunMockTestWithFlags(
 		t,
 		"sources", "update",
+		"--api-key", "string",
 		"--id", "id",
 		"--status", "Disabled",
 		"--bot-control-mode", "Allow",
