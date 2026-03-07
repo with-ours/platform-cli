@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.3.0 (2026-03-07)
+
+Full Changelog: [v1.2.0...v1.3.0](https://github.com/with-ours/platform-cli/compare/v1.2.0...v1.3.0)
+
+### Features
+
+* **api:** manual updates ([31f0338](https://github.com/with-ours/platform-cli/commit/31f03383ca97470f74b60c1d78a84fd829a7bf82))
+
+
+### Bug Fixes
+
+* fix for encoding arrays with `any` type items ([546318a](https://github.com/with-ours/platform-cli/commit/546318a28946678300413e4583a5843562c0750a))
+
+
+### Chores
+
+* **ci:** skip uploading artifacts on stainless-internal branches ([799faea](https://github.com/with-ours/platform-cli/commit/799faeadf92f7f54b187eb54da9b5770c1cc9bef))
+
 ## 1.2.0 (2026-03-05)
 
 Full Changelog: [v1.1.0...v1.2.0](https://github.com/with-ours/platform-cli/compare/v1.1.0...v1.2.0)
