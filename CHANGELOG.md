@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.1 (2026-03-12)
+
+Full Changelog: [v1.4.0...v1.4.1](https://github.com/with-ours/platform-cli/compare/v1.4.0...v1.4.1)
+
+### Bug Fixes
+
+* fix for test cases with newlines in YAML and better error reporting ([0357fb2](https://github.com/with-ours/platform-cli/commit/0357fb2d42c7c6b237a6c219e4763875e3cd301d))
+
 ## 1.4.0 (2026-03-09)
 
 Full Changelog: [v1.3.0...v1.4.0](https://github.com/with-ours/platform-cli/compare/v1.3.0...v1.4.0)
