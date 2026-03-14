@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.2 (2026-03-14)
+
+Full Changelog: [v1.4.1...v1.4.2](https://github.com/with-ours/platform-cli/compare/v1.4.1...v1.4.2)
+
+### Bug Fixes
+
+* only set client options when the corresponding CLI flag or env var is explicitly set ([6d6b690](https://github.com/with-ours/platform-cli/commit/6d6b690520220496e3bf6236cb2672ebbf480a28))
+
 ## 1.4.1 (2026-03-12)
 
 Full Changelog: [v1.4.0...v1.4.1](https://github.com/with-ours/platform-cli/compare/v1.4.0...v1.4.1)
