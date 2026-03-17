@@ -12,8 +12,9 @@ import (
 func TestGlobalDispatchCentersCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "global-dispatch-centers", "create",
+			t,
 			"--api-key", "string",
+			"global-dispatch-centers", "create",
 		)
 	})
 }
@@ -21,8 +22,9 @@ func TestGlobalDispatchCentersCreate(t *testing.T) {
 func TestGlobalDispatchCentersRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "global-dispatch-centers", "retrieve",
+			t,
 			"--api-key", "string",
+			"global-dispatch-centers", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -31,8 +33,9 @@ func TestGlobalDispatchCentersRetrieve(t *testing.T) {
 func TestGlobalDispatchCentersUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "global-dispatch-centers", "update",
+			t,
 			"--api-key", "string",
+			"global-dispatch-centers", "update",
 			"--id", "id",
 			"--category", "[{description: description, destinationIds: [string], logic: {}, name: name, priority: 0}]",
 			"--is-enabled=true",
@@ -47,8 +50,9 @@ func TestGlobalDispatchCentersUpdate(t *testing.T) {
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
-			t, "global-dispatch-centers", "update",
+			t,
 			"--api-key", "string",
+			"global-dispatch-centers", "update",
 			"--id", "id",
 			"--category.description", "description",
 			"--category.destination-ids", "[string]",
@@ -75,8 +79,9 @@ func TestGlobalDispatchCentersUpdate(t *testing.T) {
 			"name: name\n" +
 			"notes: notes\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "global-dispatch-centers", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"global-dispatch-centers", "update",
 			"--id", "id",
 		)
 	})
@@ -85,8 +90,9 @@ func TestGlobalDispatchCentersUpdate(t *testing.T) {
 func TestGlobalDispatchCentersList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "global-dispatch-centers", "list",
+			t,
 			"--api-key", "string",
+			"global-dispatch-centers", "list",
 		)
 	})
 }
@@ -94,8 +100,9 @@ func TestGlobalDispatchCentersList(t *testing.T) {
 func TestGlobalDispatchCentersDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "global-dispatch-centers", "delete",
+			t,
 			"--api-key", "string",
+			"global-dispatch-centers", "delete",
 			"--id", "id",
 		)
 	})

@@ -11,8 +11,9 @@ import (
 func TestAllowedEventsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "allowed-events", "create",
+			t,
 			"--api-key", "string",
+			"allowed-events", "create",
 			"--name", "name",
 			"--destination-ids", "[string]",
 		)
@@ -25,8 +26,9 @@ func TestAllowedEventsCreate(t *testing.T) {
 			"destinationIds:\n" +
 			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "allowed-events", "create",
+			t, pipeData,
 			"--api-key", "string",
+			"allowed-events", "create",
 		)
 	})
 }
@@ -34,8 +36,9 @@ func TestAllowedEventsCreate(t *testing.T) {
 func TestAllowedEventsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "allowed-events", "retrieve",
+			t,
 			"--api-key", "string",
+			"allowed-events", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -44,8 +47,9 @@ func TestAllowedEventsRetrieve(t *testing.T) {
 func TestAllowedEventsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "allowed-events", "list",
+			t,
 			"--api-key", "string",
+			"allowed-events", "list",
 		)
 	})
 }
@@ -53,8 +57,9 @@ func TestAllowedEventsList(t *testing.T) {
 func TestAllowedEventsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "allowed-events", "delete",
+			t,
 			"--api-key", "string",
+			"allowed-events", "delete",
 			"--id", "id",
 		)
 	})
