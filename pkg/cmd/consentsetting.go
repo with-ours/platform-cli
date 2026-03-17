@@ -38,7 +38,7 @@ var consentSettingsRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var consentSettingsUpdate = cli.Command{
+var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Update a consent setting. Requires scope: consentSettings:update",
 	Suggest: true,
@@ -47,22 +47,27 @@ var consentSettingsUpdate = cli.Command{
 			Name:     "id",
 			Required: true,
 		},
-		&requestflag.Flag[[]any]{
+		&requestflag.Flag[[]map[string]any]{
 			Name:     "category",
 			Required: true,
 			BodyPath: "categories",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "default",
+			Required: true,
+			BodyPath: "default",
 		},
 		&requestflag.Flag[string]{
 			Name:     "name",
 			Required: true,
 			BodyPath: "name",
 		},
-		&requestflag.Flag[[]any]{
+		&requestflag.Flag[[]map[string]any]{
 			Name:     "region",
 			Required: true,
 			BodyPath: "regions",
 		},
-		&requestflag.Flag[[]any]{
+		&requestflag.Flag[[]map[string]any]{
 			Name:     "service",
 			Required: true,
 			BodyPath: "services",
@@ -79,10 +84,6 @@ var consentSettingsUpdate = cli.Command{
 		&requestflag.Flag[any]{
 			Name:     "custom-domain",
 			BodyPath: "customDomain",
-		},
-		&requestflag.Flag[any]{
-			Name:     "default",
-			BodyPath: "default",
 		},
 		&requestflag.Flag[any]{
 			Name:     "revision",
@@ -103,7 +104,104 @@ var consentSettingsUpdate = cli.Command{
 	},
 	Action:          handleConsentSettingsUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"category": {
+		&requestflag.InnerFlag[string]{
+			Name:       "category.label",
+			InnerField: "label",
+		},
+		&requestflag.InnerFlag[int64]{
+			Name:       "category.priority",
+			InnerField: "priority",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "category.value",
+			InnerField: "value",
+		},
+	},
+	"default": {
+		&requestflag.InnerFlag[[]map[string]any]{
+			Name:       "default.categories",
+			InnerField: "categories",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "default.language",
+			InnerField: "language",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "default.mode",
+			InnerField: "mode",
+		},
+		&requestflag.InnerFlag[[]map[string]any]{
+			Name:       "default.translations",
+			InnerField: "translations",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "default.auto-show",
+			InnerField: "autoShow",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "default.auto-show-dismiss-config",
+			InnerField: "autoShowDismissConfig",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "default.auto-show-dismiss-mode",
+			InnerField: "autoShowDismissMode",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "default.disable-page-interaction",
+			InnerField: "disablePageInteraction",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "default.gui-options",
+			InnerField: "guiOptions",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "default.hide-from-bots",
+			InnerField: "hideFromBots",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "default.show-vendors-in-preferences",
+			InnerField: "showVendorsInPreferences",
+		},
+	},
+	"region": {
+		&requestflag.InnerFlag[string]{
+			Name:       "region.region-code",
+			InnerField: "regionCode",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "region.rule",
+			InnerField: "rule",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "region.additional-regions",
+			InnerField: "additionalRegions",
+		},
+	},
+	"service": {
+		&requestflag.InnerFlag[string]{
+			Name:       "service.internal-notes",
+			InnerField: "internalNotes",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "service.label",
+			InnerField: "label",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "service.additional-categories",
+			InnerField: "additionalCategories",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "service.category",
+			InnerField: "category",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "service.domain-patterns",
+			InnerField: "domainPatterns",
+		},
+	},
+})
 
 var consentSettingsList = cli.Command{
 	Name:            "list",
