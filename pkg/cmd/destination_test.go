@@ -64,7 +64,7 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--project-api-key", "projectAPIKey",
 			"--project-token", "projectToken",
 			"--selected-account-id", "selectedAccountId",
-			"--settings", "{foo: bar}",
+			"--settings", "{foo: string}",
 		)
 	})
 
@@ -87,7 +87,7 @@ func TestDestinationsUpdate(t *testing.T) {
 			"projectToken: projectToken\n" +
 			"selectedAccountId: selectedAccountId\n" +
 			"settings:\n" +
-			"  foo: bar\n")
+			"  foo: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
