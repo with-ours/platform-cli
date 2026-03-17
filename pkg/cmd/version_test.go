@@ -11,8 +11,9 @@ import (
 func TestVersionsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "versions", "create",
+			t,
 			"--api-key", "string",
+			"versions", "create",
 			"--include-allowed-event", "[string]",
 			"--include-consent-setting", "[string]",
 			"--include-destination", "[string]",
@@ -57,8 +58,9 @@ func TestVersionsCreate(t *testing.T) {
 			"name: name\n" +
 			"notes: notes\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "versions", "create",
+			t, pipeData,
 			"--api-key", "string",
+			"versions", "create",
 		)
 	})
 }
@@ -66,8 +68,9 @@ func TestVersionsCreate(t *testing.T) {
 func TestVersionsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "versions", "retrieve",
+			t,
 			"--api-key", "string",
+			"versions", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -76,8 +79,9 @@ func TestVersionsRetrieve(t *testing.T) {
 func TestVersionsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "versions", "update",
+			t,
 			"--api-key", "string",
+			"versions", "update",
 			"--id", "id",
 			"--name", "name",
 			"--notes", "notes",
@@ -90,8 +94,9 @@ func TestVersionsUpdate(t *testing.T) {
 			"name: name\n" +
 			"notes: notes\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "versions", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"versions", "update",
 			"--id", "id",
 		)
 	})
@@ -100,8 +105,9 @@ func TestVersionsUpdate(t *testing.T) {
 func TestVersionsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "versions", "list",
+			t,
 			"--api-key", "string",
+			"versions", "list",
 		)
 	})
 }

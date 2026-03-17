@@ -11,8 +11,9 @@ import (
 func TestConsentSettingsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "consent-settings", "create",
+			t,
 			"--api-key", "string",
+			"consent-settings", "create",
 		)
 	})
 }
@@ -20,8 +21,9 @@ func TestConsentSettingsCreate(t *testing.T) {
 func TestConsentSettingsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "consent-settings", "retrieve",
+			t,
 			"--api-key", "string",
+			"consent-settings", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -30,8 +32,9 @@ func TestConsentSettingsRetrieve(t *testing.T) {
 func TestConsentSettingsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "consent-settings", "update",
+			t,
 			"--api-key", "string",
+			"consent-settings", "update",
 			"--id", "id",
 			"--category", "{}",
 			"--name", "name",
@@ -69,8 +72,9 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"whitelistDomains:\n" +
 			"  - {}\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "consent-settings", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"consent-settings", "update",
 			"--id", "id",
 		)
 	})
@@ -79,8 +83,9 @@ func TestConsentSettingsUpdate(t *testing.T) {
 func TestConsentSettingsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "consent-settings", "list",
+			t,
 			"--api-key", "string",
+			"consent-settings", "list",
 		)
 	})
 }
@@ -88,8 +93,9 @@ func TestConsentSettingsList(t *testing.T) {
 func TestConsentSettingsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "consent-settings", "delete",
+			t,
 			"--api-key", "string",
+			"consent-settings", "delete",
 			"--id", "id",
 		)
 	})
