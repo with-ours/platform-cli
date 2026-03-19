@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.5.0 (2026-03-19)
+
+Full Changelog: [v1.4.2...v1.5.0](https://github.com/with-ours/platform-cli/compare/v1.4.2...v1.5.0)
+
+### Features
+
+* **api:** api update ([08577d6](https://github.com/with-ours/platform-cli/commit/08577d6fc551dc14a7ea1129f8906cca403bd29a))
+
+
+### Bug Fixes
+
+* avoid reading from stdin unless request body is form encoded or json ([25295d5](https://github.com/with-ours/platform-cli/commit/25295d55458cf3f1606a743d8b34460a8b965c5c))
+* better support passing client args in any position ([cd7c596](https://github.com/with-ours/platform-cli/commit/cd7c596b12c3649143931d35ca30614706b7e5eb))
+* improve linking behavior when developing on a branch not in the Go SDK ([da9eb75](https://github.com/with-ours/platform-cli/commit/da9eb75eae8991db1e58640b6b2b8e5350231d5e))
+* improved workflow for developing on branches ([0337780](https://github.com/with-ours/platform-cli/commit/033778056a78504c4f1d500273e6e03b23e5b233))
+* no longer require an API key when building on production repos ([b999f2e](https://github.com/with-ours/platform-cli/commit/b999f2ec5bbbbbd170d523d622853d26d509d2ba))
+
+
+### Chores
+
+* **internal:** tweak CI branches ([f50e126](https://github.com/with-ours/platform-cli/commit/f50e126bc3314adf7fc2dcf6e132aa2259b786a1))
+
 ## 1.4.2 (2026-03-14)
 
 Full Changelog: [v1.4.1...v1.4.2](https://github.com/with-ours/platform-cli/compare/v1.4.1...v1.4.2)
