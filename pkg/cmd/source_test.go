@@ -12,8 +12,9 @@ import (
 func TestSourcesCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "sources", "create",
+			t,
 			"--api-key", "string",
+			"sources", "create",
 			"--type", "AlchemerWebhook",
 			"--name", "name",
 		)
@@ -25,8 +26,9 @@ func TestSourcesCreate(t *testing.T) {
 			"type: AlchemerWebhook\n" +
 			"name: name\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "sources", "create",
+			t, pipeData,
 			"--api-key", "string",
+			"sources", "create",
 		)
 	})
 }
@@ -34,8 +36,9 @@ func TestSourcesCreate(t *testing.T) {
 func TestSourcesRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "sources", "retrieve",
+			t,
 			"--api-key", "string",
+			"sources", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -44,8 +47,9 @@ func TestSourcesRetrieve(t *testing.T) {
 func TestSourcesUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "sources", "update",
+			t,
 			"--api-key", "string",
+			"sources", "update",
 			"--id", "id",
 			"--status", "Disabled",
 			"--bot-control-mode", "Allow",
@@ -56,7 +60,7 @@ func TestSourcesUpdate(t *testing.T) {
 			"--project-api-key", "projectAPIKey",
 			"--redirect-url", "redirectUrl",
 			"--selected-account-id", "selectedAccountId",
-			"--whitelist-domain", "[{}]",
+			"--whitelist-domain", "[string]",
 			"--whitelist-ip", "[string]",
 		)
 	})
@@ -67,8 +71,9 @@ func TestSourcesUpdate(t *testing.T) {
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
-			t, "sources", "update",
+			t,
 			"--api-key", "string",
+			"sources", "update",
 			"--id", "id",
 			"--status", "Disabled",
 			"--bot-control-mode", "Allow",
@@ -81,7 +86,7 @@ func TestSourcesUpdate(t *testing.T) {
 			"--project-api-key", "projectAPIKey",
 			"--redirect-url", "redirectUrl",
 			"--selected-account-id", "selectedAccountId",
-			"--whitelist-domain", "[{}]",
+			"--whitelist-domain", "[string]",
 			"--whitelist-ip", "[string]",
 		)
 	})
@@ -102,12 +107,13 @@ func TestSourcesUpdate(t *testing.T) {
 			"redirectUrl: redirectUrl\n" +
 			"selectedAccountId: selectedAccountId\n" +
 			"whitelistDomains:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"whitelistIps:\n" +
 			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "sources", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"sources", "update",
 			"--id", "id",
 		)
 	})
@@ -116,8 +122,9 @@ func TestSourcesUpdate(t *testing.T) {
 func TestSourcesList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "sources", "list",
+			t,
 			"--api-key", "string",
+			"sources", "list",
 		)
 	})
 }
@@ -125,8 +132,9 @@ func TestSourcesList(t *testing.T) {
 func TestSourcesDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "sources", "delete",
+			t,
 			"--api-key", "string",
+			"sources", "delete",
 			"--id", "id",
 		)
 	})

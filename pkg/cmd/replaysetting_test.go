@@ -11,8 +11,9 @@ import (
 func TestReplaySettingsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "replay-settings", "create",
+			t,
 			"--api-key", "string",
+			"replay-settings", "create",
 			"--custom-domain", "customDomain",
 			"--name", "name",
 			"--status", "Disabled",
@@ -29,8 +30,9 @@ func TestReplaySettingsCreate(t *testing.T) {
 			"whitelistDomains:\n" +
 			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "replay-settings", "create",
+			t, pipeData,
 			"--api-key", "string",
+			"replay-settings", "create",
 		)
 	})
 }
@@ -38,8 +40,9 @@ func TestReplaySettingsCreate(t *testing.T) {
 func TestReplaySettingsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "replay-settings", "retrieve",
+			t,
 			"--api-key", "string",
+			"replay-settings", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -48,8 +51,9 @@ func TestReplaySettingsRetrieve(t *testing.T) {
 func TestReplaySettingsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "replay-settings", "update",
+			t,
 			"--api-key", "string",
+			"replay-settings", "update",
 			"--id", "id",
 			"--custom-domain", "customDomain",
 			"--name", "name",
@@ -67,8 +71,9 @@ func TestReplaySettingsUpdate(t *testing.T) {
 			"whitelistDomains:\n" +
 			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "replay-settings", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"replay-settings", "update",
 			"--id", "id",
 		)
 	})
@@ -77,8 +82,9 @@ func TestReplaySettingsUpdate(t *testing.T) {
 func TestReplaySettingsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "replay-settings", "list",
+			t,
 			"--api-key", "string",
+			"replay-settings", "list",
 		)
 	})
 }
@@ -86,8 +92,9 @@ func TestReplaySettingsList(t *testing.T) {
 func TestReplaySettingsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "replay-settings", "delete",
+			t,
 			"--api-key", "string",
+			"replay-settings", "delete",
 			"--id", "id",
 		)
 	})

@@ -11,8 +11,9 @@ import (
 func TestDestinationsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "destinations", "create",
+			t,
 			"--api-key", "string",
+			"destinations", "create",
 			"--type", "AWSEventBridge",
 			"--name", "name",
 		)
@@ -24,8 +25,9 @@ func TestDestinationsCreate(t *testing.T) {
 			"type: AWSEventBridge\n" +
 			"name: name\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "destinations", "create",
+			t, pipeData,
 			"--api-key", "string",
+			"destinations", "create",
 		)
 	})
 }
@@ -33,8 +35,9 @@ func TestDestinationsCreate(t *testing.T) {
 func TestDestinationsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "destinations", "retrieve",
+			t,
 			"--api-key", "string",
+			"destinations", "retrieve",
 			"--id", "id",
 		)
 	})
@@ -43,8 +46,9 @@ func TestDestinationsRetrieve(t *testing.T) {
 func TestDestinationsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "destinations", "update",
+			t,
 			"--api-key", "string",
+			"destinations", "update",
 			"--id", "id",
 			"--status", "Disabled",
 			"--facebook-conversion-api-key", "facebookConversionAPIKey",
@@ -60,7 +64,7 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--project-api-key", "projectAPIKey",
 			"--project-token", "projectToken",
 			"--selected-account-id", "selectedAccountId",
-			"--settings", "{foo: bar}",
+			"--settings", "{foo: string}",
 		)
 	})
 
@@ -83,10 +87,11 @@ func TestDestinationsUpdate(t *testing.T) {
 			"projectToken: projectToken\n" +
 			"selectedAccountId: selectedAccountId\n" +
 			"settings:\n" +
-			"  foo: bar\n")
+			"  foo: string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
-			t, pipeData, "destinations", "update",
+			t, pipeData,
 			"--api-key", "string",
+			"destinations", "update",
 			"--id", "id",
 		)
 	})
@@ -95,8 +100,9 @@ func TestDestinationsUpdate(t *testing.T) {
 func TestDestinationsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "destinations", "list",
+			t,
 			"--api-key", "string",
+			"destinations", "list",
 		)
 	})
 }
@@ -104,8 +110,9 @@ func TestDestinationsList(t *testing.T) {
 func TestDestinationsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
-			t, "destinations", "delete",
+			t,
 			"--api-key", "string",
+			"destinations", "delete",
 			"--id", "id",
 		)
 	})
