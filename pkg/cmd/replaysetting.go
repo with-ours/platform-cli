@@ -30,6 +30,7 @@ var replaySettingsCreate = cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "status",
+			Usage:    `Allowed values: "Disabled", "Enabled".`,
 			BodyPath: "status",
 		},
 		&requestflag.Flag[any]{
@@ -74,6 +75,7 @@ var replaySettingsUpdate = cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "status",
+			Usage:    `Allowed values: "Disabled", "Enabled".`,
 			BodyPath: "status",
 		},
 		&requestflag.Flag[any]{

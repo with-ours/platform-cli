@@ -22,6 +22,7 @@ var destinationsCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "type",
+			Usage:    `Allowed values: "AWSEventBridge", "AWSKinesis", "AWSLambda", "AWSS3", "AWSSNS", "ActiveCampaignApi", "AmazonDSP", "Amplitude", "AppLovin", "ArtsAI", "Audiohook", "AzureBlob", "BasisPostback", "BingAds", "BingAdsWeb", "Braze", "ConvertABTestingEvent", "Customerio", "DomoWarehouse", "Facebook", "FloodlightSGTM", "FullContact", "G4Analytics", "GA4MeasurementProtocol", "GA4ServerProxy", "Google", "GoogleAds360", "GoogleAdsServerContainer", "GoogleBigQuery", "GoogleBigQueryWarehouse", "GoogleDataManagerEventIngest", "GooglePubSub", "GoogleStorage", "HTTPCustomRequest", "HTTPDestination", "Hubspot", "IHeartMediaMagellan", "Impact", "Iterable", "Klaviyo", "LinkedInAdsCAPI", "LiveIntent", "LiveRampWarehouse", "Mailchimp", "Mixpanel", "NextdoorAds", "OursSyntheticData", "Partnerize", "Pinterest", "Podscribe", "QuantcastCAPI", "QuoraAds", "Reddit", "SnapchatAdsCapi", "Spotify", "StackAdaptAPI", "Taboola", "Tatari", "TheTradeDesk", "TikTok", "Viant", "Vibe", "Woopra", "XAds", "Zendesk", "ZoomInfo".`,
 			Required: true,
 			BodyPath: "type",
 		},
@@ -59,6 +60,7 @@ var destinationsUpdate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "status",
+			Usage:    `Allowed values: "Disabled", "Enabled".`,
 			Required: true,
 			BodyPath: "status",
 		},
