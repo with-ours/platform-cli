@@ -74,6 +74,7 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "status",
+			Usage:    `Allowed values: "Disabled", "Enabled".`,
 			Required: true,
 			BodyPath: "status",
 		},
@@ -130,6 +131,7 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "default.mode",
+			Usage:      `Allowed values: "opt_in", "opt_out".`,
 			InnerField: "mode",
 		},
 		&requestflag.InnerFlag[[]map[string]any]{
@@ -146,6 +148,7 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "default.auto-show-dismiss-mode",
+			Usage:      `Allowed values: "after_pages", "after_seconds", "never".`,
 			InnerField: "autoShowDismissMode",
 		},
 		&requestflag.InnerFlag[any]{
