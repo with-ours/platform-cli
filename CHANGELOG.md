@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.6.0 (2026-03-25)
+
+Full Changelog: [v1.5.0...v1.6.0](https://github.com/with-ours/platform-cli/compare/v1.5.0...v1.6.0)
+
+### Features
+
+* add default description for enum CLI flags without an explicit description ([a10acdc](https://github.com/with-ours/platform-cli/commit/a10acdcd54f31aebded2d708f867f6d8d93707a1))
+* **api:** add macos ([fad75dd](https://github.com/with-ours/platform-cli/commit/fad75dd9091988426b09e6ff9611e0ccc3e85138))
+* **api:** api update ([d5757a6](https://github.com/with-ours/platform-cli/commit/d5757a61ae73009d7716d22a0cb3d9e93b76aa1a))
+
+
+### Bug Fixes
+
+* cli no longer hangs when stdin is attached to a pipe with empty input ([15c78a2](https://github.com/with-ours/platform-cli/commit/15c78a2b1383a7547a7ccf2c6e59e7546b2b10de))
+
+
+### Chores
+
+* **ci:** skip lint on metadata-only changes ([d378195](https://github.com/with-ours/platform-cli/commit/d378195c661ed7290a225851642b8a2b4e5c4cb7))
+* **internal:** codegen related update ([b90f4a5](https://github.com/with-ours/platform-cli/commit/b90f4a5cb06cc79958637ba1b1882883ae01f6c7))
+* **internal:** codegen related update ([a550650](https://github.com/with-ours/platform-cli/commit/a550650ff66ce362fc40f312471dc78215041455))
+* **internal:** update gitignore ([b898f66](https://github.com/with-ours/platform-cli/commit/b898f66e88029a82b2e0696c21933e9d8eb52db7))
+* **tests:** bump steady to v0.19.4 ([2847a43](https://github.com/with-ours/platform-cli/commit/2847a4340f158329a314c8aaa75688e04bce4f71))
+* **tests:** bump steady to v0.19.5 ([efa419a](https://github.com/with-ours/platform-cli/commit/efa419a5ed6c5408ecc475780bdaabcb983ef55d))
+* **tests:** bump steady to v0.19.6 ([aebd322](https://github.com/with-ours/platform-cli/commit/aebd322c763837df2ed711619f3b1df17853804b))
+* **tests:** bump steady to v0.19.7 ([40f6d41](https://github.com/with-ours/platform-cli/commit/40f6d41b5e19edb93fd98a36fe504d185f6e560f))
+
+
+### Refactors
+
+* **tests:** switch from prism to steady ([dccc32f](https://github.com/with-ours/platform-cli/commit/dccc32f1c19a5d56d2feab5410e12c0d8a713023))
+
 ## 1.5.0 (2026-03-19)
 
 Full Changelog: [v1.4.2...v1.5.0](https://github.com/with-ours/platform-cli/compare/v1.4.2...v1.5.0)
