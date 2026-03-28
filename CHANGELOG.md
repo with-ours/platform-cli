@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.7.0 (2026-03-28)
+
+Full Changelog: [v1.6.0...v1.7.0](https://github.com/with-ours/platform-cli/compare/v1.6.0...v1.7.0)
+
+### Features
+
+* **api:** api update ([aa841fe](https://github.com/with-ours/platform-cli/commit/aa841fefbd3a8703a709a4a2f0142eb64ead49db))
+* set CLI flag constant values automatically where `x-stainless-const` is set ([74ec13d](https://github.com/with-ours/platform-cli/commit/74ec13d0445ff481ea30c221fbe18afd5ce6e76a))
+
+
+### Bug Fixes
+
+* fix for off-by-one error in pagination logic ([7d422c8](https://github.com/with-ours/platform-cli/commit/7d422c8256af34d5605554a57e8e9b5ac0550874))
+
+
+### Chores
+
+* **internal:** codegen related update ([172c2e4](https://github.com/with-ours/platform-cli/commit/172c2e4f435f6a2cd9e74c2bd1285654597b570c))
+* **internal:** update multipart form array serialization ([136e30d](https://github.com/with-ours/platform-cli/commit/136e30da4b076d5f1cea754dc23b32e51b85691f))
+* omit full usage information when missing required CLI parameters ([32196a9](https://github.com/with-ours/platform-cli/commit/32196a96e3a3580d049fcf4f0df5b235e8b677d4))
+
 ## 1.6.0 (2026-03-25)
 
 Full Changelog: [v1.5.0...v1.6.0](https://github.com/with-ours/platform-cli/compare/v1.5.0...v1.6.0)
