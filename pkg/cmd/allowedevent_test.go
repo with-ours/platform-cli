@@ -15,7 +15,7 @@ func TestAllowedEventsCreate(t *testing.T) {
 			"--api-key", "string",
 			"allowed-events", "create",
 			"--name", "name",
-			"--destination-ids", "[string]",
+			"--destination-id", "[{}]",
 		)
 	})
 
@@ -24,7 +24,7 @@ func TestAllowedEventsCreate(t *testing.T) {
 		pipeData := []byte("" +
 			"name: name\n" +
 			"destinationIds:\n" +
-			"  - string\n")
+			"  - {}\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",

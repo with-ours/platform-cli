@@ -49,7 +49,7 @@ var sourcesRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var sourcesUpdate = requestflag.WithInnerFlags(cli.Command{
+var sourcesUpdate = cli.Command{
 	Name:    "update",
 	Usage:   "Update a source. Requires scope: source:update",
 	Suggest: true,
@@ -66,7 +66,6 @@ var sourcesUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "bot-control-mode",
-			Usage:    `Allowed values: "Allow", "Block", "Threshold".`,
 			BodyPath: "botControlMode",
 		},
 		&requestflag.Flag[any]{
@@ -108,22 +107,7 @@ var sourcesUpdate = requestflag.WithInnerFlags(cli.Command{
 	},
 	Action:          handleSourcesUpdate,
 	HideHelpCommand: true,
-}, map[string][]requestflag.HasOuterFlag{
-	"probabilistic-identity": {
-		&requestflag.InnerFlag[bool]{
-			Name:       "probabilistic-identity.enabled",
-			InnerField: "enabled",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "probabilistic-identity.match-window-minutes",
-			InnerField: "matchWindowMinutes",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "probabilistic-identity.max-matches-per-ip",
-			InnerField: "maxMatchesPerIp",
-		},
-	},
-})
+}
 
 var sourcesList = cli.Command{
 	Name:            "list",

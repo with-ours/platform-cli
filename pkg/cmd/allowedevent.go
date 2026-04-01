@@ -26,7 +26,7 @@ var allowedEventsCreate = cli.Command{
 			BodyPath: "name",
 		},
 		&requestflag.Flag[any]{
-			Name:     "destination-ids",
+			Name:     "destination-id",
 			BodyPath: "destinationIds",
 		},
 	},
