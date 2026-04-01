@@ -148,7 +148,6 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "default.auto-show-dismiss-mode",
-			Usage:      `Allowed values: "after_pages", "after_seconds", "never".`,
 			InnerField: "autoShowDismissMode",
 		},
 		&requestflag.InnerFlag[any]{
