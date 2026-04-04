@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.8.0 (2026-04-04)
+
+Full Changelog: [v1.7.0...v1.8.0](https://github.com/with-ours/platform-cli/compare/v1.7.0...v1.8.0)
+
+### Features
+
+* allow `-` as value representing stdin to binary-only file parameters in CLIs ([1039858](https://github.com/with-ours/platform-cli/commit/1039858862968d8ec73dc815638c9f31e359278f))
+* **api:** api update ([7b00edc](https://github.com/with-ours/platform-cli/commit/7b00edcc8746b4d4198766f48ba980a463d1c364))
+* better error message if scheme forgotten in CLI `*_BASE_URL`/`--base-url` ([b985092](https://github.com/with-ours/platform-cli/commit/b985092887c7e7856234dade788d354a9556475c))
+* binary-only parameters become CLI flags that take filenames only ([e9e9f2d](https://github.com/with-ours/platform-cli/commit/e9e9f2d80e056b65e7a4c1df9c4c85100334412f))
+
+
+### Bug Fixes
+
+* handle empty data set using `--format explore` ([e5e4410](https://github.com/with-ours/platform-cli/commit/e5e4410b27179c3e98cf15ee39a33d3fe0981bcf))
+* use `RawJSON` when iterating items with `--format explore` in the CLI ([6d1344b](https://github.com/with-ours/platform-cli/commit/6d1344b68e9ee344ee36f4e443d53e1c3607a200))
+
+
+### Chores
+
+* mark all CLI-related tests in Go with `t.Parallel()` ([dce989a](https://github.com/with-ours/platform-cli/commit/dce989a7553689b187f88fa8ae9378b9bb884d4a))
+* modify CLI tests to inject stdout so mutating `os.Stdout` isn't necessary ([986e280](https://github.com/with-ours/platform-cli/commit/986e280b0338fb6c170f3c33e31884c7fcca3149))
+* switch some CLI Go tests from `os.Chdir` to `t.Chdir` ([6e984b2](https://github.com/with-ours/platform-cli/commit/6e984b218e42b8f6e72bd29f88192644d75a79b8))
+* **tests:** bump steady to v0.20.1 ([6ab75f5](https://github.com/with-ours/platform-cli/commit/6ab75f57c1c1041c237d8805c99152c400e76608))
+* **tests:** bump steady to v0.20.2 ([fddb4db](https://github.com/with-ours/platform-cli/commit/fddb4db03c57b706be91151d08f337f49452199d))
+
 ## 1.7.0 (2026-03-28)
 
 Full Changelog: [v1.6.0...v1.7.0](https://github.com/with-ours/platform-cli/compare/v1.6.0...v1.7.0)
