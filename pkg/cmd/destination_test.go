@@ -58,13 +58,13 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--g4-analytics-track-on-page=true",
 			"--hashing-salt", "hashingSalt",
 			"--http-destination-url", "httpDestinationUrl",
-			"--limited-to-source-id", "[string]",
+			"--limited-to-source-id", "[{}]",
 			"--manager-google-customer-id", "managerGoogleCustomerId",
 			"--name", "name",
 			"--project-api-key", "projectAPIKey",
 			"--project-token", "projectToken",
 			"--selected-account-id", "selectedAccountId",
-			"--settings", "{foo: string}",
+			"--settings", "{}",
 		)
 	})
 
@@ -80,14 +80,13 @@ func TestDestinationsUpdate(t *testing.T) {
 			"hashingSalt: hashingSalt\n" +
 			"httpDestinationUrl: httpDestinationUrl\n" +
 			"limitedToSourceIds:\n" +
-			"  - string\n" +
+			"  - {}\n" +
 			"managerGoogleCustomerId: managerGoogleCustomerId\n" +
 			"name: name\n" +
 			"projectAPIKey: projectAPIKey\n" +
 			"projectToken: projectToken\n" +
 			"selectedAccountId: selectedAccountId\n" +
-			"settings:\n" +
-			"  foo: string\n")
+			"settings: {}\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",

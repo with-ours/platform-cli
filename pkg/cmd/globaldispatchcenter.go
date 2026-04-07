@@ -38,7 +38,7 @@ var globalDispatchCentersRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
+var globalDispatchCentersUpdate = cli.Command{
 	Name:    "update",
 	Usage:   "Update a global dispatch center. Requires scope: globalDispatch:update",
 	Suggest: true,
@@ -66,30 +66,7 @@ var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 	},
 	Action:          handleGlobalDispatchCentersUpdate,
 	HideHelpCommand: true,
-}, map[string][]requestflag.HasOuterFlag{
-	"category": {
-		&requestflag.InnerFlag[any]{
-			Name:       "category.description",
-			InnerField: "description",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "category.destination-ids",
-			InnerField: "destinationIds",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "category.logic",
-			InnerField: "logic",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "category.name",
-			InnerField: "name",
-		},
-		&requestflag.InnerFlag[any]{
-			Name:       "category.priority",
-			InnerField: "priority",
-		},
-	},
-})
+}
 
 var globalDispatchCentersList = cli.Command{
 	Name:            "list",
