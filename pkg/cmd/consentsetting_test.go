@@ -38,9 +38,9 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"consent-settings", "update",
 			"--id", "id",
 			"--category", "{label: label, priority: 0, value: value}",
-			"--default", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
+			"--default", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
 			"--name", "name",
-			"--region", "{regionCode: regionCode, rule: {categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}, additionalRegions: [{}]}",
+			"--region", "{regionCode: regionCode, rule: {categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}, additionalRegions: [{}]}",
 			"--service", "{internalNotes: internalNotes, label: label, additionalCategories: [{}], category: category, domainPatterns: [{}]}",
 			"--status", "Disabled",
 			"--consent-cookie-name", "consentCookieName",
@@ -69,6 +69,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"--default.language", "language",
 			"--default.mode", "opt_in",
 			"--default.translations", "[{language: language, value: {consentModal: {}, preferencesModal: {}}}]",
+			"--default.autoblock-unknown=true",
 			"--default.auto-show=true",
 			"--default.auto-show-dismiss-config", "{}",
 			"--default.auto-show-dismiss-mode", "autoShowDismissMode",
@@ -78,7 +79,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"--default.show-vendors-in-preferences=true",
 			"--name", "name",
 			"--region.region-code", "regionCode",
-			"--region.rule", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
+			"--region.rule", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
 			"--region.additional-regions", "[{}]",
 			"--service.internal-notes", "internalNotes",
 			"--service.label", "label",
@@ -117,6 +118,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"      value:\n" +
 			"        consentModal: {}\n" +
 			"        preferencesModal: {}\n" +
+			"  autoblockUnknown: true\n" +
 			"  autoShow: true\n" +
 			"  autoShowDismissConfig: {}\n" +
 			"  autoShowDismissMode: autoShowDismissMode\n" +
@@ -142,6 +144,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"          value:\n" +
 			"            consentModal: {}\n" +
 			"            preferencesModal: {}\n" +
+			"      autoblockUnknown: true\n" +
 			"      autoShow: true\n" +
 			"      autoShowDismissConfig: {}\n" +
 			"      autoShowDismissMode: autoShowDismissMode\n" +
