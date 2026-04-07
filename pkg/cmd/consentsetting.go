@@ -139,6 +139,10 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			InnerField: "translations",
 		},
 		&requestflag.InnerFlag[any]{
+			Name:       "default.autoblock-unknown",
+			InnerField: "autoblockUnknown",
+		},
+		&requestflag.InnerFlag[any]{
 			Name:       "default.auto-show",
 			InnerField: "autoShow",
 		},
