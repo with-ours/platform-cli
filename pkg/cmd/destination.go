@@ -178,8 +178,9 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "destinations create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "destinations create", obj, format, explicitFormat, transform)
 }
 
 func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -213,8 +214,9 @@ func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "destinations retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "destinations retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -255,8 +257,9 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "destinations update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "destinations update", obj, format, explicitFormat, transform)
 }
 
 func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
@@ -287,8 +290,9 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "destinations list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "destinations list", obj, format, explicitFormat, transform)
 }
 
 func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
@@ -322,6 +326,7 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "destinations delete", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "destinations delete", obj, format, explicitFormat, transform)
 }

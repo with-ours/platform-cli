@@ -162,8 +162,9 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "sources create", obj, format, explicitFormat, transform)
 }
 
 func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -197,8 +198,9 @@ func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "sources retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -239,8 +241,9 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "sources update", obj, format, explicitFormat, transform)
 }
 
 func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
@@ -271,8 +274,9 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "sources list", obj, format, explicitFormat, transform)
 }
 
 func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
@@ -306,6 +310,7 @@ func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources delete", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "sources delete", obj, format, explicitFormat, transform)
 }

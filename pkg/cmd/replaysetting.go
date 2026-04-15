@@ -138,8 +138,9 @@ func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "replay-settings create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "replay-settings create", obj, format, explicitFormat, transform)
 }
 
 func handleReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -173,8 +174,9 @@ func handleReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "replay-settings retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "replay-settings retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -215,8 +217,9 @@ func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "replay-settings update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "replay-settings update", obj, format, explicitFormat, transform)
 }
 
 func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
@@ -247,8 +250,9 @@ func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "replay-settings list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "replay-settings list", obj, format, explicitFormat, transform)
 }
 
 func handleReplaySettingsDelete(ctx context.Context, cmd *cli.Command) error {
@@ -282,6 +286,7 @@ func handleReplaySettingsDelete(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "replay-settings delete", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "replay-settings delete", obj, format, explicitFormat, transform)
 }
