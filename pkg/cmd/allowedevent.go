@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
@@ -103,7 +102,12 @@ func handleAllowedEventsCreate(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "allowed-events create", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "allowed-events create",
+		Transform:      transform,
+	})
 }
 
 func handleAllowedEventsRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -139,7 +143,12 @@ func handleAllowedEventsRetrieve(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "allowed-events retrieve", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "allowed-events retrieve",
+		Transform:      transform,
+	})
 }
 
 func handleAllowedEventsList(ctx context.Context, cmd *cli.Command) error {
@@ -172,7 +181,12 @@ func handleAllowedEventsList(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "allowed-events list", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "allowed-events list",
+		Transform:      transform,
+	})
 }
 
 func handleAllowedEventsDelete(ctx context.Context, cmd *cli.Command) error {
@@ -208,5 +222,10 @@ func handleAllowedEventsDelete(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "allowed-events delete", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "allowed-events delete",
+		Transform:      transform,
+	})
 }

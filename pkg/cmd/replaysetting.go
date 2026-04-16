@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
@@ -140,7 +139,12 @@ func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "replay-settings create", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "replay-settings create",
+		Transform:      transform,
+	})
 }
 
 func handleReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -176,7 +180,12 @@ func handleReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "replay-settings retrieve", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "replay-settings retrieve",
+		Transform:      transform,
+	})
 }
 
 func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -219,7 +228,12 @@ func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "replay-settings update", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "replay-settings update",
+		Transform:      transform,
+	})
 }
 
 func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
@@ -252,7 +266,12 @@ func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "replay-settings list", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "replay-settings list",
+		Transform:      transform,
+	})
 }
 
 func handleReplaySettingsDelete(ctx context.Context, cmd *cli.Command) error {
@@ -288,5 +307,10 @@ func handleReplaySettingsDelete(ctx context.Context, cmd *cli.Command) error {
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "replay-settings delete", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "replay-settings delete",
+		Transform:      transform,
+	})
 }
