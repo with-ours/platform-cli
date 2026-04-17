@@ -264,6 +264,7 @@ func handleConsentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "consent-settings create",
 		Transform:      transform,
 	})
@@ -305,6 +306,7 @@ func handleConsentSettingsRetrieve(ctx context.Context, cmd *cli.Command) error 
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "consent-settings retrieve",
 		Transform:      transform,
 	})
@@ -353,6 +355,7 @@ func handleConsentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "consent-settings update",
 		Transform:      transform,
 	})
@@ -391,6 +394,7 @@ func handleConsentSettingsList(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "consent-settings list",
 		Transform:      transform,
 	})
@@ -432,6 +436,7 @@ func handleConsentSettingsDelete(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "consent-settings delete",
 		Transform:      transform,
 	})
