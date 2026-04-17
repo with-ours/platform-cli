@@ -142,6 +142,7 @@ func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "replay-settings create",
 		Transform:      transform,
 	})
@@ -183,6 +184,7 @@ func handleReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "replay-settings retrieve",
 		Transform:      transform,
 	})
@@ -231,6 +233,7 @@ func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "replay-settings update",
 		Transform:      transform,
 	})
@@ -269,6 +272,7 @@ func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "replay-settings list",
 		Transform:      transform,
 	})
@@ -310,6 +314,7 @@ func handleReplaySettingsDelete(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "replay-settings delete",
 		Transform:      transform,
 	})

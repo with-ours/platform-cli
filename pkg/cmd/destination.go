@@ -182,6 +182,7 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "destinations create",
 		Transform:      transform,
 	})
@@ -223,6 +224,7 @@ func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "destinations retrieve",
 		Transform:      transform,
 	})
@@ -271,6 +273,7 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "destinations update",
 		Transform:      transform,
 	})
@@ -309,6 +312,7 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "destinations list",
 		Transform:      transform,
 	})
@@ -350,6 +354,7 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "destinations delete",
 		Transform:      transform,
 	})
