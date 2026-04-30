@@ -19,15 +19,15 @@ var replaySettingsCreate = cli.Command{
 	Usage:   "Create a new replay setting. Requires scope: replaySettings:create",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "custom-domain",
 			BodyPath: "customDomain",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "status",
 			BodyPath: "status",
 		},
@@ -63,15 +63,15 @@ var replaySettingsUpdate = cli.Command{
 			Name:     "id",
 			Required: true,
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "custom-domain",
 			BodyPath: "customDomain",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "status",
 			BodyPath: "status",
 		},

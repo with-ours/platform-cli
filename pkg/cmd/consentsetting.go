@@ -77,15 +77,15 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Required: true,
 			BodyPath: "status",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "consent-cookie-name",
 			BodyPath: "consentCookieName",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "custom-domain",
 			BodyPath: "customDomain",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*float64]{
 			Name:     "revision",
 			BodyPath: "revision",
 		},
@@ -93,7 +93,7 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Name:     "skip-blocking-class-name",
 			BodyPath: "skipBlockingClassNames",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "web-sdk-token",
 			BodyPath: "webSDKToken",
 		},
@@ -137,11 +137,11 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "default.translations",
 			InnerField: "translations",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*bool]{
 			Name:       "default.autoblock-unknown",
 			InnerField: "autoblockUnknown",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*bool]{
 			Name:       "default.auto-show",
 			InnerField: "autoShow",
 		},
@@ -149,11 +149,11 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "default.auto-show-dismiss-config",
 			InnerField: "autoShowDismissConfig",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "default.auto-show-dismiss-mode",
 			InnerField: "autoShowDismissMode",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*bool]{
 			Name:       "default.disable-page-interaction",
 			InnerField: "disablePageInteraction",
 		},
@@ -161,11 +161,11 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "default.gui-options",
 			InnerField: "guiOptions",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*bool]{
 			Name:       "default.hide-from-bots",
 			InnerField: "hideFromBots",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*bool]{
 			Name:       "default.show-vendors-in-preferences",
 			InnerField: "showVendorsInPreferences",
 		},
@@ -197,7 +197,7 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Name:       "service.additional-categories",
 			InnerField: "additionalCategories",
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[*string]{
 			Name:       "service.category",
 			InnerField: "category",
 		},
