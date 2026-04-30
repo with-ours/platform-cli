@@ -25,7 +25,7 @@ var sourcesCreate = cli.Command{
 			Required: true,
 			BodyPath: "type",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
@@ -63,19 +63,19 @@ var sourcesUpdate = cli.Command{
 			Required: true,
 			BodyPath: "status",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "bot-control-mode",
 			BodyPath: "botControlMode",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*float64]{
 			Name:     "bot-score-threshold",
 			BodyPath: "botScoreThreshold",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*bool]{
 			Name:     "exclude-request-context",
 			BodyPath: "excludeRequestContext",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
@@ -83,15 +83,15 @@ var sourcesUpdate = cli.Command{
 			Name:     "probabilistic-identity",
 			BodyPath: "probabilisticIdentity",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "project-api-key",
 			BodyPath: "projectAPIKey",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "redirect-url",
 			BodyPath: "redirectUrl",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "selected-account-id",
 			BodyPath: "selectedAccountId",
 		},
