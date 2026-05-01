@@ -40,15 +40,15 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"--category", "{label: label, priority: 0, value: value}",
 			"--default", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
 			"--name", "name",
-			"--region", "{regionCode: regionCode, rule: {categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}, additionalRegions: [{}]}",
-			"--service", "{internalNotes: internalNotes, label: label, additionalCategories: [{}], category: category, domainPatterns: [{}]}",
+			"--region", "{regionCode: regionCode, rule: {categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}, additionalRegions: [string]}",
+			"--service", "{internalNotes: internalNotes, label: label, additionalCategories: [string], category: category, domainPatterns: [string]}",
 			"--status", "Disabled",
 			"--consent-cookie-name", "consentCookieName",
 			"--custom-domain", "customDomain",
 			"--revision", "0",
-			"--skip-blocking-class-name", "[{}]",
+			"--skip-blocking-class-name", "[string]",
 			"--web-sdk-token", "webSDKToken",
-			"--whitelist-domain", "[{}]",
+			"--whitelist-domain", "[string]",
 		)
 	})
 
@@ -80,19 +80,19 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"--name", "name",
 			"--region.region-code", "regionCode",
 			"--region.rule", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
-			"--region.additional-regions", "[{}]",
+			"--region.additional-regions", "[string]",
 			"--service.internal-notes", "internalNotes",
 			"--service.label", "label",
-			"--service.additional-categories", "[{}]",
+			"--service.additional-categories", "[string]",
 			"--service.category", "category",
-			"--service.domain-patterns", "[{}]",
+			"--service.domain-patterns", "[string]",
 			"--status", "Disabled",
 			"--consent-cookie-name", "consentCookieName",
 			"--custom-domain", "customDomain",
 			"--revision", "0",
-			"--skip-blocking-class-name", "[{}]",
+			"--skip-blocking-class-name", "[string]",
 			"--web-sdk-token", "webSDKToken",
-			"--whitelist-domain", "[{}]",
+			"--whitelist-domain", "[string]",
 		)
 	})
 
@@ -153,24 +153,24 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"      hideFromBots: true\n" +
 			"      showVendorsInPreferences: true\n" +
 			"    additionalRegions:\n" +
-			"      - {}\n" +
+			"      - string\n" +
 			"services:\n" +
 			"  - internalNotes: internalNotes\n" +
 			"    label: label\n" +
 			"    additionalCategories:\n" +
-			"      - {}\n" +
+			"      - string\n" +
 			"    category: category\n" +
 			"    domainPatterns:\n" +
-			"      - {}\n" +
+			"      - string\n" +
 			"status: Disabled\n" +
 			"consentCookieName: consentCookieName\n" +
 			"customDomain: customDomain\n" +
 			"revision: 0\n" +
 			"skipBlockingClassNames:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"webSDKToken: webSDKToken\n" +
 			"whitelistDomains:\n" +
-			"  - {}\n")
+			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
