@@ -15,10 +15,26 @@ import (
 )
 
 var globalDispatchCentersCreate = cli.Command{
-	Name:            "create",
-	Usage:           "Create a new global dispatch center. Requires scope: globalDispatch:create",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "create",
+	Usage:   "Create a new global dispatch center. Requires scope: globalDispatch:create",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[*bool]{
+			Name:     "is-enabled",
+			Usage:    "Whether the center starts enabled. Defaults to false — opt in by setting true here or via PATCH later.",
+			BodyPath: "isEnabled",
+		},
+		&requestflag.Flag[*string]{
+			Name:     "name",
+			Usage:    `Display name for the new center. Defaults to "Consent Dispatch Center".`,
+			BodyPath: "name",
+		},
+		&requestflag.Flag[*string]{
+			Name:     "notes",
+			Usage:    "Free-form notes shown in the dashboard. Not used for routing.",
+			BodyPath: "notes",
+		},
+	},
 	Action:          handleGlobalDispatchCentersCreate,
 	HideHelpCommand: true,
 }
@@ -38,7 +54,7 @@ var globalDispatchCentersRetrieve = cli.Command{
 	HideHelpCommand: true,
 }
 
-var globalDispatchCentersUpdate = cli.Command{
+var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
 	Usage:   "Update a global dispatch center. Requires scope: globalDispatch:update",
 	Suggest: true,
@@ -50,24 +66,61 @@ var globalDispatchCentersUpdate = cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "category",
+			Usage:    "Full replacement of the categories list. Categories are sorted by priority on write and re-stamped 1..N — see the priority field. Omit to leave existing categories untouched.",
 			BodyPath: "categories",
 		},
 		&requestflag.Flag[*bool]{
 			Name:     "is-enabled",
+			Usage:    "Toggle the dispatch center on/off without changing any other config.",
 			BodyPath: "isEnabled",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
+			Usage:    "New display name for the center.",
 			BodyPath: "name",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "notes",
+			Usage:    "Replace the free-form notes.",
 			BodyPath: "notes",
 		},
 	},
 	Action:          handleGlobalDispatchCentersUpdate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"category": {
+		&requestflag.InnerFlag[*string]{
+			Name:                  "category.description",
+			Usage:                 "Optional human-readable description shown in the dashboard.",
+			InnerField:            "description",
+			OuterIsArrayOfObjects: true,
+		},
+		&requestflag.InnerFlag[any]{
+			Name:                  "category.destination-ids",
+			Usage:                 "Destinations that receive events matching this category. Stale IDs (deleted destinations or ones from another account) are silently filtered out at write time.",
+			InnerField:            "destinationIds",
+			OuterIsArrayOfObjects: true,
+		},
+		&requestflag.InnerFlag[any]{
+			Name:                  "category.logic",
+			Usage:                 "Optional condition tree. When set, only matching events route to this category.",
+			InnerField:            "logic",
+			OuterIsArrayOfObjects: true,
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:                  "category.name",
+			Usage:                 "Display name for the category. Auto-generated if omitted.",
+			InnerField:            "name",
+			OuterIsArrayOfObjects: true,
+		},
+		&requestflag.InnerFlag[*float64]{
+			Name:                  "category.priority",
+			Usage:                 "Used as a sort key on write. The server sorts categories by this value (ascending), then re-stamps priority as (sorted index + 1) on persist. Send any positive number — gaps are ironed out, duplicate values keep input order via stable sort. Omit to fall to the end.",
+			InnerField:            "priority",
+			OuterIsArrayOfObjects: true,
+		},
+	},
+})
 
 var globalDispatchCentersList = cli.Command{
 	Name:            "list",
@@ -105,16 +158,18 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
 		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
+		ApplicationJSON,
 		false,
 	)
 	if err != nil {
 		return err
 	}
 
+	params := githubcomwithoursplatformsdkgo.GlobalDispatchCenterNewParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.GlobalDispatchCenters.New(ctx, options...)
+	_, err = client.GlobalDispatchCenters.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}

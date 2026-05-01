@@ -59,8 +59,8 @@ func TestSourcesUpdate(t *testing.T) {
 			"--project-api-key", "projectAPIKey",
 			"--redirect-url", "redirectUrl",
 			"--selected-account-id", "selectedAccountId",
-			"--whitelist-domain", "[{}]",
-			"--whitelist-ip", "[{}]",
+			"--whitelist-domain", "[string]",
+			"--whitelist-ip", "[string]",
 		)
 	})
 
@@ -77,9 +77,9 @@ func TestSourcesUpdate(t *testing.T) {
 			"redirectUrl: redirectUrl\n" +
 			"selectedAccountId: selectedAccountId\n" +
 			"whitelistDomains:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"whitelistIps:\n" +
-			"  - {}\n")
+			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
