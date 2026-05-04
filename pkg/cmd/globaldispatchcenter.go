@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
@@ -121,7 +120,12 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers create", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "global-dispatch-centers create",
+		Transform:      transform,
+	})
 }
 
 func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -157,7 +161,12 @@ func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers retrieve", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "global-dispatch-centers retrieve",
+		Transform:      transform,
+	})
 }
 
 func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -200,7 +209,12 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers update", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "global-dispatch-centers update",
+		Transform:      transform,
+	})
 }
 
 func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) error {
@@ -233,7 +247,12 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers list", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "global-dispatch-centers list",
+		Transform:      transform,
+	})
 }
 
 func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) error {
@@ -269,5 +288,10 @@ func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) er
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers delete", obj, format, explicitFormat, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		Title:          "global-dispatch-centers delete",
+		Transform:      transform,
+	})
 }
