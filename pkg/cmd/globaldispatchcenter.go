@@ -123,6 +123,7 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "global-dispatch-centers create",
 		Transform:      transform,
 	})
@@ -164,6 +165,7 @@ func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) 
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "global-dispatch-centers retrieve",
 		Transform:      transform,
 	})
@@ -212,6 +214,7 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "global-dispatch-centers update",
 		Transform:      transform,
 	})
@@ -250,6 +253,7 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "global-dispatch-centers list",
 		Transform:      transform,
 	})
@@ -291,6 +295,7 @@ func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) er
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "global-dispatch-centers delete",
 		Transform:      transform,
 	})

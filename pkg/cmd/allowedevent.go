@@ -105,6 +105,7 @@ func handleAllowedEventsCreate(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "allowed-events create",
 		Transform:      transform,
 	})
@@ -146,6 +147,7 @@ func handleAllowedEventsRetrieve(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "allowed-events retrieve",
 		Transform:      transform,
 	})
@@ -184,6 +186,7 @@ func handleAllowedEventsList(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "allowed-events list",
 		Transform:      transform,
 	})
@@ -225,6 +228,7 @@ func handleAllowedEventsDelete(ctx context.Context, cmd *cli.Command) error {
 	return ShowJSON(obj, ShowJSONOpts{
 		ExplicitFormat: explicitFormat,
 		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "allowed-events delete",
 		Transform:      transform,
 	})
