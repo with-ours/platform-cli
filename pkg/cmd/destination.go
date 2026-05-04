@@ -25,7 +25,7 @@ var destinationsCreate = cli.Command{
 			Required: true,
 			BodyPath: "type",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
@@ -63,31 +63,31 @@ var destinationsUpdate = cli.Command{
 			Required: true,
 			BodyPath: "status",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "facebook-conversion-api-key",
 			BodyPath: "facebookConversionAPIKey",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "facebook-pixel-id",
 			BodyPath: "facebookPixelId",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "g4-analytics-api-key",
 			BodyPath: "g4AnalyticsApiKey",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "g4-analytics-measurement-id",
 			BodyPath: "g4AnalyticsMeasurementId",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*bool]{
 			Name:     "g4-analytics-track-on-page",
 			BodyPath: "g4AnalyticsTrackOnPage",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "hashing-salt",
 			BodyPath: "hashingSalt",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "http-destination-url",
 			BodyPath: "httpDestinationUrl",
 		},
@@ -95,23 +95,23 @@ var destinationsUpdate = cli.Command{
 			Name:     "limited-to-source-id",
 			BodyPath: "limitedToSourceIds",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "manager-google-customer-id",
 			BodyPath: "managerGoogleCustomerId",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "project-api-key",
 			BodyPath: "projectAPIKey",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "project-token",
 			BodyPath: "projectToken",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "selected-account-id",
 			BodyPath: "selectedAccountId",
 		},

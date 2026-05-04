@@ -63,11 +63,11 @@ var versionsCreate = cli.Command{
 			Name:     "include-tag-manager-variable",
 			BodyPath: "includeTagManagerVariables",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "notes",
 			BodyPath: "notes",
 		},
@@ -99,11 +99,11 @@ var versionsUpdate = cli.Command{
 			Name:     "id",
 			Required: true,
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "notes",
 			BodyPath: "notes",
 		},

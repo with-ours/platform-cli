@@ -50,15 +50,15 @@ var globalDispatchCentersUpdate = cli.Command{
 			Name:     "category",
 			BodyPath: "categories",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*bool]{
 			Name:     "is-enabled",
 			BodyPath: "isEnabled",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "notes",
 			BodyPath: "notes",
 		},
