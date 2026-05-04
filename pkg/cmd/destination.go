@@ -51,7 +51,7 @@ var destinationsRetrieve = cli.Command{
 
 var destinationsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a destination. Requires scope: destination:update",
+	Usage:   "Partially update a destination. Only the fields you send are changed. Requires\nscope: destination:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

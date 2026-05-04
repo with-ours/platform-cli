@@ -51,7 +51,7 @@ var sourcesRetrieve = cli.Command{
 
 var sourcesUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a source. Requires scope: source:update",
+	Usage:   "Partially update a source. Only the fields you send are changed. Requires scope:\nsource:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

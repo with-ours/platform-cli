@@ -38,15 +38,15 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"consent-settings", "update",
 			"--id", "id",
 			"--category", "{label: label, priority: 0, value: value}",
-			"--default", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
-			"--name", "name",
-			"--region", "{regionCode: regionCode, rule: {categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}, additionalRegions: [string]}",
-			"--service", "{internalNotes: internalNotes, label: label, additionalCategories: [string], category: category, domainPatterns: [string]}",
-			"--status", "Disabled",
 			"--consent-cookie-name", "consentCookieName",
 			"--custom-domain", "customDomain",
+			"--default", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: en, mode: opt_in, translations: [{language: en, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
+			"--name", "name",
+			"--region", "{regionCode: US-CA, rule: {categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: en, mode: opt_in, translations: [{language: en, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}, additionalRegions: [string]}",
 			"--revision", "0",
+			"--service", "{internalNotes: internalNotes, label: label, additionalCategories: [string], category: category, domainPatterns: [string]}",
 			"--skip-blocking-class-name", "[string]",
+			"--status", "Disabled",
 			"--web-sdk-token", "webSDKToken",
 			"--whitelist-domain", "[string]",
 		)
@@ -65,10 +65,12 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"--category.label", "label",
 			"--category.priority", "0",
 			"--category.value", "value",
+			"--consent-cookie-name", "consentCookieName",
+			"--custom-domain", "customDomain",
 			"--default.categories", "[{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}]",
-			"--default.language", "language",
+			"--default.language", "en",
 			"--default.mode", "opt_in",
-			"--default.translations", "[{language: language, value: {consentModal: {}, preferencesModal: {}}}]",
+			"--default.translations", "[{language: en, value: {consentModal: {}, preferencesModal: {}}}]",
 			"--default.autoblock-unknown=true",
 			"--default.auto-show=true",
 			"--default.auto-show-dismiss-config", "{}",
@@ -78,19 +80,17 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"--default.hide-from-bots=true",
 			"--default.show-vendors-in-preferences=true",
 			"--name", "name",
-			"--region.region-code", "regionCode",
-			"--region.rule", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: language, mode: opt_in, translations: [{language: language, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
+			"--region.region-code", "US-CA",
+			"--region.rule", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: en, mode: opt_in, translations: [{language: en, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
 			"--region.additional-regions", "[string]",
+			"--revision", "0",
 			"--service.internal-notes", "internalNotes",
 			"--service.label", "label",
 			"--service.additional-categories", "[string]",
 			"--service.category", "category",
 			"--service.domain-patterns", "[string]",
-			"--status", "Disabled",
-			"--consent-cookie-name", "consentCookieName",
-			"--custom-domain", "customDomain",
-			"--revision", "0",
 			"--skip-blocking-class-name", "[string]",
+			"--status", "Disabled",
 			"--web-sdk-token", "webSDKToken",
 			"--whitelist-domain", "[string]",
 		)
@@ -103,6 +103,8 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"  - label: label\n" +
 			"    priority: 0\n" +
 			"    value: value\n" +
+			"consentCookieName: consentCookieName\n" +
+			"customDomain: customDomain\n" +
 			"default:\n" +
 			"  categories:\n" +
 			"    - key: key\n" +
@@ -111,10 +113,10 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"        autoDisableOnGPC: true\n" +
 			"        readOnly: true\n" +
 			"        reloadPage: true\n" +
-			"  language: language\n" +
+			"  language: en\n" +
 			"  mode: opt_in\n" +
 			"  translations:\n" +
-			"    - language: language\n" +
+			"    - language: en\n" +
 			"      value:\n" +
 			"        consentModal: {}\n" +
 			"        preferencesModal: {}\n" +
@@ -128,7 +130,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"  showVendorsInPreferences: true\n" +
 			"name: name\n" +
 			"regions:\n" +
-			"  - regionCode: regionCode\n" +
+			"  - regionCode: US-CA\n" +
 			"    rule:\n" +
 			"      categories:\n" +
 			"        - key: key\n" +
@@ -137,10 +139,10 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"            autoDisableOnGPC: true\n" +
 			"            readOnly: true\n" +
 			"            reloadPage: true\n" +
-			"      language: language\n" +
+			"      language: en\n" +
 			"      mode: opt_in\n" +
 			"      translations:\n" +
-			"        - language: language\n" +
+			"        - language: en\n" +
 			"          value:\n" +
 			"            consentModal: {}\n" +
 			"            preferencesModal: {}\n" +
@@ -154,6 +156,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"      showVendorsInPreferences: true\n" +
 			"    additionalRegions:\n" +
 			"      - string\n" +
+			"revision: 0\n" +
 			"services:\n" +
 			"  - internalNotes: internalNotes\n" +
 			"    label: label\n" +
@@ -162,12 +165,9 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"    category: category\n" +
 			"    domainPatterns:\n" +
 			"      - string\n" +
-			"status: Disabled\n" +
-			"consentCookieName: consentCookieName\n" +
-			"customDomain: customDomain\n" +
-			"revision: 0\n" +
 			"skipBlockingClassNames:\n" +
 			"  - string\n" +
+			"status: Disabled\n" +
 			"webSDKToken: webSDKToken\n" +
 			"whitelistDomains:\n" +
 			"  - string\n")

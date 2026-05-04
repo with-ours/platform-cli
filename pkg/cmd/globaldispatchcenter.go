@@ -56,7 +56,7 @@ var globalDispatchCentersRetrieve = cli.Command{
 
 var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Update a global dispatch center. Requires scope: globalDispatch:update",
+	Usage:   "Partially update a global dispatch center. Only the fields you send are changed.\nRequires scope: globalDispatch:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
