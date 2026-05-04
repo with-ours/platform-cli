@@ -16,23 +16,27 @@ import (
 
 var replaySettingsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new replay setting. Requires scope: replaySettings:create",
+	Usage:   "Create the replay configuration for this account. Each account is limited to one\nreplay configuration — calls made when one already exists return HTTP 409 with\nthe reason in the response `error` field. Requires scope: replaySettings:create",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[*string]{
 			Name:     "custom-domain",
+			Usage:    "Optional custom domain (CNAME) for hosting the replay capture script. Leave null to use the default Ours Privacy domain.",
 			BodyPath: "customDomain",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
+			Usage:    "Human-readable label for this replay configuration. Shown in the dashboard. May be empty.",
 			BodyPath: "name",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "status",
+			Usage:    `Whether session replay capture is currently active. Set to "Enabled" to start capturing replays from whitelisted domains, or "Disabled" to pause capture without losing the configuration.`,
 			BodyPath: "status",
 		},
 		&requestflag.Flag[any]{
 			Name:     "whitelist-domain",
+			Usage:    "Hostnames where session replay capture is permitted. Replays initiated from any host not in this list are dropped. PATCH replaces the list — partial updates are not merged.",
 			BodyPath: "whitelistDomains",
 		},
 	},
@@ -42,7 +46,7 @@ var replaySettingsCreate = cli.Command{
 
 var replaySettingsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single replay setting by ID. Requires scope: replaySettings:find",
+	Usage:   "Fetch a single replay configuration by ID, including its whitelisted domains and\ncustom domain. Requires scope: replaySettings:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -57,7 +61,7 @@ var replaySettingsRetrieve = cli.Command{
 
 var replaySettingsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a replay setting. Requires scope: replaySettings:update",
+	Usage:   "Update one or more fields on an existing replay configuration. Only the fields\nyou send are changed; omitted fields keep their current value. Note that\n`whitelistDomains` is replaced wholesale (not merged with the existing list).\nRequires scope: replaySettings:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -67,18 +71,22 @@ var replaySettingsUpdate = cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "custom-domain",
+			Usage:    "Optional custom domain (CNAME) for hosting the replay capture script. Leave null to use the default Ours Privacy domain.",
 			BodyPath: "customDomain",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
+			Usage:    "Human-readable label for this replay configuration. Shown in the dashboard. May be empty.",
 			BodyPath: "name",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "status",
+			Usage:    `Whether session replay capture is currently active. Set to "Enabled" to start capturing replays from whitelisted domains, or "Disabled" to pause capture without losing the configuration.`,
 			BodyPath: "status",
 		},
 		&requestflag.Flag[any]{
 			Name:     "whitelist-domain",
+			Usage:    "Hostnames where session replay capture is permitted. Replays initiated from any host not in this list are dropped. PATCH replaces the list — partial updates are not merged.",
 			BodyPath: "whitelistDomains",
 		},
 	},
@@ -88,7 +96,7 @@ var replaySettingsUpdate = cli.Command{
 
 var replaySettingsList = cli.Command{
 	Name:            "list",
-	Usage:           "List all replay settings. Requires scope: replaySettings:list",
+	Usage:           "List the replay configurations on this account. Replay settings control which\ndomains may capture session replays and where the capture script is hosted.\nRequires scope: replaySettings:list",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleReplaySettingsList,
@@ -97,7 +105,7 @@ var replaySettingsList = cli.Command{
 
 var replaySettingsDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a replay setting. Requires scope: replaySettings:delete",
+	Usage:   "Delete the replay configuration. Capture stops immediately for all whitelisted\ndomains. Requires scope: replaySettings:delete",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
