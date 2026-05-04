@@ -16,7 +16,7 @@ import (
 
 var versionsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new version. Requires scope: version:publish",
+	Usage:   "Publish the current draft (i.e. all unpublished entity changes) as a new\nversion. Returns the full Version on success. Returns HTTP 409 with the reason\nin the response `error` field when there are no draft changes to publish, when\nanother publish is already in flight, or when the action otherwise conflicts\nwith current state. To re-publish an existing version, use POST\n/rest/v1/versions/{id}/publish instead. Requires scope: version:publish",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
@@ -93,7 +93,7 @@ var versionsRetrieve = cli.Command{
 
 var versionsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a version. Requires scope: version:update",
+	Usage:   "Partially update a version. Only the fields you send are changed. Requires\nscope: version:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -115,10 +115,36 @@ var versionsUpdate = cli.Command{
 }
 
 var versionsList = cli.Command{
-	Name:            "list",
-	Usage:           "List all versions. Requires scope: version:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "list",
+	Usage:   "List versions for this account, newest first. Supports cursor pagination and\nfiltering by `isPublished`, `nameContains`, and `notesContains`. Combine filters\nwith AND semantics. Requires scope: version:list",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[string]{
+			Name:      "is-published",
+			Usage:     "Filter to only published or unpublished versions.",
+			QueryPath: "isPublished",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of versions to return. Defaults to 25; values below 1 are clamped to 1 and values above 100 are clamped to 100.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[string]{
+			Name:      "name-contains",
+			Usage:     "Case-insensitive substring match on the version name.",
+			QueryPath: "nameContains",
+		},
+		&requestflag.Flag[string]{
+			Name:      "notes-contains",
+			Usage:     "Case-insensitive substring match on the version notes.",
+			QueryPath: "notesContains",
+		},
+	},
 	Action:          handleVersionsList,
 	HideHelpCommand: true,
 }
@@ -274,9 +300,11 @@ func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := githubcomwithoursplatformsdkgo.VersionListParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Versions.List(ctx, options...)
+	_, err = client.Versions.List(ctx, params, options...)
 	if err != nil {
 		return err
 	}

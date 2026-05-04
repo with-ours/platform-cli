@@ -108,6 +108,11 @@ func TestVersionsList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"versions", "list",
+			"--cursor", "cursor",
+			"--is-published", "true",
+			"--limit", "25",
+			"--name-contains", "nameContains",
+			"--notes-contains", "notesContains",
 		)
 	})
 }
