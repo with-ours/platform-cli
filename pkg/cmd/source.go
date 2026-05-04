@@ -40,8 +40,9 @@ var sourcesRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleSourcesRetrieve,
@@ -54,8 +55,9 @@ var sourcesUpdate = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
 		},
 		&requestflag.Flag[string]{
 			Name:     "status",
@@ -123,8 +125,9 @@ var sourcesDelete = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleSourcesDelete,
@@ -139,8 +142,6 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomwithoursplatformsdkgo.SourceNewParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -151,6 +152,8 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomwithoursplatformsdkgo.SourceNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -225,8 +228,6 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomwithoursplatformsdkgo.SourceUpdateParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -237,6 +238,8 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomwithoursplatformsdkgo.SourceUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
