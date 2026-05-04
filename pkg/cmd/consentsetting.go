@@ -260,8 +260,9 @@ func handleConsentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "consent-settings create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "consent-settings create", obj, format, explicitFormat, transform)
 }
 
 func handleConsentSettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -295,8 +296,9 @@ func handleConsentSettingsRetrieve(ctx context.Context, cmd *cli.Command) error 
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "consent-settings retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "consent-settings retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleConsentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -337,8 +339,9 @@ func handleConsentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "consent-settings update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "consent-settings update", obj, format, explicitFormat, transform)
 }
 
 func handleConsentSettingsList(ctx context.Context, cmd *cli.Command) error {
@@ -369,8 +372,9 @@ func handleConsentSettingsList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "consent-settings list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "consent-settings list", obj, format, explicitFormat, transform)
 }
 
 func handleConsentSettingsDelete(ctx context.Context, cmd *cli.Command) error {
@@ -404,6 +408,7 @@ func handleConsentSettingsDelete(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "consent-settings delete", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "consent-settings delete", obj, format, explicitFormat, transform)
 }

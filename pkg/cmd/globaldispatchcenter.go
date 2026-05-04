@@ -119,8 +119,9 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "global-dispatch-centers create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers create", obj, format, explicitFormat, transform)
 }
 
 func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -154,8 +155,9 @@ func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) 
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "global-dispatch-centers retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -196,8 +198,9 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "global-dispatch-centers update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers update", obj, format, explicitFormat, transform)
 }
 
 func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) error {
@@ -228,8 +231,9 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "global-dispatch-centers list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers list", obj, format, explicitFormat, transform)
 }
 
 func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) error {
@@ -263,6 +267,7 @@ func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) er
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "global-dispatch-centers delete", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "global-dispatch-centers delete", obj, format, explicitFormat, transform)
 }

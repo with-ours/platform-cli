@@ -152,8 +152,9 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "versions create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "versions create", obj, format, explicitFormat, transform)
 }
 
 func handleVersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -187,8 +188,9 @@ func handleVersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "versions retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "versions retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -229,8 +231,9 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "versions update", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "versions update", obj, format, explicitFormat, transform)
 }
 
 func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
@@ -261,6 +264,7 @@ func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "versions list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "versions list", obj, format, explicitFormat, transform)
 }

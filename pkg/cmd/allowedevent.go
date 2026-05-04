@@ -101,8 +101,9 @@ func handleAllowedEventsCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "allowed-events create", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "allowed-events create", obj, format, explicitFormat, transform)
 }
 
 func handleAllowedEventsRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -136,8 +137,9 @@ func handleAllowedEventsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "allowed-events retrieve", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "allowed-events retrieve", obj, format, explicitFormat, transform)
 }
 
 func handleAllowedEventsList(ctx context.Context, cmd *cli.Command) error {
@@ -168,8 +170,9 @@ func handleAllowedEventsList(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "allowed-events list", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "allowed-events list", obj, format, explicitFormat, transform)
 }
 
 func handleAllowedEventsDelete(ctx context.Context, cmd *cli.Command) error {
@@ -203,6 +206,7 @@ func handleAllowedEventsDelete(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "allowed-events delete", obj, format, transform)
+	return ShowJSON(os.Stdout, os.Stderr, "allowed-events delete", obj, format, explicitFormat, transform)
 }
