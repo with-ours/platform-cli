@@ -14,17 +14,17 @@ func TestVersionsCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"versions", "create",
-			"--include-allowed-event", "[{}]",
-			"--include-consent-setting", "[{}]",
-			"--include-destination", "[{}]",
-			"--include-external-allowed-event-data", "[{}]",
-			"--include-global-dispatch-center", "[{}]",
-			"--include-mapping", "[{}]",
-			"--include-replay-setting", "[{}]",
-			"--include-source", "[{}]",
-			"--include-tag-manager-tag", "[{}]",
-			"--include-tag-manager-trigger", "[{}]",
-			"--include-tag-manager-variable", "[{}]",
+			"--include-allowed-event", "[string]",
+			"--include-consent-setting", "[string]",
+			"--include-destination", "[string]",
+			"--include-external-allowed-event-data", "[string]",
+			"--include-global-dispatch-center", "[string]",
+			"--include-mapping", "[string]",
+			"--include-replay-setting", "[string]",
+			"--include-source", "[string]",
+			"--include-tag-manager-tag", "[string]",
+			"--include-tag-manager-trigger", "[string]",
+			"--include-tag-manager-variable", "[string]",
 			"--name", "name",
 			"--notes", "notes",
 		)
@@ -34,27 +34,27 @@ func TestVersionsCreate(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
 			"includeAllowedEvents:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeConsentSettings:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeDestinations:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeExternalAllowedEventData:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeGlobalDispatchCenters:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeMappings:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeReplaySettings:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeSources:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeTagManagerTags:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeTagManagerTriggers:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"includeTagManagerVariables:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"name: name\n" +
 			"notes: notes\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(

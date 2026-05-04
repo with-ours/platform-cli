@@ -58,7 +58,7 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--g4-analytics-track-on-page=true",
 			"--hashing-salt", "hashingSalt",
 			"--http-destination-url", "httpDestinationUrl",
-			"--limited-to-source-id", "[{}]",
+			"--limited-to-source-id", "[string]",
 			"--manager-google-customer-id", "managerGoogleCustomerId",
 			"--name", "name",
 			"--project-api-key", "projectAPIKey",
@@ -80,7 +80,7 @@ func TestDestinationsUpdate(t *testing.T) {
 			"hashingSalt: hashingSalt\n" +
 			"httpDestinationUrl: httpDestinationUrl\n" +
 			"limitedToSourceIds:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"managerGoogleCustomerId: managerGoogleCustomerId\n" +
 			"name: name\n" +
 			"projectAPIKey: projectAPIKey\n" +

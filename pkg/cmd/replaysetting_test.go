@@ -17,7 +17,7 @@ func TestReplaySettingsCreate(t *testing.T) {
 			"--custom-domain", "customDomain",
 			"--name", "name",
 			"--status", "status",
-			"--whitelist-domain", "[{}]",
+			"--whitelist-domain", "[string]",
 		)
 	})
 
@@ -28,7 +28,7 @@ func TestReplaySettingsCreate(t *testing.T) {
 			"name: name\n" +
 			"status: status\n" +
 			"whitelistDomains:\n" +
-			"  - {}\n")
+			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -58,7 +58,7 @@ func TestReplaySettingsUpdate(t *testing.T) {
 			"--custom-domain", "customDomain",
 			"--name", "name",
 			"--status", "status",
-			"--whitelist-domain", "[{}]",
+			"--whitelist-domain", "[string]",
 		)
 	})
 
@@ -69,7 +69,7 @@ func TestReplaySettingsUpdate(t *testing.T) {
 			"name: name\n" +
 			"status: status\n" +
 			"whitelistDomains:\n" +
-			"  - {}\n")
+			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
