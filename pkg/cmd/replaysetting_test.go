@@ -14,6 +14,7 @@ func TestReplaySettingsList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"replay-settings", "list",
+			"--max-items", "10",
 			"--cursor", "cursor",
 			"--limit", "25",
 		)
