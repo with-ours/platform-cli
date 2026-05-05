@@ -14,38 +14,45 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var destinationsList = cli.Command{
-	Name:            "list",
-	Usage:           "List all destinations. Requires scope: destination:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
-	Action:          handleDestinationsList,
+var mappingsList = cli.Command{
+	Name:    "list",
+	Usage:   "List all mappings for an entity. Requires scope: mapping:list",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "entity-id",
+			Usage:     "Filter mappings by their parent entity id (for example an allowed event id).",
+			Required:  true,
+			QueryPath: "entityId",
+		},
+	},
+	Action:          handleMappingsList,
 	HideHelpCommand: true,
 }
 
-var destinationsCreate = cli.Command{
+var mappingsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new destination. Requires scope: destination:create",
+	Usage:   "Create a new mapping. Requires scope: mapping:create",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "type",
-			Usage:    `Allowed values: "AWSEventBridge", "AWSKinesis", "AWSLambda", "AWSS3", "AWSSNS", "ActiveCampaignApi", "Admitad", "AmazonDSP", "Amplitude", "AppLovin", "ArtsAI", "Attentive", "Audiohook", "AzureBlob", "BasisPostback", "BingAds", "BingAdsWeb", "Braze", "ConvertABTestingEvent", "Customerio", "DomoWarehouse", "Facebook", "FloodlightSGTM", "FullContact", "G4Analytics", "GA4MeasurementProtocol", "GA4ServerProxy", "Google", "GoogleAds360", "GoogleAdsServerContainer", "GoogleBigQuery", "GoogleBigQueryWarehouse", "GoogleDataManagerEventIngest", "GooglePubSub", "GoogleStorage", "HTTPCustomRequest", "HTTPDestination", "Hubspot", "IHeartMediaMagellan", "Impact", "Iterable", "Klaviyo", "LinkedInAdsCAPI", "LiveIntent", "LiveRampWarehouse", "Mailchimp", "Mixpanel", "NextdoorAds", "OursSyntheticData", "Partnerize", "Pinterest", "Plausible", "Podscribe", "PostHog", "QuantcastCAPI", "QuoraAds", "Reddit", "RokuCAPI", "SnapchatAdsCapi", "Spotify", "StackAdaptAPI", "Taboola", "Tatari", "TheTradeDesk", "TikTok", "VWO", "Viant", "Vibe", "Woopra", "XAds", "Zendesk", "ZoomInfo".`,
+			Name:     "allowed-event-id",
 			Required: true,
-			BodyPath: "type",
+			BodyPath: "allowedEventId",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "name",
-			BodyPath: "name",
+		&requestflag.Flag[string]{
+			Name:     "destination-id",
+			Required: true,
+			BodyPath: "destinationId",
 		},
 	},
-	Action:          handleDestinationsCreate,
+	Action:          handleMappingsCreate,
 	HideHelpCommand: true,
 }
 
-var destinationsRetrieve = cli.Command{
+var mappingsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single destination by ID. Requires scope: destination:find",
+	Usage:   "Find a single mapping by ID. Requires scope: mapping:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -54,13 +61,13 @@ var destinationsRetrieve = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleDestinationsRetrieve,
+	Action:          handleMappingsRetrieve,
 	HideHelpCommand: true,
 }
 
-var destinationsUpdate = cli.Command{
+var mappingsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a destination. Only the fields you send are changed. Requires\nscope: destination:update",
+	Usage:   "Partially update a mapping. Only the fields you send are changed. Requires\nscope: mapping:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -68,76 +75,41 @@ var destinationsUpdate = cli.Command{
 			Required:  true,
 			PathParam: "id",
 		},
-		&requestflag.Flag[string]{
-			Name:     "status",
-			Usage:    `Allowed values: "Disabled", "Enabled".`,
-			Required: true,
-			BodyPath: "status",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "facebook-conversion-api-key",
-			BodyPath: "facebookConversionAPIKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "facebook-pixel-id",
-			BodyPath: "facebookPixelId",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "g4-analytics-api-key",
-			BodyPath: "g4AnalyticsApiKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "g4-analytics-measurement-id",
-			BodyPath: "g4AnalyticsMeasurementId",
-		},
-		&requestflag.Flag[*bool]{
-			Name:     "g4-analytics-track-on-page",
-			BodyPath: "g4AnalyticsTrackOnPage",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "hashing-salt",
-			BodyPath: "hashingSalt",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "http-destination-url",
-			BodyPath: "httpDestinationUrl",
-		},
 		&requestflag.Flag[any]{
-			Name:     "limited-to-source-id",
-			BodyPath: "limitedToSourceIds",
+			Name:     "logic",
+			BodyPath: "logic",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "manager-google-customer-id",
-			BodyPath: "managerGoogleCustomerId",
+		&requestflag.Flag[[]map[string]any]{
+			Name:     "mapping",
+			BodyPath: "mappings",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "project-api-key",
-			BodyPath: "projectAPIKey",
+	},
+	Action:          handleMappingsUpdate,
+	HideHelpCommand: true,
+}, map[string][]requestflag.HasOuterFlag{
+	"mapping": {
+		&requestflag.InnerFlag[string]{
+			Name:       "mapping.map",
+			InnerField: "map",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "project-token",
-			BodyPath: "projectToken",
+		&requestflag.InnerFlag[string]{
+			Name:       "mapping.property",
+			InnerField: "property",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "selected-account-id",
-			BodyPath: "selectedAccountId",
-		},
-		&requestflag.Flag[any]{
-			Name:     "settings",
-			BodyPath: "settings",
+		&requestflag.InnerFlag[*string]{
+			Name:       "mapping.modification",
+			InnerField: "modification",
 		},
 	},
-	Action:          handleDestinationsUpdate,
-	HideHelpCommand: true,
-}
+})
 
-var destinationsDelete = cli.Command{
+var mappingsDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a destination. Requires scope: destination:delete",
+	Usage:   "Delete a mapping. Requires scope: mapping:delete",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -146,11 +118,11 @@ var destinationsDelete = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleDestinationsDelete,
+	Action:          handleMappingsDelete,
 	HideHelpCommand: true,
 }
 
-func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
+func handleMappingsList(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -169,9 +141,11 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := githubcomwithoursplatformsdkgo.MappingListParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.List(ctx, options...)
+	_, err = client.Mappings.List(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -184,12 +158,12 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations list",
+		Title:          "mappings list",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
+func handleMappingsCreate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -208,11 +182,11 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.DestinationNewParams{}
+	params := githubcomwithoursplatformsdkgo.MappingNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.New(ctx, params, options...)
+	_, err = client.Mappings.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -225,12 +199,12 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations create",
+		Title:          "mappings create",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleMappingsRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -254,7 +228,7 @@ func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.Mappings.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -267,12 +241,12 @@ func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations retrieve",
+		Title:          "mappings retrieve",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleMappingsUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -294,11 +268,11 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.DestinationUpdateParams{}
+	params := githubcomwithoursplatformsdkgo.MappingUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Update(
+	_, err = client.Mappings.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -316,12 +290,12 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations update",
+		Title:          "mappings update",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
+func handleMappingsDelete(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -345,7 +319,7 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.Mappings.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -358,7 +332,7 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations delete",
+		Title:          "mappings delete",
 		Transform:      transform,
 	})
 }

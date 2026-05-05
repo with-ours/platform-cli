@@ -14,6 +14,15 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
+var sourcesList = cli.Command{
+	Name:            "list",
+	Usage:           "List all sources. Requires scope: source:list",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleSourcesList,
+	HideHelpCommand: true,
+}
+
 var sourcesCreate = cli.Command{
 	Name:    "create",
 	Usage:   "Create a new source. Requires scope: source:create",
@@ -110,15 +119,6 @@ var sourcesUpdate = cli.Command{
 	HideHelpCommand: true,
 }
 
-var sourcesList = cli.Command{
-	Name:            "list",
-	Usage:           "List all sources. Requires scope: source:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
-	Action:          handleSourcesList,
-	HideHelpCommand: true,
-}
-
 var sourcesDelete = cli.Command{
 	Name:    "delete",
 	Usage:   "Delete a source. Requires scope: source:delete",
@@ -132,6 +132,60 @@ var sourcesDelete = cli.Command{
 	},
 	Action:          handleSourcesDelete,
 	HideHelpCommand: true,
+}
+
+var sourcesTokens = cli.Command{
+	Name:    "tokens",
+	Usage:   "Fetch install tokens and snippets for a source. Requires scope: source:view",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleSourcesTokens,
+	HideHelpCommand: true,
+}
+
+func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Sources.List(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sources list",
+		Transform:      transform,
+	})
 }
 
 func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
@@ -266,45 +320,6 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 	})
 }
 
-func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
-	unusedArgs := cmd.Args().Slice()
-
-	if len(unusedArgs) > 0 {
-		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
-	}
-
-	options, err := flagOptions(
-		cmd,
-		apiquery.NestedQueryFormatBrackets,
-		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
-		false,
-	)
-	if err != nil {
-		return err
-	}
-
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.List(ctx, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
-	format := cmd.Root().String("format")
-	explicitFormat := cmd.Root().IsSet("format")
-	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources list",
-		Transform:      transform,
-	})
-}
-
 func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -343,6 +358,48 @@ func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "sources delete",
+		Transform:      transform,
+	})
+}
+
+func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Sources.Tokens(ctx, cmd.Value("id").(string), options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sources tokens",
 		Transform:      transform,
 	})
 }
