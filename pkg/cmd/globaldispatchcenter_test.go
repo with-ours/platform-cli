@@ -15,6 +15,7 @@ func TestGlobalDispatchCentersList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"global-dispatch-centers", "list",
+			"--max-items", "10",
 			"--cursor", "cursor",
 			"--limit", "25",
 		)
