@@ -15,6 +15,7 @@ func TestExperimentsList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"experiments", "list",
+			"--max-items", "10",
 			"--cursor", "cursor",
 			"--limit", "25",
 			"--search", "pricing hero",

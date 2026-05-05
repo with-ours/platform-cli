@@ -14,6 +14,7 @@ func TestVersionsList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"versions", "list",
+			"--max-items", "10",
 			"--cursor", "cursor",
 			"--is-published", "true",
 			"--limit", "25",
