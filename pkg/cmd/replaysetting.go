@@ -14,6 +14,26 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
+var replaySettingsList = cli.Command{
+	Name:    "list",
+	Usage:   "List the replay configurations on this account. Supports cursor pagination via\n`limit` and `cursor`. Replay settings control which domains may capture session\nreplays and where the capture script is hosted. Requires scope:\nreplaySettings:list",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of items to return. Defaults to 25; values below 1 are clamped to 1 and values above 100 are clamped to 100.",
+			QueryPath: "limit",
+		},
+	},
+	Action:          handleReplaySettingsList,
+	HideHelpCommand: true,
+}
+
 var replaySettingsCreate = cli.Command{
 	Name:    "create",
 	Usage:   "Create the replay configuration for this account. Each account is limited to one\nreplay configuration — calls made when one already exists return HTTP 409 with\nthe reason in the response `error` field. Requires scope: replaySettings:create",
@@ -94,15 +114,6 @@ var replaySettingsUpdate = cli.Command{
 	HideHelpCommand: true,
 }
 
-var replaySettingsList = cli.Command{
-	Name:            "list",
-	Usage:           "List the replay configurations on this account. Replay settings control which\ndomains may capture session replays and where the capture script is hosted.\nRequires scope: replaySettings:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
-	Action:          handleReplaySettingsList,
-	HideHelpCommand: true,
-}
-
 var replaySettingsDelete = cli.Command{
 	Name:    "delete",
 	Usage:   "Delete the replay configuration. Capture stops immediately for all whitelisted\ndomains. Requires scope: replaySettings:delete",
@@ -116,6 +127,47 @@ var replaySettingsDelete = cli.Command{
 	},
 	Action:          handleReplaySettingsDelete,
 	HideHelpCommand: true,
+}
+
+func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomwithoursplatformsdkgo.ReplaySettingListParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.ReplaySettings.List(ctx, params, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "replay-settings list",
+		Transform:      transform,
+	})
 }
 
 func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
@@ -246,45 +298,6 @@ func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "replay-settings update",
-		Transform:      transform,
-	})
-}
-
-func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
-	unusedArgs := cmd.Args().Slice()
-
-	if len(unusedArgs) > 0 {
-		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
-	}
-
-	options, err := flagOptions(
-		cmd,
-		apiquery.NestedQueryFormatBrackets,
-		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
-		false,
-	)
-	if err != nil {
-		return err
-	}
-
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.ReplaySettings.List(ctx, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
-	format := cmd.Root().String("format")
-	explicitFormat := cmd.Root().IsSet("format")
-	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "replay-settings list",
 		Transform:      transform,
 	})
 }

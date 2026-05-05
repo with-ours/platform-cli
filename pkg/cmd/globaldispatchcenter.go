@@ -14,6 +14,26 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
+var globalDispatchCentersList = cli.Command{
+	Name:    "list",
+	Usage:   "List global dispatch centers for this account. Supports cursor pagination via\n`limit` and `cursor`. Requires scope: globalDispatch:list",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of items to return. Defaults to 25; values below 1 are clamped to 1 and values above 100 are clamped to 100.",
+			QueryPath: "limit",
+		},
+	},
+	Action:          handleGlobalDispatchCentersList,
+	HideHelpCommand: true,
+}
+
 var globalDispatchCentersCreate = cli.Command{
 	Name:    "create",
 	Usage:   "Create a new global dispatch center. Requires scope: globalDispatch:create",
@@ -122,15 +142,6 @@ var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 	},
 })
 
-var globalDispatchCentersList = cli.Command{
-	Name:            "list",
-	Usage:           "List all global dispatch centers. Requires scope: globalDispatch:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
-	Action:          handleGlobalDispatchCentersList,
-	HideHelpCommand: true,
-}
-
 var globalDispatchCentersDelete = cli.Command{
 	Name:    "delete",
 	Usage:   "Delete a global dispatch center. Requires scope: globalDispatch:delete",
@@ -144,6 +155,47 @@ var globalDispatchCentersDelete = cli.Command{
 	},
 	Action:          handleGlobalDispatchCentersDelete,
 	HideHelpCommand: true,
+}
+
+func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomwithoursplatformsdkgo.GlobalDispatchCenterListParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.GlobalDispatchCenters.List(ctx, params, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "global-dispatch-centers list",
+		Transform:      transform,
+	})
 }
 
 func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) error {
@@ -274,45 +326,6 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "global-dispatch-centers update",
-		Transform:      transform,
-	})
-}
-
-func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
-	unusedArgs := cmd.Args().Slice()
-
-	if len(unusedArgs) > 0 {
-		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
-	}
-
-	options, err := flagOptions(
-		cmd,
-		apiquery.NestedQueryFormatBrackets,
-		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
-		false,
-	)
-	if err != nil {
-		return err
-	}
-
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.GlobalDispatchCenters.List(ctx, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
-	format := cmd.Root().String("format")
-	explicitFormat := cmd.Root().IsSet("format")
-	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "global-dispatch-centers list",
 		Transform:      transform,
 	})
 }

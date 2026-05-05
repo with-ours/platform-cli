@@ -8,6 +8,16 @@ import (
 	"github.com/with-ours/platform-cli/internal/mocktest"
 )
 
+func TestDestinationsList(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"destinations", "list",
+		)
+	})
+}
+
 func TestDestinationsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
@@ -92,16 +102,6 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"destinations", "update",
 			"--id", "id",
-		)
-	})
-}
-
-func TestDestinationsList(t *testing.T) {
-	t.Run("regular flags", func(t *testing.T) {
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"destinations", "list",
 		)
 	})
 }
