@@ -8,6 +8,21 @@ import (
 	"github.com/with-ours/platform-cli/internal/mocktest"
 )
 
+func TestVersionsList(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"versions", "list",
+			"--cursor", "cursor",
+			"--is-published", "true",
+			"--limit", "25",
+			"--name-contains", "nameContains",
+			"--notes-contains", "notesContains",
+		)
+	})
+}
+
 func TestVersionsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
@@ -102,17 +117,35 @@ func TestVersionsUpdate(t *testing.T) {
 	})
 }
 
-func TestVersionsList(t *testing.T) {
+func TestVersionsPublish(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"versions", "list",
-			"--cursor", "cursor",
-			"--is-published", "true",
-			"--limit", "25",
-			"--name-contains", "nameContains",
-			"--notes-contains", "notesContains",
+			"versions", "publish",
+			"--id", "id",
+		)
+	})
+}
+
+func TestVersionsSnapshot(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"versions", "snapshot",
+			"--id", "id",
+		)
+	})
+}
+
+func TestVersionsDiff(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"versions", "diff",
+			"--id", "draft",
 		)
 	})
 }

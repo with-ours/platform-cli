@@ -14,38 +14,43 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var destinationsList = cli.Command{
+var experimentSettingsList = cli.Command{
 	Name:            "list",
-	Usage:           "List all destinations. Requires scope: destination:list",
+	Usage:           "List experiment settings records for the account. Use the returned `id` as\n`experimentSettingsId` when creating an experiment. Requires scope:\nexperimentSettings:list",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
-	Action:          handleDestinationsList,
+	Action:          handleExperimentSettingsList,
 	HideHelpCommand: true,
 }
 
-var destinationsCreate = cli.Command{
+var experimentSettingsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new destination. Requires scope: destination:create",
+	Usage:   "Create the account-level experimentation bootstrap record. Most accounts should\nonly ever have one. Requires scope: experimentSettings:create",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:     "type",
-			Usage:    `Allowed values: "AWSEventBridge", "AWSKinesis", "AWSLambda", "AWSS3", "AWSSNS", "ActiveCampaignApi", "Admitad", "AmazonDSP", "Amplitude", "AppLovin", "ArtsAI", "Attentive", "Audiohook", "AzureBlob", "BasisPostback", "BingAds", "BingAdsWeb", "Braze", "ConvertABTestingEvent", "Customerio", "DomoWarehouse", "Facebook", "FloodlightSGTM", "FullContact", "G4Analytics", "GA4MeasurementProtocol", "GA4ServerProxy", "Google", "GoogleAds360", "GoogleAdsServerContainer", "GoogleBigQuery", "GoogleBigQueryWarehouse", "GoogleDataManagerEventIngest", "GooglePubSub", "GoogleStorage", "HTTPCustomRequest", "HTTPDestination", "Hubspot", "IHeartMediaMagellan", "Impact", "Iterable", "Klaviyo", "LinkedInAdsCAPI", "LiveIntent", "LiveRampWarehouse", "Mailchimp", "Mixpanel", "NextdoorAds", "OursSyntheticData", "Partnerize", "Pinterest", "Plausible", "Podscribe", "PostHog", "QuantcastCAPI", "QuoraAds", "Reddit", "RokuCAPI", "SnapchatAdsCapi", "Spotify", "StackAdaptAPI", "Taboola", "Tatari", "TheTradeDesk", "TikTok", "VWO", "Viant", "Vibe", "Woopra", "XAds", "Zendesk", "ZoomInfo".`,
-			Required: true,
-			BodyPath: "type",
+		&requestflag.Flag[*string]{
+			Name:     "cookie-name",
+			Usage:    "Cookie name used to persist sticky variant assignments in the browser. Defaults to `_cord_exp` when omitted on create.",
+			BodyPath: "cookieName",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
+			Usage:    "Human-readable name for this experimentation configuration. Defaults to `Experiment Settings` when omitted on create.",
 			BodyPath: "name",
 		},
+		&requestflag.Flag[any]{
+			Name:     "whitelist-domain",
+			Usage:    "Optional domain allowlist for experiment SDK delivery. When set, experiments using this settings record are only served on these domains. This is separate from source `whitelistDomains`, which gates CDP event ingestion.",
+			BodyPath: "whitelistDomains",
+		},
 	},
-	Action:          handleDestinationsCreate,
+	Action:          handleExperimentSettingsCreate,
 	HideHelpCommand: true,
 }
 
-var destinationsRetrieve = cli.Command{
+var experimentSettingsRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single destination by ID. Requires scope: destination:find",
+	Usage:   "Find a single experiment settings record by ID. Returns 404 when no record\nmatches the supplied id. Requires scope: experimentSettings:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -54,13 +59,13 @@ var destinationsRetrieve = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleDestinationsRetrieve,
+	Action:          handleExperimentSettingsRetrieve,
 	HideHelpCommand: true,
 }
 
-var destinationsUpdate = cli.Command{
+var experimentSettingsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a destination. Only the fields you send are changed. Requires\nscope: destination:update",
+	Usage:   "Partially update an experiment settings. Only the fields you send are changed.\nRequires scope: experimentSettings:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -68,76 +73,29 @@ var destinationsUpdate = cli.Command{
 			Required:  true,
 			PathParam: "id",
 		},
-		&requestflag.Flag[string]{
-			Name:     "status",
-			Usage:    `Allowed values: "Disabled", "Enabled".`,
-			Required: true,
-			BodyPath: "status",
-		},
 		&requestflag.Flag[*string]{
-			Name:     "facebook-conversion-api-key",
-			BodyPath: "facebookConversionAPIKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "facebook-pixel-id",
-			BodyPath: "facebookPixelId",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "g4-analytics-api-key",
-			BodyPath: "g4AnalyticsApiKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "g4-analytics-measurement-id",
-			BodyPath: "g4AnalyticsMeasurementId",
-		},
-		&requestflag.Flag[*bool]{
-			Name:     "g4-analytics-track-on-page",
-			BodyPath: "g4AnalyticsTrackOnPage",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "hashing-salt",
-			BodyPath: "hashingSalt",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "http-destination-url",
-			BodyPath: "httpDestinationUrl",
-		},
-		&requestflag.Flag[any]{
-			Name:     "limited-to-source-id",
-			BodyPath: "limitedToSourceIds",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "manager-google-customer-id",
-			BodyPath: "managerGoogleCustomerId",
+			Name:     "cookie-name",
+			Usage:    "Cookie name used to persist sticky variant assignments in the browser. Defaults to `_cord_exp` when omitted on create.",
+			BodyPath: "cookieName",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
+			Usage:    "Human-readable name for this experimentation configuration. Defaults to `Experiment Settings` when omitted on create.",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "project-api-key",
-			BodyPath: "projectAPIKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "project-token",
-			BodyPath: "projectToken",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "selected-account-id",
-			BodyPath: "selectedAccountId",
-		},
 		&requestflag.Flag[any]{
-			Name:     "settings",
-			BodyPath: "settings",
+			Name:     "whitelist-domain",
+			Usage:    "Optional domain allowlist for experiment SDK delivery. When set, experiments using this settings record are only served on these domains. This is separate from source `whitelistDomains`, which gates CDP event ingestion.",
+			BodyPath: "whitelistDomains",
 		},
 	},
-	Action:          handleDestinationsUpdate,
+	Action:          handleExperimentSettingsUpdate,
 	HideHelpCommand: true,
 }
 
-var destinationsDelete = cli.Command{
+var experimentSettingsDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a destination. Requires scope: destination:delete",
+	Usage:   "Delete the experimentation bootstrap record. This also deletes child\nexperiments, variants, and personalization properties owned by it. Requires\nscope: experimentSettings:delete",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -146,11 +104,11 @@ var destinationsDelete = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleDestinationsDelete,
+	Action:          handleExperimentSettingsDelete,
 	HideHelpCommand: true,
 }
 
-func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
+func handleExperimentSettingsList(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -171,7 +129,7 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.List(ctx, options...)
+	_, err = client.ExperimentSettings.List(ctx, options...)
 	if err != nil {
 		return err
 	}
@@ -184,12 +142,12 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations list",
+		Title:          "experiment-settings list",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
+func handleExperimentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -208,11 +166,11 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.DestinationNewParams{}
+	params := githubcomwithoursplatformsdkgo.ExperimentSettingNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.New(ctx, params, options...)
+	_, err = client.ExperimentSettings.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -225,12 +183,12 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations create",
+		Title:          "experiment-settings create",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleExperimentSettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -254,7 +212,7 @@ func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ExperimentSettings.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -267,12 +225,12 @@ func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations retrieve",
+		Title:          "experiment-settings retrieve",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleExperimentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -294,11 +252,11 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.DestinationUpdateParams{}
+	params := githubcomwithoursplatformsdkgo.ExperimentSettingUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Update(
+	_, err = client.ExperimentSettings.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -316,12 +274,12 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations update",
+		Title:          "experiment-settings update",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
+func handleExperimentSettingsDelete(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -345,7 +303,7 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ExperimentSettings.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -358,7 +316,7 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations delete",
+		Title:          "experiment-settings delete",
 		Transform:      transform,
 	})
 }

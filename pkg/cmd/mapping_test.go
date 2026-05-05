@@ -9,118 +9,107 @@ import (
 	"github.com/with-ours/platform-cli/internal/requestflag"
 )
 
-func TestGlobalDispatchCentersList(t *testing.T) {
+func TestMappingsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "list",
-			"--cursor", "cursor",
-			"--limit", "25",
+			"mappings", "list",
+			"--entity-id", "00000000-0000-0000-0000-000000000000",
 		)
 	})
 }
 
-func TestGlobalDispatchCentersCreate(t *testing.T) {
+func TestMappingsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "create",
-			"--is-enabled=true",
-			"--name", "name",
-			"--notes", "notes",
+			"mappings", "create",
+			"--allowed-event-id", "allowedEventId",
+			"--destination-id", "destinationId",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"isEnabled: true\n" +
-			"name: name\n" +
-			"notes: notes\n")
+			"allowedEventId: allowedEventId\n" +
+			"destinationId: destinationId\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"global-dispatch-centers", "create",
+			"mappings", "create",
 		)
 	})
 }
 
-func TestGlobalDispatchCentersRetrieve(t *testing.T) {
+func TestMappingsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "retrieve",
+			"mappings", "retrieve",
 			"--id", "id",
 		)
 	})
 }
 
-func TestGlobalDispatchCentersUpdate(t *testing.T) {
+func TestMappingsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "update",
+			"mappings", "update",
 			"--id", "id",
-			"--category", "[{description: description, destinationIds: [string], logic: {}, name: name, priority: 0}]",
-			"--is-enabled=true",
+			"--logic", "{}",
+			"--mapping", "{map: map, property: property, modification: modification}",
 			"--name", "name",
-			"--notes", "notes",
 		)
 	})
 
 	t.Run("inner flags", func(t *testing.T) {
 		// Check that inner flags have been set up correctly
-		requestflag.CheckInnerFlags(globalDispatchCentersUpdate)
+		requestflag.CheckInnerFlags(mappingsUpdate)
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "update",
+			"mappings", "update",
 			"--id", "id",
-			"--category.description", "description",
-			"--category.destination-ids", "[string]",
-			"--category.logic", "{}",
-			"--category.name", "name",
-			"--category.priority", "0",
-			"--is-enabled=true",
+			"--logic", "{}",
+			"--mapping.map", "map",
+			"--mapping.property", "property",
+			"--mapping.modification", "modification",
 			"--name", "name",
-			"--notes", "notes",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"categories:\n" +
-			"  - description: description\n" +
-			"    destinationIds:\n" +
-			"      - string\n" +
-			"    logic: {}\n" +
-			"    name: name\n" +
-			"    priority: 0\n" +
-			"isEnabled: true\n" +
-			"name: name\n" +
-			"notes: notes\n")
+			"logic: {}\n" +
+			"mappings:\n" +
+			"  - map: map\n" +
+			"    property: property\n" +
+			"    modification: modification\n" +
+			"name: name\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"global-dispatch-centers", "update",
+			"mappings", "update",
 			"--id", "id",
 		)
 	})
 }
 
-func TestGlobalDispatchCentersDelete(t *testing.T) {
+func TestMappingsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "delete",
+			"mappings", "delete",
 			"--id", "id",
 		)
 	})
