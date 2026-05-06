@@ -8,6 +8,16 @@ import (
 	"github.com/with-ours/platform-cli/internal/mocktest"
 )
 
+func TestDestinationsList(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"destinations", "list",
+		)
+	})
+}
+
 func TestDestinationsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
@@ -58,7 +68,7 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--g4-analytics-track-on-page=true",
 			"--hashing-salt", "hashingSalt",
 			"--http-destination-url", "httpDestinationUrl",
-			"--limited-to-source-id", "[{}]",
+			"--limited-to-source-id", "[string]",
 			"--manager-google-customer-id", "managerGoogleCustomerId",
 			"--name", "name",
 			"--project-api-key", "projectAPIKey",
@@ -80,7 +90,7 @@ func TestDestinationsUpdate(t *testing.T) {
 			"hashingSalt: hashingSalt\n" +
 			"httpDestinationUrl: httpDestinationUrl\n" +
 			"limitedToSourceIds:\n" +
-			"  - {}\n" +
+			"  - string\n" +
 			"managerGoogleCustomerId: managerGoogleCustomerId\n" +
 			"name: name\n" +
 			"projectAPIKey: projectAPIKey\n" +
@@ -92,16 +102,6 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"destinations", "update",
 			"--id", "id",
-		)
-	})
-}
-
-func TestDestinationsList(t *testing.T) {
-	t.Run("regular flags", func(t *testing.T) {
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"destinations", "list",
 		)
 	})
 }

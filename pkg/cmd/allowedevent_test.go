@@ -8,6 +8,16 @@ import (
 	"github.com/with-ours/platform-cli/internal/mocktest"
 )
 
+func TestAllowedEventsList(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"allowed-events", "list",
+		)
+	})
+}
+
 func TestAllowedEventsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
@@ -15,7 +25,7 @@ func TestAllowedEventsCreate(t *testing.T) {
 			"--api-key", "string",
 			"allowed-events", "create",
 			"--name", "name",
-			"--destination-id", "[{}]",
+			"--destination-id", "[string]",
 		)
 	})
 
@@ -24,7 +34,7 @@ func TestAllowedEventsCreate(t *testing.T) {
 		pipeData := []byte("" +
 			"name: name\n" +
 			"destinationIds:\n" +
-			"  - {}\n")
+			"  - string\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -40,16 +50,6 @@ func TestAllowedEventsRetrieve(t *testing.T) {
 			"--api-key", "string",
 			"allowed-events", "retrieve",
 			"--id", "id",
-		)
-	})
-}
-
-func TestAllowedEventsList(t *testing.T) {
-	t.Run("regular flags", func(t *testing.T) {
-		mocktest.TestRunMockTestWithFlags(
-			t,
-			"--api-key", "string",
-			"allowed-events", "list",
 		)
 	})
 }

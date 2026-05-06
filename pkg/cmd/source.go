@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
@@ -14,6 +13,15 @@ import (
 	"github.com/with-ours/platform-sdk-go"
 	"github.com/with-ours/platform-sdk-go/option"
 )
+
+var sourcesList = cli.Command{
+	Name:            "list",
+	Usage:           "List all sources. Requires scope: source:list",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleSourcesList,
+	HideHelpCommand: true,
+}
 
 var sourcesCreate = cli.Command{
 	Name:    "create",
@@ -26,7 +34,7 @@ var sourcesCreate = cli.Command{
 			Required: true,
 			BodyPath: "type",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
@@ -41,8 +49,9 @@ var sourcesRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleSourcesRetrieve,
@@ -51,12 +60,13 @@ var sourcesRetrieve = cli.Command{
 
 var sourcesUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a source. Requires scope: source:update",
+	Usage:   "Partially update a source. Only the fields you send are changed. Requires scope:\nsource:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
 		},
 		&requestflag.Flag[string]{
 			Name:     "status",
@@ -64,19 +74,19 @@ var sourcesUpdate = cli.Command{
 			Required: true,
 			BodyPath: "status",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "bot-control-mode",
 			BodyPath: "botControlMode",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*float64]{
 			Name:     "bot-score-threshold",
 			BodyPath: "botScoreThreshold",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*bool]{
 			Name:     "exclude-request-context",
 			BodyPath: "excludeRequestContext",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
@@ -84,15 +94,15 @@ var sourcesUpdate = cli.Command{
 			Name:     "probabilistic-identity",
 			BodyPath: "probabilisticIdentity",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "project-api-key",
 			BodyPath: "projectAPIKey",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "redirect-url",
 			BodyPath: "redirectUrl",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "selected-account-id",
 			BodyPath: "selectedAccountId",
 		},
@@ -109,27 +119,73 @@ var sourcesUpdate = cli.Command{
 	HideHelpCommand: true,
 }
 
-var sourcesList = cli.Command{
-	Name:            "list",
-	Usage:           "List all sources. Requires scope: source:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
-	Action:          handleSourcesList,
-	HideHelpCommand: true,
-}
-
 var sourcesDelete = cli.Command{
 	Name:    "delete",
 	Usage:   "Delete a source. Requires scope: source:delete",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleSourcesDelete,
 	HideHelpCommand: true,
+}
+
+var sourcesTokens = cli.Command{
+	Name:    "tokens",
+	Usage:   "Fetch install tokens and snippets for a source. Requires scope: source:view",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleSourcesTokens,
+	HideHelpCommand: true,
+}
+
+func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Sources.List(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sources list",
+		Transform:      transform,
+	})
 }
 
 func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
@@ -139,8 +195,6 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
-
-	params := githubcomwithoursplatformsdkgo.SourceNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -153,6 +207,8 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := githubcomwithoursplatformsdkgo.SourceNewParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Sources.New(ctx, params, options...)
@@ -162,8 +218,15 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources create", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sources create",
+		Transform:      transform,
+	})
 }
 
 func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -197,8 +260,15 @@ func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources retrieve", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sources retrieve",
+		Transform:      transform,
+	})
 }
 
 func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -212,8 +282,6 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomwithoursplatformsdkgo.SourceUpdateParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -224,6 +292,8 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomwithoursplatformsdkgo.SourceUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -239,40 +309,15 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources update", obj, format, transform)
-}
-
-func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
-	unusedArgs := cmd.Args().Slice()
-
-	if len(unusedArgs) > 0 {
-		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
-	}
-
-	options, err := flagOptions(
-		cmd,
-		apiquery.NestedQueryFormatBrackets,
-		apiquery.ArrayQueryFormatComma,
-		EmptyBody,
-		false,
-	)
-	if err != nil {
-		return err
-	}
-
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.List(ctx, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
-	format := cmd.Root().String("format")
-	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources list", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sources update",
+		Transform:      transform,
+	})
 }
 
 func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
@@ -306,6 +351,55 @@ func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "sources delete", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sources delete",
+		Transform:      transform,
+	})
+}
+
+func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Sources.Tokens(ctx, cmd.Value("id").(string), options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "sources tokens",
+		Transform:      transform,
+	})
 }

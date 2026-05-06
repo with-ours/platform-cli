@@ -8,96 +8,91 @@ import (
 	"github.com/with-ours/platform-cli/internal/mocktest"
 )
 
-func TestReplaySettingsList(t *testing.T) {
+func TestExperimentSettingsList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"replay-settings", "list",
-			"--max-items", "10",
-			"--cursor", "cursor",
-			"--limit", "25",
+			"experiment-settings", "list",
 		)
 	})
 }
 
-func TestReplaySettingsCreate(t *testing.T) {
+func TestExperimentSettingsCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"replay-settings", "create",
-			"--custom-domain", "customDomain",
-			"--name", "name",
-			"--status", "Disabled",
-			"--whitelist-domain", "[string]",
+			"experiment-settings", "create",
+			"--cookie-name", "_cord_exp",
+			"--name", "Default Web Experiment Settings",
+			"--whitelist-domain", "[www.example.com, staging.example.com]",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"customDomain: customDomain\n" +
-			"name: name\n" +
-			"status: Disabled\n" +
+			"cookieName: _cord_exp\n" +
+			"name: Default Web Experiment Settings\n" +
 			"whitelistDomains:\n" +
-			"  - string\n")
+			"  - www.example.com\n" +
+			"  - staging.example.com\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"replay-settings", "create",
+			"experiment-settings", "create",
 		)
 	})
 }
 
-func TestReplaySettingsRetrieve(t *testing.T) {
+func TestExperimentSettingsRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"replay-settings", "retrieve",
+			"experiment-settings", "retrieve",
 			"--id", "id",
 		)
 	})
 }
 
-func TestReplaySettingsUpdate(t *testing.T) {
+func TestExperimentSettingsUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"replay-settings", "update",
+			"experiment-settings", "update",
 			"--id", "id",
-			"--custom-domain", "customDomain",
-			"--name", "name",
-			"--status", "Disabled",
-			"--whitelist-domain", "[string]",
+			"--cookie-name", "_cord_exp",
+			"--name", "Default Web Experiment Settings",
+			"--whitelist-domain", "[www.example.com, staging.example.com]",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"customDomain: customDomain\n" +
-			"name: name\n" +
-			"status: Disabled\n" +
+			"cookieName: _cord_exp\n" +
+			"name: Default Web Experiment Settings\n" +
 			"whitelistDomains:\n" +
-			"  - string\n")
+			"  - www.example.com\n" +
+			"  - staging.example.com\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"replay-settings", "update",
+			"experiment-settings", "update",
 			"--id", "id",
 		)
 	})
 }
 
-func TestReplaySettingsDelete(t *testing.T) {
+func TestExperimentSettingsDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"replay-settings", "delete",
+			"experiment-settings", "delete",
 			"--id", "id",
 		)
 	})

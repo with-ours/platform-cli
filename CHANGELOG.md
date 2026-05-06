@@ -1,5 +1,52 @@
 # Changelog
 
+## 1.9.0 (2026-05-06)
+
+Full Changelog: [v1.8.0...v1.9.0](https://github.com/with-ours/platform-cli/compare/v1.8.0...v1.9.0)
+
+### Features
+
+* **api:** api update ([0b44b44](https://github.com/with-ours/platform-cli/commit/0b44b449236fc0fb601652d515967da4490a7ab8))
+* **api:** api update ([1c08953](https://github.com/with-ours/platform-cli/commit/1c089530d7a2310c85567fe46cb48dd5fe2ab37b))
+* **api:** api update ([dc25998](https://github.com/with-ours/platform-cli/commit/dc25998895c8d8198796de607112d6ce60147eca))
+* **api:** api update ([9269a0b](https://github.com/with-ours/platform-cli/commit/9269a0b1c18115acbb828290d39cd19eba6d5274))
+* **api:** api update ([df76b40](https://github.com/with-ours/platform-cli/commit/df76b40f592b934b32c6cd80d579facc85853a50))
+* **api:** api update ([906380c](https://github.com/with-ours/platform-cli/commit/906380c06522737e02339252370a63469970f230))
+* **api:** api update ([a39ec60](https://github.com/with-ours/platform-cli/commit/a39ec603e28e40607599d1d4e0f3aca5472cb913))
+* **api:** manual updates ([ff66958](https://github.com/with-ours/platform-cli/commit/ff6695844839fe716a7ad07065784da24ee7ea71))
+* **api:** manual updates ([cc1e416](https://github.com/with-ours/platform-cli/commit/cc1e416caab003b7e9fbc18d836ca947f32e0169))
+* **cli:** add `--raw-output`/`-r` option to print raw (non-JSON) strings ([505e152](https://github.com/with-ours/platform-cli/commit/505e1528a69c0e96768c4f3b901dd078bc1f2b53))
+* **cli:** alias parameters in data with `x-stainless-cli-data-alias` ([2db5ff5](https://github.com/with-ours/platform-cli/commit/2db5ff59792b12390d0f965f57d0d85e86c29aa2))
+* **cli:** send filename and content type when reading input from files ([1db8943](https://github.com/with-ours/platform-cli/commit/1db8943f92177286744f55e2b155f7bc6bd7085f))
+* support passing path and query params over stdin ([7874a3b](https://github.com/with-ours/platform-cli/commit/7874a3bef25d88f6da40ff999b4c0e483683a4ce))
+
+
+### Bug Fixes
+
+* **cli:** correctly load zsh autocompletion ([b7f7241](https://github.com/with-ours/platform-cli/commit/b7f7241a29a838e87a4bebc6364e039d4b578715))
+* fall back to main branch if linking fails in CI ([3531489](https://github.com/with-ours/platform-cli/commit/3531489fe4c876ccda758d2409732e2e4a75ca62))
+* fix for failing to drop invalid module replace in link script ([1a10ca1](https://github.com/with-ours/platform-cli/commit/1a10ca166e8aec65a185ca62f88007654bd712f9))
+* fix quoting typo ([bb838c3](https://github.com/with-ours/platform-cli/commit/bb838c31590dc6f24fd06da1b6ddc0f44a3f8f9b))
+* flags for nullable body scalar fields are strictly typed ([1a540e5](https://github.com/with-ours/platform-cli/commit/1a540e5b3dbfa18d300ed27a59f12fc9057f07b7))
+
+
+### Chores
+
+* add documentation for ./scripts/link ([21b6e08](https://github.com/with-ours/platform-cli/commit/21b6e086dd1b9fa217ad70502d930d9c8bf9e7a6))
+* **ci:** support manually triggering release workflow ([ac1ce9e](https://github.com/with-ours/platform-cli/commit/ac1ce9e53a30fe91098246c270adeb814d44d3f8))
+* **cli:** additional test cases for `ShowJSONIterator` ([72b9cad](https://github.com/with-ours/platform-cli/commit/72b9cad6ec1a2e241da415557858a8366b56b9fc))
+* **cli:** fall back to JSON when using default "explore" with non-TTY ([8600c01](https://github.com/with-ours/platform-cli/commit/8600c014daaa0f0539203175275ee33f0ccb60ef))
+* **cli:** let `--format raw` be used in conjunction with `--transform` ([496afd4](https://github.com/with-ours/platform-cli/commit/496afd4bc7c739df8ee4d232dad4c5755f58a6b3))
+* **cli:** switch long lists of positional args over to param structs ([9f222b3](https://github.com/with-ours/platform-cli/commit/9f222b395c422b4e99b2b46575d922306144bcb1))
+* **cli:** use `ShowJSONOpts` as argument to `formatJSON` instead of many positionals ([2ff93ed](https://github.com/with-ours/platform-cli/commit/2ff93eddc57484230674fb24f8dcf71a52f61fc8))
+* **internal:** codegen related update ([121d36e](https://github.com/with-ours/platform-cli/commit/121d36ed02b3b982d0c140a717f3a64e43a7a9da))
+* **internal:** codegen related update ([d5a5635](https://github.com/with-ours/platform-cli/commit/d5a5635bc96ae7089d775a9611551c98d1da8472))
+* **internal:** codegen related update ([5456809](https://github.com/with-ours/platform-cli/commit/5456809af1b9630b5bf25bff1e22b2e866574fcf))
+* **internal:** codegen related update ([eb13f6f](https://github.com/with-ours/platform-cli/commit/eb13f6f2158e919d852d3ae781b50df3d886e6cb))
+* **internal:** codegen related update ([9c5080d](https://github.com/with-ours/platform-cli/commit/9c5080d9cff70076cfb870d1819149dfe23a7330))
+* **internal:** more robust bootstrap script ([05506a6](https://github.com/with-ours/platform-cli/commit/05506a63a2968ec82836aac70764f9a7765176c6))
+* **tests:** bump steady to v0.22.1 ([59ed550](https://github.com/with-ours/platform-cli/commit/59ed5508f2d5fcb99e241c0092ede793cd71f3ab))
+
 ## 1.8.0 (2026-04-04)
 
 Full Changelog: [v1.7.0...v1.8.0](https://github.com/with-ours/platform-cli/compare/v1.7.0...v1.8.0)

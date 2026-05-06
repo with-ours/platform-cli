@@ -5,7 +5,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v3"
@@ -15,9 +14,48 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
+var versionsList = cli.Command{
+	Name:    "list",
+	Usage:   "List versions for this account, newest first. Supports cursor pagination and\nfiltering by `isPublished`, `nameContains`, and `notesContains`. Combine filters\nwith AND semantics. Requires scope: version:list",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[string]{
+			Name:      "is-published",
+			Usage:     "Filter to only published or unpublished versions.",
+			QueryPath: "isPublished",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of items to return. Defaults to 25; values below 1 are clamped to 1 and values above 100 are clamped to 100.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[string]{
+			Name:      "name-contains",
+			Usage:     "Case-insensitive substring match on the version name.",
+			QueryPath: "nameContains",
+		},
+		&requestflag.Flag[string]{
+			Name:      "notes-contains",
+			Usage:     "Case-insensitive substring match on the version notes.",
+			QueryPath: "notesContains",
+		},
+		&requestflag.Flag[int64]{
+			Name:  "max-items",
+			Usage: "The maximum number of items to return (use -1 for unlimited).",
+		},
+	},
+	Action:          handleVersionsList,
+	HideHelpCommand: true,
+}
+
 var versionsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new version. Requires scope: version:publish",
+	Usage:   "Publish the current draft (i.e. all unpublished entity changes) as a new\nversion. Returns the full Version on success. Returns HTTP 409 with the reason\nin the response `error` field when there are no draft changes to publish, when\nanother publish is already in flight, or when the action otherwise conflicts\nwith current state. To re-publish an existing version, use POST\n/rest/v1/versions/{id}/publish instead. Requires scope: version:publish",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
@@ -64,11 +102,11 @@ var versionsCreate = cli.Command{
 			Name:     "include-tag-manager-variable",
 			BodyPath: "includeTagManagerVariables",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "notes",
 			BodyPath: "notes",
 		},
@@ -83,8 +121,9 @@ var versionsRetrieve = cli.Command{
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
 		},
 	},
 	Action:          handleVersionsRetrieve,
@@ -93,18 +132,19 @@ var versionsRetrieve = cli.Command{
 
 var versionsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Update a version. Requires scope: version:update",
+	Usage:   "Partially update a version. Only the fields you send are changed. Requires\nscope: version:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "id",
-			Required: true,
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[*string]{
 			Name:     "notes",
 			BodyPath: "notes",
 		},
@@ -113,13 +153,105 @@ var versionsUpdate = cli.Command{
 	HideHelpCommand: true,
 }
 
-var versionsList = cli.Command{
-	Name:            "list",
-	Usage:           "List all versions. Requires scope: version:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
-	Action:          handleVersionsList,
+var versionsPublish = cli.Command{
+	Name:    "publish",
+	Usage:   "Re-publish an existing (previously created) version by ID. Use this to roll back\nto an older snapshot. Returns 409 if the version is already published, was\ncreated more than 45 days ago, or another publish is already in flight. To\ncreate-and-publish from current draft state, use POST /rest/v1/versions instead.\nRequires scope: version:publish",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleVersionsPublish,
 	HideHelpCommand: true,
+}
+
+var versionsSnapshot = cli.Command{
+	Name:    "snapshot",
+	Usage:   "Retrieve the full JSON snapshot captured by a version — every entity\n(destinations, sources, mappings, consent settings, etc.) as it existed when\nthis version was published. Sensitive fields (API keys, tokens, secrets) are\nredacted. Useful for IaC export, audit, and backup workflows. Requires scope:\nversion:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleVersionsSnapshot,
+	HideHelpCommand: true,
+}
+
+var versionsDiff = cli.Command{
+	Name:    "diff",
+	Usage:   "Compare the current draft (all unpublished entity changes) against the latest\npublished version. Returns added/removed/modified entities grouped by\ncollection, plus a total `count`. Use this to preview what would be included in\na `POST /rest/v1/versions` call. The path segment `draft` is a literal — there\nis no version with that ID; it identifies the comparison target. Requires scope:\nversion:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Usage:     `Allowed values: "draft".`,
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleVersionsDiff,
+	HideHelpCommand: true,
+}
+
+func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := githubcomwithoursplatformsdkgo.VersionListParams{}
+
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	if format == "raw" {
+		var res []byte
+		options = append(options, option.WithResponseBodyInto(&res))
+		_, err = client.Versions.List(ctx, params, options...)
+		if err != nil {
+			return err
+		}
+		obj := gjson.ParseBytes(res)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "versions list",
+			Transform:      transform,
+		})
+	} else {
+		iter := client.Versions.ListAutoPaging(ctx, params, options...)
+		maxItems := int64(-1)
+		if cmd.IsSet("max-items") {
+			maxItems = cmd.Value("max-items").(int64)
+		}
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "versions list",
+			Transform:      transform,
+		})
+	}
 }
 
 func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
@@ -129,8 +261,6 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
-
-	params := githubcomwithoursplatformsdkgo.VersionNewParams{}
 
 	options, err := flagOptions(
 		cmd,
@@ -143,6 +273,8 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := githubcomwithoursplatformsdkgo.VersionNewParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Versions.New(ctx, params, options...)
@@ -152,8 +284,15 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "versions create", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "versions create",
+		Transform:      transform,
+	})
 }
 
 func handleVersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
@@ -187,8 +326,15 @@ func handleVersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "versions retrieve", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "versions retrieve",
+		Transform:      transform,
+	})
 }
 
 func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
@@ -202,8 +348,6 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionUpdateParams{}
-
 	options, err := flagOptions(
 		cmd,
 		apiquery.NestedQueryFormatBrackets,
@@ -214,6 +358,8 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+
+	params := githubcomwithoursplatformsdkgo.VersionUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -229,14 +375,24 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "versions update", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "versions update",
+		Transform:      transform,
+	})
 }
 
-func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
+func handleVersionsPublish(ctx context.Context, cmd *cli.Command) error {
 	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
-
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
@@ -254,13 +410,104 @@ func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Versions.List(ctx, options...)
+	_, err = client.Versions.Publish(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
 
 	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(os.Stdout, "versions list", obj, format, transform)
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "versions publish",
+		Transform:      transform,
+	})
+}
+
+func handleVersionsSnapshot(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Versions.Snapshot(ctx, cmd.Value("id").(string), options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "versions snapshot",
+		Transform:      transform,
+	})
+}
+
+func handleVersionsDiff(ctx context.Context, cmd *cli.Command) error {
+	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Versions.Diff(ctx, githubcomwithoursplatformsdkgo.VersionDiffParamsID(cmd.Value("id").(string)), options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "versions diff",
+		Transform:      transform,
+	})
 }
