@@ -15,7 +15,10 @@ func TestMappingsList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"mappings", "list",
+			"--max-items", "10",
 			"--entity-id", "00000000-0000-0000-0000-000000000000",
+			"--cursor", "cursor",
+			"--limit", "1000",
 		)
 	})
 }

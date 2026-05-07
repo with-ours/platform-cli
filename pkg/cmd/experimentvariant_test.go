@@ -15,7 +15,10 @@ func TestExperimentVariantsList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"experiment-variants", "list",
+			"--max-items", "10",
 			"--experiment-id", "08524dc8-5289-48e8-bf40-b3a7cfa6ca0a",
+			"--cursor", "cursor",
+			"--limit", "200",
 		)
 	})
 }
