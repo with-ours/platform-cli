@@ -60,46 +60,82 @@ var versionsCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
 			Name:     "include-allowed-event",
+			Usage:    "Cherry-pick: allowed event ids (slug-like strings) to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeAllowedEvents",
 		},
 		&requestflag.Flag[any]{
 			Name:     "include-consent-setting",
+			Usage:    "Cherry-pick: consent settings ids to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeConsentSettings",
 		},
 		&requestflag.Flag[any]{
+			Name:     "include-data-governance-event",
+			Usage:    "Cherry-pick: data governance event UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
+			BodyPath: "includeDataGovernanceEvents",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-data-governance-rule",
+			Usage:    "Cherry-pick: data governance rule UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
+			BodyPath: "includeDataGovernanceRules",
+		},
+		&requestflag.Flag[any]{
 			Name:     "include-destination",
+			Usage:    "Cherry-pick: destination UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeDestinations",
 		},
 		&requestflag.Flag[any]{
+			Name:     "include-experiment",
+			Usage:    "Cherry-pick: experiment UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
+			BodyPath: "includeExperiments",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-experiment-setting",
+			Usage:    "Cherry-pick: experiment settings UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
+			BodyPath: "includeExperimentSettings",
+		},
+		&requestflag.Flag[any]{
+			Name:     "include-experiment-variant",
+			Usage:    "Cherry-pick: experiment variant UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
+			BodyPath: "includeExperimentVariants",
+		},
+		&requestflag.Flag[any]{
 			Name:     "include-external-allowed-event-data",
+			Usage:    "Cherry-pick: external allowed event data ids to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeExternalAllowedEventData",
 		},
 		&requestflag.Flag[any]{
 			Name:     "include-global-dispatch-center",
+			Usage:    "Cherry-pick: global dispatch center ids to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeGlobalDispatchCenters",
 		},
 		&requestflag.Flag[any]{
 			Name:     "include-mapping",
+			Usage:    "Cherry-pick: mapping ids to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeMappings",
 		},
 		&requestflag.Flag[any]{
 			Name:     "include-replay-setting",
+			Usage:    "Cherry-pick: replay settings ids to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeReplaySettings",
 		},
 		&requestflag.Flag[any]{
 			Name:     "include-source",
+			Usage:    "Cherry-pick: source UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeSources",
 		},
 		&requestflag.Flag[any]{
 			Name:     "include-tag-manager-tag",
+			Usage:    "Cherry-pick: tag manager tag UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeTagManagerTags",
 		},
 		&requestflag.Flag[any]{
 			Name:     "include-tag-manager-trigger",
+			Usage:    "Cherry-pick: tag manager trigger UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeTagManagerTriggers",
 		},
 		&requestflag.Flag[any]{
 			Name:     "include-tag-manager-variable",
+			Usage:    "Cherry-pick: tag manager variable UUIDs to include from the draft. Omit or send `[]` to include all draft changes in this collection.",
 			BodyPath: "includeTagManagerVariables",
 		},
 		&requestflag.Flag[*string]{
@@ -185,14 +221,18 @@ var versionsSnapshot = cli.Command{
 
 var versionsDiff = cli.Command{
 	Name:    "diff",
-	Usage:   "Compare the current draft (all unpublished entity changes) against the latest\npublished version. Returns added/removed/modified entities grouped by\ncollection, plus a total `count`. Use this to preview what would be included in\na `POST /rest/v1/versions` call. The path segment `draft` is a literal — there\nis no version with that ID; it identifies the comparison target. Requires scope:\nversion:find",
+	Usage:   "Compare two versions of the account configuration. Returns\nadded/removed/modified entities grouped by collection, plus a total `count`.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "id",
-			Usage:     `Allowed values: "draft".`,
 			Required:  true,
 			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:      "against",
+			Usage:     "Baseline version id to compare the path version against. Omit for the latest published version. Pass a version UUID to compute a version-vs-version diff.",
+			QueryPath: "against",
 		},
 	},
 	Action:          handleVersionsDiff,
@@ -492,9 +532,16 @@ func handleVersionsDiff(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := githubcomwithoursplatformsdkgo.VersionDiffParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Versions.Diff(ctx, githubcomwithoursplatformsdkgo.VersionDiffParamsID(cmd.Value("id").(string)), options...)
+	_, err = client.Versions.Diff(
+		ctx,
+		githubcomwithoursplatformsdkgo.VersionDiffParamsID(cmd.Value("id").(string)),
+		params,
+		options...,
+	)
 	if err != nil {
 		return err
 	}

@@ -65,8 +65,8 @@ func TestMappingsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"mappings", "update",
 			"--id", "id",
-			"--logic", "{}",
-			"--mapping", "{map: map, property: property, modification: modification}",
+			"--logic", "{AND: [{}], condition: {operator: Is, property: property, value: value}, NOT: {}, OR: [{}]}",
+			"--mapping", "{map: map, property: property, modification: CamelCase}",
 			"--name", "name",
 		)
 	})
@@ -81,10 +81,13 @@ func TestMappingsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"mappings", "update",
 			"--id", "id",
-			"--logic", "{}",
+			"--logic.and", "[{}]",
+			"--logic.condition", "{operator: Is, property: property, value: value}",
+			"--logic.not", "{}",
+			"--logic.or", "[{}]",
 			"--mapping.map", "map",
 			"--mapping.property", "property",
-			"--mapping.modification", "modification",
+			"--mapping.modification", "CamelCase",
 			"--name", "name",
 		)
 	})
@@ -92,11 +95,20 @@ func TestMappingsUpdate(t *testing.T) {
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"logic: {}\n" +
+			"logic:\n" +
+			"  AND:\n" +
+			"    - {}\n" +
+			"  condition:\n" +
+			"    operator: Is\n" +
+			"    property: property\n" +
+			"    value: value\n" +
+			"  NOT: {}\n" +
+			"  OR:\n" +
+			"    - {}\n" +
 			"mappings:\n" +
 			"  - map: map\n" +
 			"    property: property\n" +
-			"    modification: modification\n" +
+			"    modification: CamelCase\n" +
 			"name: name\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
