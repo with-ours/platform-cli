@@ -16,7 +16,7 @@ import (
 
 var mappingsList = cli.Command{
 	Name:    "list",
-	Usage:   "List all mappings for an entity. Requires scope: mapping:list",
+	Usage:   "List mappings for an entity (a source or destination). Requires the `entityId`\nquery parameter. Supports cursor pagination via `limit` and `cursor`. Sorted by\n`priority` ascending, then by `id` for deterministic pagination. Requires scope:\nmapping:list",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -24,6 +24,20 @@ var mappingsList = cli.Command{
 			Usage:     "Filter mappings by their parent entity id (for example an allowed event id).",
 			Required:  true,
 			QueryPath: "entityId",
+		},
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of mappings to return. Defaults to 1000; values below 1 are clamped to 1 and values above 1000 are clamped to 1000. Most accounts can fetch the full list in one request.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[int64]{
+			Name:  "max-items",
+			Usage: "The maximum number of items to return (use -1 for unlimited).",
 		},
 	},
 	Action:          handleMappingsList,
@@ -143,24 +157,38 @@ func handleMappingsList(ctx context.Context, cmd *cli.Command) error {
 
 	params := githubcomwithoursplatformsdkgo.MappingListParams{}
 
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Mappings.List(ctx, params, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "mappings list",
-		Transform:      transform,
-	})
+	if format == "raw" {
+		var res []byte
+		options = append(options, option.WithResponseBodyInto(&res))
+		_, err = client.Mappings.List(ctx, params, options...)
+		if err != nil {
+			return err
+		}
+		obj := gjson.ParseBytes(res)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "mappings list",
+			Transform:      transform,
+		})
+	} else {
+		iter := client.Mappings.ListAutoPaging(ctx, params, options...)
+		maxItems := int64(-1)
+		if cmd.IsSet("max-items") {
+			maxItems = cmd.Value("max-items").(int64)
+		}
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "mappings list",
+			Transform:      transform,
+		})
+	}
 }
 
 func handleMappingsCreate(ctx context.Context, cmd *cli.Command) error {
