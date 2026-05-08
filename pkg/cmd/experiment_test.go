@@ -321,3 +321,17 @@ func TestExperimentsResultsTimeSeries(t *testing.T) {
 		)
 	})
 }
+
+func TestExperimentsSessionReplays(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"experiments", "session-replays",
+			"--id", "id",
+			"--cursor", "cursor",
+			"--limit", "25",
+			"--variant-id", "var_01HZX8YJH3Z3W1R2Q4M5N6P7Q8",
+		)
+	})
+}

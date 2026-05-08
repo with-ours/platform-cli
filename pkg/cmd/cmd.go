@@ -160,6 +160,7 @@ func init() {
 					&experimentsResume,
 					&experimentsResults,
 					&experimentsResultsTimeSeries,
+					&experimentsSessionReplays,
 				},
 			},
 			{
