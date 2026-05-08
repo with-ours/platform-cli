@@ -55,7 +55,7 @@ var versionsList = cli.Command{
 
 var versionsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Publish the current draft (i.e. all unpublished entity changes) as a new\nversion. Returns the full Version on success. Returns HTTP 409 with the reason\nin the response `error` field when there are no draft changes to publish, when\nanother publish is already in flight, or when the action otherwise conflicts\nwith current state. To re-publish an existing version, use POST\n/rest/v1/versions/{id}/publish instead. Requires scope: version:publish",
+	Usage:   "Publish the current draft of non-experiment entities (destinations, mappings,\nexperiment settings, governance rules, etc.) as a new version. Newly created or\nmodified DRAFT experiments and experiment variants are NOT shipped here — call\n`POST /rest/v1/experiments/{id}/start` instead, which atomically publishes the\nexperiment and its variants by default (`publishAfterStart: true`). Returns the\nfull Version on success. Returns HTTP 409 with the reason in the response\n`error` field when there are no draft changes to publish, when another publish\nis already in flight, or when the action otherwise conflicts with current state.\nTo re-publish an existing version, use POST /rest/v1/versions/{id}/publish\ninstead.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{

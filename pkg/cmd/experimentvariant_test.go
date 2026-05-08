@@ -32,7 +32,7 @@ func TestExperimentVariantsCreate(t *testing.T) {
 			"--experiment-id", "x",
 			"--name", "Variant B",
 			"--weight", "50",
-			"--dom-modification", "[{action: customCss, selector: h1.hero-title, attribute: {}, styles: [{property: background-color, value: '#10B981'}], value: Start your free trial}]",
+			"--dom-modification", "[{action: customCss, selector: '#hero-headline', attribute: {}, styles: [{property: background-color, value: '#10B981'}], value: Start your free trial}]",
 			"--is-control=false",
 			"--redirect-url", "https://www.example.com/pricing-v2",
 			"--variant-type", "dom_modifications",
@@ -52,7 +52,7 @@ func TestExperimentVariantsCreate(t *testing.T) {
 			"--name", "Variant B",
 			"--weight", "50",
 			"--dom-modification.action", "customCss",
-			"--dom-modification.selector", "h1.hero-title",
+			"--dom-modification.selector", "#hero-headline",
 			"--dom-modification.attribute", "{}",
 			"--dom-modification.styles", "[{property: background-color, value: '#10B981'}]",
 			"--dom-modification.value", "Start your free trial",
@@ -70,7 +70,7 @@ func TestExperimentVariantsCreate(t *testing.T) {
 			"weight: 50\n" +
 			"domModifications:\n" +
 			"  - action: customCss\n" +
-			"    selector: h1.hero-title\n" +
+			"    selector: '#hero-headline'\n" +
 			"    attribute: {}\n" +
 			"    styles:\n" +
 			"      - property: background-color\n" +
@@ -105,7 +105,7 @@ func TestExperimentVariantsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"experiment-variants", "update",
 			"--id", "id",
-			"--dom-modification", "[{action: customCss, selector: h1.hero-title, attribute: {}, styles: [{property: background-color, value: '#10B981'}], value: Start your free trial}]",
+			"--dom-modification", "[{action: customCss, selector: '#hero-headline', attribute: {}, styles: [{property: background-color, value: '#10B981'}], value: Start your free trial}]",
 			"--is-control=true",
 			"--name", "name",
 			"--redirect-url", "redirectUrl",
@@ -125,7 +125,7 @@ func TestExperimentVariantsUpdate(t *testing.T) {
 			"experiment-variants", "update",
 			"--id", "id",
 			"--dom-modification.action", "customCss",
-			"--dom-modification.selector", "h1.hero-title",
+			"--dom-modification.selector", "#hero-headline",
 			"--dom-modification.attribute", "{}",
 			"--dom-modification.styles", "[{property: background-color, value: '#10B981'}]",
 			"--dom-modification.value", "Start your free trial",
@@ -142,7 +142,7 @@ func TestExperimentVariantsUpdate(t *testing.T) {
 		pipeData := []byte("" +
 			"domModifications:\n" +
 			"  - action: customCss\n" +
-			"    selector: h1.hero-title\n" +
+			"    selector: '#hero-headline'\n" +
 			"    attribute: {}\n" +
 			"    styles:\n" +
 			"      - property: background-color\n" +

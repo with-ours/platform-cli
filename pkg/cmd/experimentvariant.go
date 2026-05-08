@@ -84,7 +84,7 @@ var experimentVariantsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "variant-type",
-			Usage:    "Variant type to create. Use `redirect` for redirect tests or `dom_modifications` for on-page changes.",
+			Usage:    "Variant delivery mechanism. `dom_modifications` mutates the current page in-place at SDK runtime — use it for copy/style/image/HTML changes that keep visitors on the same URL (headline copy tests, button color, hero image swap). `redirect` routes the visitor to a different URL entirely — use it for landing-page A/B tests, alternate pricing pages, or any test where the *page itself* is the variable. They are not interchangeable: a redirect variant cannot also tweak DOM, and a dom_modifications variant cannot send the visitor elsewhere.",
 			BodyPath: "variantType",
 		},
 	},
@@ -100,7 +100,7 @@ var experimentVariantsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:                  "dom-modification.selector",
-			Usage:                 "CSS selector used to find the element to modify on the page at runtime.",
+			Usage:                 "CSS selector for the element to modify at runtime. PREFER specific selectors that match exactly one element: an `id` (`#hero-headline`), a stable `data-*` attribute (`[data-testid=\"hero-headline\"]`), or a unique class/structural chain (`section.hero > h1.headline`). AVOID bare tag selectors like `h1`, `button`, or `img` — modern pages usually contain several, and the runtime applies the mutation to ONLY THE FIRST match, which silently picks the wrong element. If you only have a tag name, scope it with the nearest unique ancestor (e.g. `main h1`, `header nav a:first-of-type`).",
 			InnerField:            "selector",
 			OuterIsArrayOfObjects: true,
 		},
@@ -172,7 +172,7 @@ var experimentVariantsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "variant-type",
-			Usage:    "Updated variant type — `redirect` or `dom_modifications`. Changing this also requires updating the matching payload field (`redirectUrl` or `domModifications`).",
+			Usage:    "Updated variant delivery mechanism. `dom_modifications` mutates the current page in-place; `redirect` sends the visitor to a different URL — pick based on whether the *page* or the *content* is the variable. Changing this also requires updating the matching payload field (`redirectUrl` or `domModifications`).",
 			BodyPath: "variantType",
 		},
 		&requestflag.Flag[*int64]{
@@ -193,7 +193,7 @@ var experimentVariantsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[string]{
 			Name:                  "dom-modification.selector",
-			Usage:                 "CSS selector used to find the element to modify on the page at runtime.",
+			Usage:                 "CSS selector for the element to modify at runtime. PREFER specific selectors that match exactly one element: an `id` (`#hero-headline`), a stable `data-*` attribute (`[data-testid=\"hero-headline\"]`), or a unique class/structural chain (`section.hero > h1.headline`). AVOID bare tag selectors like `h1`, `button`, or `img` — modern pages usually contain several, and the runtime applies the mutation to ONLY THE FIRST match, which silently picks the wrong element. If you only have a tag name, scope it with the nearest unique ancestor (e.g. `main h1`, `header nav a:first-of-type`).",
 			InnerField:            "selector",
 			OuterIsArrayOfObjects: true,
 		},
