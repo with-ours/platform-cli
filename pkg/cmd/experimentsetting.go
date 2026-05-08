@@ -40,7 +40,7 @@ var experimentSettingsCreate = cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "whitelist-domain",
-			Usage:    "Optional domain allowlist for experiment SDK delivery. When set, experiments using this settings record are only served on these domains. This is separate from source `whitelistDomains`, which gates CDP event ingestion.",
+			Usage:    "Limits which domains can load your experiments. When set, experiments using this settings record are only served on these domains; the SDK refuses to load anywhere else and your experiments never run on those hosts. Separate from source `whitelistDomains`, which limits which domains can send events to the CDP.",
 			BodyPath: "whitelistDomains",
 		},
 	},
@@ -85,7 +85,7 @@ var experimentSettingsUpdate = cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "whitelist-domain",
-			Usage:    "Optional domain allowlist for experiment SDK delivery. When set, experiments using this settings record are only served on these domains. This is separate from source `whitelistDomains`, which gates CDP event ingestion.",
+			Usage:    "Limits which domains can load your experiments. When set, experiments using this settings record are only served on these domains; the SDK refuses to load anywhere else and your experiments never run on those hosts. Separate from source `whitelistDomains`, which limits which domains can send events to the CDP.",
 			BodyPath: "whitelistDomains",
 		},
 	},
