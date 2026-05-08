@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.10.0 (2026-05-08)
+
+Full Changelog: [v1.9.0...v1.10.0](https://github.com/with-ours/platform-cli/compare/v1.9.0...v1.10.0)
+
+### Features
+
+* **api:** api update ([e811fdd](https://github.com/with-ours/platform-cli/commit/e811fdda05837cf93169302200033f1d16c8f443))
+* **api:** api update ([de0ab73](https://github.com/with-ours/platform-cli/commit/de0ab73b57eec0dbd2cd7dc84e00b65180fe18cf))
+
+
+### Chores
+
+* **internal:** codegen related update ([681a6dd](https://github.com/with-ours/platform-cli/commit/681a6dd8e968a0e399f9b317a27f3c043d685fe8))
+* redact api-key headers in debug logs ([bd3e1fa](https://github.com/with-ours/platform-cli/commit/bd3e1fa386bdcef3048eb48514aee5614cbe4b16))
+
 ## 1.9.0 (2026-05-06)
 
 Full Changelog: [v1.8.0...v1.9.0](https://github.com/with-ours/platform-cli/compare/v1.8.0...v1.9.0)

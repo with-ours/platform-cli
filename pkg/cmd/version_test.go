@@ -32,7 +32,12 @@ func TestVersionsCreate(t *testing.T) {
 			"versions", "create",
 			"--include-allowed-event", "[string]",
 			"--include-consent-setting", "[string]",
+			"--include-data-governance-event", "[string]",
+			"--include-data-governance-rule", "[string]",
 			"--include-destination", "[string]",
+			"--include-experiment", "[string]",
+			"--include-experiment-setting", "[string]",
+			"--include-experiment-variant", "[string]",
 			"--include-external-allowed-event-data", "[string]",
 			"--include-global-dispatch-center", "[string]",
 			"--include-mapping", "[string]",
@@ -53,7 +58,17 @@ func TestVersionsCreate(t *testing.T) {
 			"  - string\n" +
 			"includeConsentSettings:\n" +
 			"  - string\n" +
+			"includeDataGovernanceEvents:\n" +
+			"  - string\n" +
+			"includeDataGovernanceRules:\n" +
+			"  - string\n" +
 			"includeDestinations:\n" +
+			"  - string\n" +
+			"includeExperiments:\n" +
+			"  - string\n" +
+			"includeExperimentSettings:\n" +
+			"  - string\n" +
+			"includeExperimentVariants:\n" +
 			"  - string\n" +
 			"includeExternalAllowedEventData:\n" +
 			"  - string\n" +
@@ -147,6 +162,7 @@ func TestVersionsDiff(t *testing.T) {
 			"--api-key", "string",
 			"versions", "diff",
 			"--id", "draft",
+			"--against", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		)
 	})
 }

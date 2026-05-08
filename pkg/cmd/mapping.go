@@ -16,14 +16,28 @@ import (
 
 var mappingsList = cli.Command{
 	Name:    "list",
-	Usage:   "List all mappings for an entity. Requires scope: mapping:list",
+	Usage:   "List mappings for an entity (a source or destination). Requires the `entityId`\nquery parameter. Supports cursor pagination via `limit` and `cursor`. Sorted by\n`priority` ascending, then by `id` for deterministic pagination. Requires scope:\nmapping:list",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "entity-id",
-			Usage:     "Filter mappings by their parent entity id (for example an allowed event id).",
+			Usage:     "Filter mappings by their parent entity id. Must be a destination id or source id.",
 			Required:  true,
 			QueryPath: "entityId",
+		},
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of mappings to return. Defaults to 1000; values below 1 are clamped to 1 and values above 1000 are clamped to 1000. Most accounts can fetch the full list in one request.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[int64]{
+			Name:  "max-items",
+			Usage: "The maximum number of items to return (use -1 for unlimited).",
 		},
 	},
 	Action:          handleMappingsList,
@@ -75,8 +89,9 @@ var mappingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Required:  true,
 			PathParam: "id",
 		},
-		&requestflag.Flag[any]{
+		&requestflag.Flag[map[string]any]{
 			Name:     "logic",
+			Usage:    "Condition tree gating when this mapping fires. A node is either a leaf `condition` or a combinator (`AND`, `OR`, `NOT`). Combinator children are themselves `MappingLogic` nodes, so trees nest arbitrarily. Example leaf: `{ \"condition\": { \"property\": \"$event.event\", \"operator\": \"Is\", \"value\": \"page_view\" } }`. Example combinator: `{ \"AND\": [{ \"condition\": ... }, { \"OR\": [...] }] }`.",
 			BodyPath: "logic",
 		},
 		&requestflag.Flag[[]map[string]any]{
@@ -91,6 +106,27 @@ var mappingsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Action:          handleMappingsUpdate,
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
+	"logic": {
+		&requestflag.InnerFlag[any]{
+			Name:       "logic.and",
+			Usage:      "All child nodes must match. Each child is a `MappingLogic` node.",
+			InnerField: "AND",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "logic.condition",
+			InnerField: "condition",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "logic.not",
+			Usage:      "Negates a single child `MappingLogic` node.",
+			InnerField: "NOT",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "logic.or",
+			Usage:      "Any child node must match. Each child is a `MappingLogic` node.",
+			InnerField: "OR",
+		},
+	},
 	"mapping": {
 		&requestflag.InnerFlag[string]{
 			Name:       "mapping.map",
@@ -102,6 +138,7 @@ var mappingsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[*string]{
 			Name:       "mapping.modification",
+			Usage:      `Allowed values: "CamelCase", "DmaIP", "DomainOnly", "DomainPathOnly", "DomainPathUTMs", "DomainUTMs", "FakeDomain", "FakeDomainRealPath", "FakeIP", "FullUrl", "Hash", "HashMD5", "HashedCountry", "HashedDateOfBirth", "HashedGender", "HashedNormalized", "HashedNormalizedNoSpecialChars", "HashedPhone", "HashedState", "HashedZip", "KebabCase", "LowerCase", "None", "Null", "Redacted", "RegionalIP", "SnakeCase", "StartCase", "UpperCase".`,
 			InnerField: "modification",
 		},
 	},
@@ -143,24 +180,38 @@ func handleMappingsList(ctx context.Context, cmd *cli.Command) error {
 
 	params := githubcomwithoursplatformsdkgo.MappingListParams{}
 
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Mappings.List(ctx, params, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "mappings list",
-		Transform:      transform,
-	})
+	if format == "raw" {
+		var res []byte
+		options = append(options, option.WithResponseBodyInto(&res))
+		_, err = client.Mappings.List(ctx, params, options...)
+		if err != nil {
+			return err
+		}
+		obj := gjson.ParseBytes(res)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "mappings list",
+			Transform:      transform,
+		})
+	} else {
+		iter := client.Mappings.ListAutoPaging(ctx, params, options...)
+		maxItems := int64(-1)
+		if cmd.IsSet("max-items") {
+			maxItems = cmd.Value("max-items").(int64)
+		}
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "mappings list",
+			Transform:      transform,
+		})
+	}
 }
 
 func handleMappingsCreate(ctx context.Context, cmd *cli.Command) error {

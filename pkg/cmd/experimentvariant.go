@@ -16,7 +16,7 @@ import (
 
 var experimentVariantsList = cli.Command{
 	Name:    "list",
-	Usage:   "List variants for a specific parent experiment. Requires the `experimentId`\nquery parameter — variants are always scoped to a single experiment. Requires\nscope: experiment:find",
+	Usage:   "List variants for a specific parent experiment. Requires the `experimentId`\nquery parameter — variants are always scoped to a single experiment. Supports\ncursor pagination via `limit` and `cursor`; SDK runtimes that need the full set\nin one request can pass `?limit=100`. Requires scope: experiment:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -24,6 +24,20 @@ var experimentVariantsList = cli.Command{
 			Usage:     "Required. List variants belonging to this parent experiment.",
 			Required:  true,
 			QueryPath: "experimentId",
+		},
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of variants to return. Defaults to 200; values below 1 are clamped to 1 and values above 200 are clamped to 200. Variants per experiment are capped at 200 server-side, so a single request returns the full set.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[int64]{
+			Name:  "max-items",
+			Usage: "The maximum number of items to return (use -1 for unlimited).",
 		},
 	},
 	Action:          handleExperimentVariantsList,
@@ -240,24 +254,38 @@ func handleExperimentVariantsList(ctx context.Context, cmd *cli.Command) error {
 
 	params := githubcomwithoursplatformsdkgo.ExperimentVariantListParams{}
 
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.ExperimentVariants.List(ctx, params, options...)
-	if err != nil {
-		return err
-	}
-
-	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "experiment-variants list",
-		Transform:      transform,
-	})
+	if format == "raw" {
+		var res []byte
+		options = append(options, option.WithResponseBodyInto(&res))
+		_, err = client.ExperimentVariants.List(ctx, params, options...)
+		if err != nil {
+			return err
+		}
+		obj := gjson.ParseBytes(res)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "experiment-variants list",
+			Transform:      transform,
+		})
+	} else {
+		iter := client.ExperimentVariants.ListAutoPaging(ctx, params, options...)
+		maxItems := int64(-1)
+		if cmd.IsSet("max-items") {
+			maxItems = cmd.Value("max-items").(int64)
+		}
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "experiment-variants list",
+			Transform:      transform,
+		})
+	}
 }
 
 func handleExperimentVariantsCreate(ctx context.Context, cmd *cli.Command) error {
