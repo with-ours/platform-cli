@@ -162,7 +162,7 @@ var globalDispatchCentersDelete = cli.Command{
 }
 
 func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -180,7 +180,7 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.GlobalDispatchCenterListParams{}
+	params := oursprivacy.GlobalDispatchCenterListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -217,7 +217,7 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 }
 
 func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -235,7 +235,7 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.GlobalDispatchCenterNewParams{}
+	params := oursprivacy.GlobalDispatchCenterNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -258,7 +258,7 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 }
 
 func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -300,7 +300,7 @@ func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) 
 }
 
 func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -321,7 +321,7 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.GlobalDispatchCenterUpdateParams{}
+	params := oursprivacy.GlobalDispatchCenterUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -349,7 +349,7 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 }
 
 func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
