@@ -150,7 +150,7 @@ var sourcesTokens = cli.Command{
 }
 
 func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -189,7 +189,7 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -207,7 +207,7 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.SourceNewParams{}
+	params := oursprivacy.SourceNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -230,7 +230,7 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -272,7 +272,7 @@ func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -293,7 +293,7 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.SourceUpdateParams{}
+	params := oursprivacy.SourceUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -321,7 +321,7 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -363,7 +363,7 @@ func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])

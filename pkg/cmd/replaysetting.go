@@ -134,7 +134,7 @@ var replaySettingsDelete = cli.Command{
 }
 
 func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -152,7 +152,7 @@ func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ReplaySettingListParams{}
+	params := oursprivacy.ReplaySettingListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -189,7 +189,7 @@ func handleReplaySettingsList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -207,7 +207,7 @@ func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ReplaySettingNewParams{}
+	params := oursprivacy.ReplaySettingNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -230,7 +230,7 @@ func handleReplaySettingsCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -272,7 +272,7 @@ func handleReplaySettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -293,7 +293,7 @@ func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ReplaySettingUpdateParams{}
+	params := oursprivacy.ReplaySettingUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -321,7 +321,7 @@ func handleReplaySettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleReplaySettingsDelete(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])

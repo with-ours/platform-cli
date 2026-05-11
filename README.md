@@ -133,7 +133,7 @@ git tag, or commit hash):
 To link to a local copy of the SDK:
 
 ```bash
-./scripts/link ../path/to/githubcomwithoursplatformsdkgo-go
+./scripts/link ../path/to/oursprivacy-go
 ```
 
-If you run the link script without any arguments, it will default to `../githubcomwithoursplatformsdkgo-go`.
+If you run the link script without any arguments, it will default to `../oursprivacy-go`.

@@ -73,7 +73,7 @@ var allowedEventsDelete = cli.Command{
 }
 
 func handleAllowedEventsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -112,7 +112,7 @@ func handleAllowedEventsList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleAllowedEventsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -130,7 +130,7 @@ func handleAllowedEventsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.AllowedEventNewParams{}
+	params := oursprivacy.AllowedEventNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -153,7 +153,7 @@ func handleAllowedEventsCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleAllowedEventsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -195,7 +195,7 @@ func handleAllowedEventsRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleAllowedEventsDelete(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])

@@ -431,7 +431,7 @@ var experimentsSessionReplays = cli.Command{
 }
 
 func handleExperimentsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -449,7 +449,7 @@ func handleExperimentsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentListParams{}
+	params := oursprivacy.ExperimentListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -486,7 +486,7 @@ func handleExperimentsList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -504,7 +504,7 @@ func handleExperimentsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentNewParams{}
+	params := oursprivacy.ExperimentNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -527,7 +527,7 @@ func handleExperimentsCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -569,7 +569,7 @@ func handleExperimentsRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -590,7 +590,7 @@ func handleExperimentsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentUpdateParams{}
+	params := oursprivacy.ExperimentUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -618,7 +618,7 @@ func handleExperimentsUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsDelete(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -660,7 +660,7 @@ func handleExperimentsDelete(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsStart(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -681,7 +681,7 @@ func handleExperimentsStart(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentStartParams{}
+	params := oursprivacy.ExperimentStartParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -709,7 +709,7 @@ func handleExperimentsStart(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsStop(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -730,7 +730,7 @@ func handleExperimentsStop(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentStopParams{}
+	params := oursprivacy.ExperimentStopParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -758,7 +758,7 @@ func handleExperimentsStop(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsPause(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -779,7 +779,7 @@ func handleExperimentsPause(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentPauseParams{}
+	params := oursprivacy.ExperimentPauseParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -807,7 +807,7 @@ func handleExperimentsPause(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsResume(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -828,7 +828,7 @@ func handleExperimentsResume(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentResumeParams{}
+	params := oursprivacy.ExperimentResumeParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -856,7 +856,7 @@ func handleExperimentsResume(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsResults(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -877,7 +877,7 @@ func handleExperimentsResults(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentResultsParams{}
+	params := oursprivacy.ExperimentResultsParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -905,7 +905,7 @@ func handleExperimentsResults(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsResultsTimeSeries(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -926,7 +926,7 @@ func handleExperimentsResultsTimeSeries(ctx context.Context, cmd *cli.Command) e
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentResultsTimeSeriesParams{}
+	params := oursprivacy.ExperimentResultsTimeSeriesParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -954,7 +954,7 @@ func handleExperimentsResultsTimeSeries(ctx context.Context, cmd *cli.Command) e
 }
 
 func handleExperimentsSessionReplays(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -975,7 +975,7 @@ func handleExperimentsSessionReplays(ctx context.Context, cmd *cli.Command) erro
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentSessionReplaysParams{}
+	params := oursprivacy.ExperimentSessionReplaysParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))

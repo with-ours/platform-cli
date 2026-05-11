@@ -240,7 +240,7 @@ var versionsDiff = cli.Command{
 }
 
 func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -258,7 +258,7 @@ func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionListParams{}
+	params := oursprivacy.VersionListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -295,7 +295,7 @@ func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -313,7 +313,7 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionNewParams{}
+	params := oursprivacy.VersionNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -336,7 +336,7 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -378,7 +378,7 @@ func handleVersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -399,7 +399,7 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionUpdateParams{}
+	params := oursprivacy.VersionUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -427,7 +427,7 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsPublish(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -469,7 +469,7 @@ func handleVersionsPublish(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsSnapshot(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -511,7 +511,7 @@ func handleVersionsSnapshot(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsDiff(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -532,13 +532,13 @@ func handleVersionsDiff(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionDiffParams{}
+	params := oursprivacy.VersionDiffParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Versions.Diff(
 		ctx,
-		githubcomwithoursplatformsdkgo.VersionDiffParamsID(cmd.Value("id").(string)),
+		oursprivacy.VersionDiffParamsID(cmd.Value("id").(string)),
 		params,
 		options...,
 	)
