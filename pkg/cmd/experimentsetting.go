@@ -109,7 +109,7 @@ var experimentSettingsDelete = cli.Command{
 }
 
 func handleExperimentSettingsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -148,7 +148,7 @@ func handleExperimentSettingsList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -166,7 +166,7 @@ func handleExperimentSettingsCreate(ctx context.Context, cmd *cli.Command) error
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentSettingNewParams{}
+	params := oursprivacy.ExperimentSettingNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -189,7 +189,7 @@ func handleExperimentSettingsCreate(ctx context.Context, cmd *cli.Command) error
 }
 
 func handleExperimentSettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -231,7 +231,7 @@ func handleExperimentSettingsRetrieve(ctx context.Context, cmd *cli.Command) err
 }
 
 func handleExperimentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -252,7 +252,7 @@ func handleExperimentSettingsUpdate(ctx context.Context, cmd *cli.Command) error
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentSettingUpdateParams{}
+	params := oursprivacy.ExperimentSettingUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -280,7 +280,7 @@ func handleExperimentSettingsUpdate(ctx context.Context, cmd *cli.Command) error
 }
 
 func handleExperimentSettingsDelete(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
