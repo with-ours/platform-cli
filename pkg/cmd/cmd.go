@@ -176,6 +176,15 @@ func init() {
 				},
 			},
 			{
+				Name:     "heatmap-pages",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&heatmapPagesList,
+					&heatmapPagesSummary,
+				},
+			},
+			{
 				Name:     "mappings",
 				Category: "API RESOURCE",
 				Suggest:  true,
