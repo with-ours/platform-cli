@@ -30,7 +30,7 @@ var destinationsCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    `Allowed values: "AWSEventBridge", "AWSKinesis", "AWSLambda", "AWSS3", "AWSSNS", "ActiveCampaignApi", "Admitad", "AmazonDSP", "Amplitude", "AppLovin", "ArtsAI", "Attentive", "Audiohook", "AzureBlob", "BasisPostback", "BingAds", "BingAdsWeb", "Braze", "ConvertABTestingEvent", "Customerio", "DomoWarehouse", "Everflow", "Facebook", "FloodlightSGTM", "FullContact", "G4Analytics", "GA4MeasurementProtocol", "GA4ServerProxy", "Google", "GoogleAds360", "GoogleAdsServerContainer", "GoogleBigQuery", "GoogleBigQueryWarehouse", "GoogleDataManagerEventIngest", "GooglePubSub", "GoogleStorage", "HTTPCustomRequest", "HTTPDestination", "Hubspot", "IHeartMediaMagellan", "Impact", "Iterable", "Klaviyo", "LinkedInAdsCAPI", "LiveIntent", "LiveRampWarehouse", "Mailchimp", "Mixpanel", "NextdoorAds", "OursSyntheticData", "Partnerize", "Pinterest", "Plausible", "Podscribe", "PostHog", "QuantcastCAPI", "QuoraAds", "Reddit", "RokuCAPI", "SnapchatAdsCapi", "Spotify", "StackAdaptAPI", "Taboola", "Tatari", "TheTradeDesk", "TikTok", "VWO", "Viant", "Vibe", "Woopra", "XAds", "Zendesk", "ZoomInfo".`,
+			Usage:    `Allowed values: "AWSEventBridge", "AWSKinesis", "AWSLambda", "AWSS3", "AWSSNS", "ActiveCampaignApi", "Admitad", "AmazonDSP", "Amplitude", "AppLovin", "ArtsAI", "Attentive", "Audiohook", "AzureBlob", "BasisPostback", "BeeswaxPostback", "BingAds", "BingAdsWeb", "Braze", "ConvertABTestingEvent", "Customerio", "DomoWarehouse", "Everflow", "Facebook", "FloodlightSGTM", "FullContact", "G4Analytics", "GA4MeasurementProtocol", "GA4ServerProxy", "Google", "GoogleAds360", "GoogleAdsServerContainer", "GoogleBigQuery", "GoogleBigQueryWarehouse", "GoogleDataManagerEventIngest", "GooglePubSub", "GoogleStorage", "HTTPCustomRequest", "HTTPDestination", "Hubspot", "IHeartMediaMagellan", "Impact", "Iterable", "Klaviyo", "LinkedInAdsCAPI", "LiveIntent", "LiveRampWarehouse", "Mailchimp", "Mixpanel", "NextdoorAds", "OursSyntheticData", "Partnerize", "Pinterest", "Plausible", "Podscribe", "PostHog", "QuantcastCAPI", "QuoraAds", "Reddit", "RokuCAPI", "SnapchatAdsCapi", "Spotify", "StackAdaptAPI", "Taboola", "Tatari", "TheTradeDesk", "TikTok", "VWO", "Viant", "Vibe", "Woopra", "XAds", "Zendesk", "ZoomInfo".`,
 			Required: true,
 			BodyPath: "type",
 		},
@@ -60,7 +60,7 @@ var destinationsRetrieve = cli.Command{
 
 var destinationsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a destination. Only the fields you send are changed. Requires\nscope: destination:update",
+	Usage:   "Partially update a destination. Only the fields you send are changed; omitted\nfields are unchanged. The `settings` object is deep-merged into the existing\nsettings by default — keys you omit keep their current value. Pass\n`?settings_strategy=replace` to wipe and replace the settings blob entirely.\nRequires scope: destination:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -69,10 +69,9 @@ var destinationsUpdate = cli.Command{
 			PathParam: "id",
 		},
 		&requestflag.Flag[string]{
-			Name:     "status",
-			Usage:    `Allowed values: "Disabled", "Enabled".`,
-			Required: true,
-			BodyPath: "status",
+			Name:      "settings-strategy",
+			Usage:     `Allowed values: "merge", "replace".`,
+			QueryPath: "settings_strategy",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "facebook-conversion-api-key",
@@ -129,6 +128,11 @@ var destinationsUpdate = cli.Command{
 		&requestflag.Flag[any]{
 			Name:     "settings",
 			BodyPath: "settings",
+		},
+		&requestflag.Flag[*string]{
+			Name:     "status",
+			Usage:    `Allowed values: "Disabled", "Enabled".`,
+			BodyPath: "status",
 		},
 	},
 	Action:          handleDestinationsUpdate,

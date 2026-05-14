@@ -60,7 +60,7 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"destinations", "update",
 			"--id", "id",
-			"--status", "Disabled",
+			"--settings-strategy", "merge",
 			"--facebook-conversion-api-key", "facebookConversionAPIKey",
 			"--facebook-pixel-id", "facebookPixelId",
 			"--g4-analytics-api-key", "g4AnalyticsApiKey",
@@ -75,13 +75,13 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--project-token", "projectToken",
 			"--selected-account-id", "selectedAccountId",
 			"--settings", "{}",
+			"--status", "Disabled",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"status: Disabled\n" +
 			"facebookConversionAPIKey: facebookConversionAPIKey\n" +
 			"facebookPixelId: facebookPixelId\n" +
 			"g4AnalyticsApiKey: g4AnalyticsApiKey\n" +
@@ -96,12 +96,14 @@ func TestDestinationsUpdate(t *testing.T) {
 			"projectAPIKey: projectAPIKey\n" +
 			"projectToken: projectToken\n" +
 			"selectedAccountId: selectedAccountId\n" +
-			"settings: {}\n")
+			"settings: {}\n" +
+			"status: Disabled\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
 			"destinations", "update",
 			"--id", "id",
+			"--settings-strategy", "merge",
 		)
 	})
 }

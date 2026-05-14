@@ -236,6 +236,15 @@ func init() {
 				},
 			},
 			{
+				Name:     "destination-types",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&destinationTypesList,
+					&destinationTypesRetrieve,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "oursprivacy @manpages [-o oursprivacy.1] [--gzip]",
