@@ -185,6 +185,17 @@ func init() {
 				},
 			},
 			{
+				Name:     "locations",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&locationsList,
+					&locationsCreate,
+					&locationsUpdate,
+					&locationsEmbedCode,
+				},
+			},
+			{
 				Name:     "mappings",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -242,17 +253,6 @@ func init() {
 				Commands: []*cli.Command{
 					&destinationTypesList,
 					&destinationTypesRetrieve,
-				},
-			},
-			{
-				Name:     "locations",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&locationsList,
-					&locationsCreate,
-					&locationsUpdate,
-					&locationsEmbedCode,
 				},
 			},
 			{
