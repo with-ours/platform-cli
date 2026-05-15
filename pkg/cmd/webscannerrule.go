@@ -14,38 +14,78 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var destinationsList = cli.Command{
-	Name:            "list",
-	Usage:           "List all destinations. Requires scope: destination:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
-	Action:          handleDestinationsList,
+var webScannerRulesList = cli.Command{
+	Name:    "list",
+	Usage:   "List suppression rules for a single web scanner. Requires the `scannerId` query\nparameter — rules are always scoped to a parent scanner. Not paginated; the\nper-scanner rule count is bounded. Requires scope: webScanner:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "scanner-id",
+			Usage:     "The web scanner whose suppression rules should be returned.",
+			Required:  true,
+			QueryPath: "scannerId",
+		},
+	},
+	Action:          handleWebScannerRulesList,
 	HideHelpCommand: true,
 }
 
-var destinationsCreate = cli.Command{
+var webScannerRulesCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new destination. Requires scope: destination:create",
+	Usage:   "Create a suppression rule on a web scanner. Auth is enforced against the parent\nscanner via `webScanner:update`. At least one of `cookiePatterns`,\n`domainPatterns`, or `scriptPatterns` should be set for the rule to match\nanything; omitted pattern arrays default to `[]`. Requires scope:\nwebScanner:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
-			Name:     "type",
-			Usage:    `Allowed values: "AWSEventBridge", "AWSKinesis", "AWSLambda", "AWSS3", "AWSSNS", "ActiveCampaignApi", "Admitad", "AdobeAnalytics", "AmazonDSP", "Amplitude", "AppLovin", "ArtsAI", "Attentive", "Audiohook", "AzureBlob", "BasisPostback", "BeeswaxPostback", "BingAds", "BingAdsWeb", "Braze", "ConvertABTestingEvent", "Customerio", "DomoWarehouse", "Everflow", "Facebook", "FloodlightSGTM", "FullContact", "G4Analytics", "GA4MeasurementProtocol", "GA4ServerProxy", "Google", "GoogleAds360", "GoogleAdsServerContainer", "GoogleBigQuery", "GoogleBigQueryWarehouse", "GoogleDataManagerEventIngest", "GooglePubSub", "GoogleStorage", "HTTPCustomRequest", "HTTPDestination", "Hubspot", "IHeartMediaMagellan", "Impact", "Iterable", "Klaviyo", "LinkedInAdsCAPI", "LiveIntent", "LiveRampWarehouse", "Mailchimp", "Mixpanel", "NextdoorAds", "OursSyntheticData", "Partnerize", "Pinterest", "Plausible", "Podscribe", "PostHog", "QuantcastCAPI", "QuoraAds", "Reddit", "RokuCAPI", "SnapchatAdsCapi", "Spotify", "StackAdaptAPI", "Taboola", "Tatari", "TheTradeDesk", "TikTok", "VWO", "Viant", "Vibe", "Woopra", "XAds", "Zendesk", "ZoomInfo".`,
+			Name:     "name",
+			Usage:    "User-friendly name for the suppression rule.",
 			Required: true,
-			BodyPath: "type",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "name",
 			BodyPath: "name",
 		},
+		&requestflag.Flag[int64]{
+			Name:     "priority",
+			Usage:    "Rule priority (1–10,000). Lower numbers are evaluated first when multiple rules match.",
+			Required: true,
+			BodyPath: "priority",
+		},
+		&requestflag.Flag[string]{
+			Name:     "scanner-id",
+			Usage:    "The web scanner this rule belongs to.",
+			Required: true,
+			BodyPath: "scannerId",
+		},
+		&requestflag.Flag[[]string]{
+			Name:     "cookie-pattern",
+			Usage:    "Glob patterns matched against cookie names (e.g. `_ga*`). Max 100 entries. When sent on PATCH, replaces the existing list wholesale.",
+			BodyPath: "cookiePatterns",
+		},
+		&requestflag.Flag[[]string]{
+			Name:     "domain-pattern",
+			Usage:    "Glob patterns matched against cookie domain / script hostname (e.g. `*.google-analytics.com`). Max 100 entries. When sent on PATCH, replaces the existing list wholesale.",
+			BodyPath: "domainPatterns",
+		},
+		&requestflag.Flag[*string]{
+			Name:     "notes",
+			Usage:    "Free-form notes about why this rule exists or what it covers. Trimmed server-side; empty strings become `null`.",
+			BodyPath: "notes",
+		},
+		&requestflag.Flag[*string]{
+			Name:     "reason",
+			Usage:    "Why this rule was added. Surfaced in audit views. Send `null` to clear an existing reason on patch.",
+			BodyPath: "reason",
+		},
+		&requestflag.Flag[[]string]{
+			Name:     "script-pattern",
+			Usage:    "Glob patterns matched against full script URLs (e.g. `https://www.googletagmanager.com/gtm.js?id=*`). Max 100 entries. When sent on PATCH, replaces the existing list wholesale.",
+			BodyPath: "scriptPatterns",
+		},
 	},
-	Action:          handleDestinationsCreate,
+	Action:          handleWebScannerRulesCreate,
 	HideHelpCommand: true,
 }
 
-var destinationsRetrieve = cli.Command{
+var webScannerRulesRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single destination by ID. Requires scope: destination:find",
+	Usage:   "Find a single web scanner rule by ID. Requires scope: webScanner:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -54,13 +94,13 @@ var destinationsRetrieve = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleDestinationsRetrieve,
+	Action:          handleWebScannerRulesRetrieve,
 	HideHelpCommand: true,
 }
 
-var destinationsUpdate = cli.Command{
+var webScannerRulesUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a destination. Only the fields you send are changed; omitted\nfields are unchanged. The `settings` object is deep-merged into the existing\nsettings by default — keys you omit keep their current value. Pass\n`?settings_strategy=replace` to wipe and replace the settings blob entirely.\nRequires scope: destination:update",
+	Usage:   "Partially update a suppression rule. Only the fields you send are changed.\nList-valued fields (`cookiePatterns`, `domainPatterns`, `scriptPatterns`) are\nreplaced wholesale when sent. Requires scope: webScanner:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -68,80 +108,47 @@ var destinationsUpdate = cli.Command{
 			Required:  true,
 			PathParam: "id",
 		},
+		&requestflag.Flag[[]string]{
+			Name:     "cookie-pattern",
+			Usage:    "Glob patterns matched against cookie names (e.g. `_ga*`). Max 100 entries. When sent on PATCH, replaces the existing list wholesale.",
+			BodyPath: "cookiePatterns",
+		},
+		&requestflag.Flag[[]string]{
+			Name:     "domain-pattern",
+			Usage:    "Glob patterns matched against cookie domain / script hostname (e.g. `*.google-analytics.com`). Max 100 entries. When sent on PATCH, replaces the existing list wholesale.",
+			BodyPath: "domainPatterns",
+		},
 		&requestflag.Flag[string]{
-			Name:      "settings-strategy",
-			Usage:     `Allowed values: "merge", "replace".`,
-			QueryPath: "settings_strategy",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "facebook-conversion-api-key",
-			BodyPath: "facebookConversionAPIKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "facebook-pixel-id",
-			BodyPath: "facebookPixelId",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "g4-analytics-api-key",
-			BodyPath: "g4AnalyticsApiKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "g4-analytics-measurement-id",
-			BodyPath: "g4AnalyticsMeasurementId",
-		},
-		&requestflag.Flag[*bool]{
-			Name:     "g4-analytics-track-on-page",
-			BodyPath: "g4AnalyticsTrackOnPage",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "hashing-salt",
-			BodyPath: "hashingSalt",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "http-destination-url",
-			BodyPath: "httpDestinationUrl",
-		},
-		&requestflag.Flag[any]{
-			Name:     "limited-to-source-id",
-			BodyPath: "limitedToSourceIds",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "manager-google-customer-id",
-			BodyPath: "managerGoogleCustomerId",
-		},
-		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
 		&requestflag.Flag[*string]{
-			Name:     "project-api-key",
-			BodyPath: "projectAPIKey",
+			Name:     "notes",
+			Usage:    "Free-form notes about why this rule exists or what it covers. Trimmed server-side; empty strings become `null`.",
+			BodyPath: "notes",
+		},
+		&requestflag.Flag[int64]{
+			Name:     "priority",
+			BodyPath: "priority",
 		},
 		&requestflag.Flag[*string]{
-			Name:     "project-token",
-			BodyPath: "projectToken",
+			Name:     "reason",
+			Usage:    "Why this rule was added. Surfaced in audit views. Send `null` to clear an existing reason on patch.",
+			BodyPath: "reason",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "selected-account-id",
-			BodyPath: "selectedAccountId",
-		},
-		&requestflag.Flag[any]{
-			Name:     "settings",
-			BodyPath: "settings",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "status",
-			Usage:    `Allowed values: "Disabled", "Enabled".`,
-			BodyPath: "status",
+		&requestflag.Flag[[]string]{
+			Name:     "script-pattern",
+			Usage:    "Glob patterns matched against full script URLs (e.g. `https://www.googletagmanager.com/gtm.js?id=*`). Max 100 entries. When sent on PATCH, replaces the existing list wholesale.",
+			BodyPath: "scriptPatterns",
 		},
 	},
-	Action:          handleDestinationsUpdate,
+	Action:          handleWebScannerRulesUpdate,
 	HideHelpCommand: true,
 }
 
-var destinationsDelete = cli.Command{
+var webScannerRulesDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a destination. Requires scope: destination:delete",
+	Usage:   "Delete a web scanner rule. Requires scope: webScanner:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -150,11 +157,11 @@ var destinationsDelete = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleDestinationsDelete,
+	Action:          handleWebScannerRulesDelete,
 	HideHelpCommand: true,
 }
 
-func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
+func handleWebScannerRulesList(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -173,9 +180,11 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := oursprivacy.WebScannerRuleListParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.List(ctx, options...)
+	_, err = client.WebScannerRules.List(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -188,12 +197,12 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations list",
+		Title:          "web-scanner-rules list",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
+func handleWebScannerRulesCreate(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -212,11 +221,11 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := oursprivacy.DestinationNewParams{}
+	params := oursprivacy.WebScannerRuleNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.New(ctx, params, options...)
+	_, err = client.WebScannerRules.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -229,12 +238,12 @@ func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations create",
+		Title:          "web-scanner-rules create",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleWebScannerRulesRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -258,7 +267,7 @@ func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.WebScannerRules.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -271,12 +280,12 @@ func handleDestinationsRetrieve(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations retrieve",
+		Title:          "web-scanner-rules retrieve",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleWebScannerRulesUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -298,11 +307,11 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := oursprivacy.DestinationUpdateParams{}
+	params := oursprivacy.WebScannerRuleUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Update(
+	_, err = client.WebScannerRules.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -320,12 +329,12 @@ func handleDestinationsUpdate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations update",
+		Title:          "web-scanner-rules update",
 		Transform:      transform,
 	})
 }
 
-func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
+func handleWebScannerRulesDelete(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -349,7 +358,7 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.WebScannerRules.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -362,7 +371,7 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations delete",
+		Title:          "web-scanner-rules delete",
 		Transform:      transform,
 	})
 }
