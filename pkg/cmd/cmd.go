@@ -256,6 +256,31 @@ func init() {
 				},
 			},
 			{
+				Name:     "web-scanner-rules",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&webScannerRulesList,
+					&webScannerRulesCreate,
+					&webScannerRulesRetrieve,
+					&webScannerRulesUpdate,
+					&webScannerRulesDelete,
+				},
+			},
+			{
+				Name:     "web-scanners",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&webScannersList,
+					&webScannersCreate,
+					&webScannersRetrieve,
+					&webScannersUpdate,
+					&webScannersDelete,
+					&webScannersTrigger,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "oursprivacy @manpages [-o oursprivacy.1] [--gzip]",
