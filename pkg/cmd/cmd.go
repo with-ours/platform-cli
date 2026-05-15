@@ -109,6 +109,15 @@ func init() {
 				},
 			},
 			{
+				Name:     "destination-types",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&destinationTypesList,
+					&destinationTypesRetrieve,
+				},
+			},
+			{
 				Name:     "destinations",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -244,15 +253,6 @@ func init() {
 					&versionsPublish,
 					&versionsSnapshot,
 					&versionsDiff,
-				},
-			},
-			{
-				Name:     "destination-types",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&destinationTypesList,
-					&destinationTypesRetrieve,
 				},
 			},
 			{
