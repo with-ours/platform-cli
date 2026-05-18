@@ -14,6 +14,11 @@ func TestDestinationsList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"destinations", "list",
+			"--max-items", "10",
+			"--cursor", "cursor",
+			"--limit", "25",
+			"--status", "Disabled",
+			"--type", "AWSEventBridge",
 		)
 	})
 }
@@ -24,16 +29,18 @@ func TestDestinationsCreate(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"destinations", "create",
-			"--type", "AWSEventBridge",
+			"--type", "Audiohook",
 			"--name", "name",
+			"--settings", "{}",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"type: AWSEventBridge\n" +
-			"name: name\n")
+			"type: Audiohook\n" +
+			"name: name\n" +
+			"settings: {}\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
@@ -60,20 +67,9 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"destinations", "update",
 			"--id", "id",
-			"--settings-strategy", "merge",
-			"--facebook-conversion-api-key", "facebookConversionAPIKey",
-			"--facebook-pixel-id", "facebookPixelId",
-			"--g4-analytics-api-key", "g4AnalyticsApiKey",
-			"--g4-analytics-measurement-id", "g4AnalyticsMeasurementId",
-			"--g4-analytics-track-on-page=true",
 			"--hashing-salt", "hashingSalt",
-			"--http-destination-url", "httpDestinationUrl",
 			"--limited-to-source-id", "[string]",
-			"--manager-google-customer-id", "managerGoogleCustomerId",
 			"--name", "name",
-			"--project-api-key", "projectAPIKey",
-			"--project-token", "projectToken",
-			"--selected-account-id", "selectedAccountId",
 			"--settings", "{}",
 			"--status", "Disabled",
 		)
@@ -82,20 +78,10 @@ func TestDestinationsUpdate(t *testing.T) {
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"facebookConversionAPIKey: facebookConversionAPIKey\n" +
-			"facebookPixelId: facebookPixelId\n" +
-			"g4AnalyticsApiKey: g4AnalyticsApiKey\n" +
-			"g4AnalyticsMeasurementId: g4AnalyticsMeasurementId\n" +
-			"g4AnalyticsTrackOnPage: true\n" +
 			"hashingSalt: hashingSalt\n" +
-			"httpDestinationUrl: httpDestinationUrl\n" +
 			"limitedToSourceIds:\n" +
 			"  - string\n" +
-			"managerGoogleCustomerId: managerGoogleCustomerId\n" +
 			"name: name\n" +
-			"projectAPIKey: projectAPIKey\n" +
-			"projectToken: projectToken\n" +
-			"selectedAccountId: selectedAccountId\n" +
 			"settings: {}\n" +
 			"status: Disabled\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
@@ -103,7 +89,6 @@ func TestDestinationsUpdate(t *testing.T) {
 			"--api-key", "string",
 			"destinations", "update",
 			"--id", "id",
-			"--settings-strategy", "merge",
 		)
 	})
 }

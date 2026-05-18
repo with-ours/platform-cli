@@ -24,7 +24,7 @@ func TestDestinationTypesRetrieve(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"destination-types", "retrieve",
-			"--id", "AWSEventBridge",
+			"--id", "x",
 		)
 	})
 }
