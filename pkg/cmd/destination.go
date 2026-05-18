@@ -15,10 +15,35 @@ import (
 )
 
 var destinationsList = cli.Command{
-	Name:            "list",
-	Usage:           "List all destinations. Requires scope: destination:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "list",
+	Usage:   "List all destinations. Requires scope: destination:list",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of items to return. Defaults to 25; values below 1 are clamped to 1 and values above 100 are clamped to 100.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[string]{
+			Name:      "status",
+			Usage:     "Filter destinations by status.",
+			QueryPath: "status",
+		},
+		&requestflag.Flag[string]{
+			Name:      "type",
+			Usage:     "Filter destinations by destination type.",
+			QueryPath: "type",
+		},
+		&requestflag.Flag[int64]{
+			Name:  "max-items",
+			Usage: "The maximum number of items to return (use -1 for unlimited).",
+		},
+	},
 	Action:          handleDestinationsList,
 	HideHelpCommand: true,
 }
@@ -30,13 +55,18 @@ var destinationsCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    `Allowed values: "AWSEventBridge", "AWSKinesis", "AWSLambda", "AWSS3", "AWSSNS", "ActiveCampaignApi", "Admitad", "AdobeAnalytics", "AmazonDSP", "Amplitude", "AppLovin", "ArtsAI", "Attentive", "Audiohook", "AzureBlob", "BasisPostback", "BeeswaxPostback", "BingAds", "BingAdsWeb", "Braze", "ConvertABTestingEvent", "Customerio", "DomoWarehouse", "Everflow", "Facebook", "FloodlightSGTM", "FullContact", "G4Analytics", "GA4MeasurementProtocol", "GA4ServerProxy", "Google", "GoogleAds360", "GoogleAdsServerContainer", "GoogleBigQuery", "GoogleBigQueryWarehouse", "GoogleDataManagerEventIngest", "GooglePubSub", "GoogleStorage", "HTTPCustomRequest", "HTTPDestination", "Hubspot", "IHeartMediaMagellan", "Impact", "Iterable", "Klaviyo", "LinkedInAdsCAPI", "LiveIntent", "LiveRampWarehouse", "Mailchimp", "Mixpanel", "NextdoorAds", "OursSyntheticData", "Partnerize", "Pinterest", "Plausible", "Podscribe", "PostHog", "QuantcastCAPI", "QuoraAds", "Reddit", "RokuCAPI", "SnapchatAdsCapi", "Spotify", "StackAdaptAPI", "Taboola", "Tatari", "TheTradeDesk", "TikTok", "VWO", "Viant", "Vibe", "Woopra", "XAds", "Zendesk", "ZoomInfo".`,
+			Usage:    "Event-dispatch destination type to create. Warehouse and cloud-storage destination types may appear on read responses but are not creatable through POST.",
 			Required: true,
 			BodyPath: "type",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "settings",
+			Usage:    "Per-type configuration keys and values. Call GET /rest/v1/destination-types/{id} to get the valid keys for your destination type.",
+			BodyPath: "settings",
 		},
 	},
 	Action:          handleDestinationsCreate,
@@ -60,7 +90,7 @@ var destinationsRetrieve = cli.Command{
 
 var destinationsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a destination. Only the fields you send are changed; omitted\nfields are unchanged. The `settings` object is deep-merged into the existing\nsettings by default — keys you omit keep their current value. Pass\n`?settings_strategy=replace` to wipe and replace the settings blob entirely.\nRequires scope: destination:update",
+	Usage:   "Partially update a destination. Only the fields you send are changed; omitted\nfields are unchanged. The `settings` object is patch-only: omitted keys keep\ntheir current value, and send `null` to clear a specific setting. Requires\nscope: destination:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -68,65 +98,21 @@ var destinationsUpdate = cli.Command{
 			Required:  true,
 			PathParam: "id",
 		},
-		&requestflag.Flag[string]{
-			Name:      "settings-strategy",
-			Usage:     `Allowed values: "merge", "replace".`,
-			QueryPath: "settings_strategy",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "facebook-conversion-api-key",
-			BodyPath: "facebookConversionAPIKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "facebook-pixel-id",
-			BodyPath: "facebookPixelId",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "g4-analytics-api-key",
-			BodyPath: "g4AnalyticsApiKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "g4-analytics-measurement-id",
-			BodyPath: "g4AnalyticsMeasurementId",
-		},
-		&requestflag.Flag[*bool]{
-			Name:     "g4-analytics-track-on-page",
-			BodyPath: "g4AnalyticsTrackOnPage",
-		},
 		&requestflag.Flag[*string]{
 			Name:     "hashing-salt",
 			BodyPath: "hashingSalt",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "http-destination-url",
-			BodyPath: "httpDestinationUrl",
 		},
 		&requestflag.Flag[any]{
 			Name:     "limited-to-source-id",
 			BodyPath: "limitedToSourceIds",
 		},
 		&requestflag.Flag[*string]{
-			Name:     "manager-google-customer-id",
-			BodyPath: "managerGoogleCustomerId",
-		},
-		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "project-api-key",
-			BodyPath: "projectAPIKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "project-token",
-			BodyPath: "projectToken",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "selected-account-id",
-			BodyPath: "selectedAccountId",
-		},
 		&requestflag.Flag[any]{
 			Name:     "settings",
+			Usage:    "Per-type configuration keys and values. Call GET /rest/v1/destination-types/{id} to get the valid keys for your destination type.",
 			BodyPath: "settings",
 		},
 		&requestflag.Flag[*string]{
@@ -173,24 +159,40 @@ func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Destinations.List(ctx, options...)
-	if err != nil {
-		return err
-	}
+	params := oursprivacy.DestinationListParams{}
 
-	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "destinations list",
-		Transform:      transform,
-	})
+	if format == "raw" {
+		var res []byte
+		options = append(options, option.WithResponseBodyInto(&res))
+		_, err = client.Destinations.List(ctx, params, options...)
+		if err != nil {
+			return err
+		}
+		obj := gjson.ParseBytes(res)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "destinations list",
+			Transform:      transform,
+		})
+	} else {
+		iter := client.Destinations.ListAutoPaging(ctx, params, options...)
+		maxItems := int64(-1)
+		if cmd.IsSet("max-items") {
+			maxItems = cmd.Value("max-items").(int64)
+		}
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "destinations list",
+			Transform:      transform,
+		})
+	}
 }
 
 func handleDestinationsCreate(ctx context.Context, cmd *cli.Command) error {
