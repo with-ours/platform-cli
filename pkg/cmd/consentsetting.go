@@ -465,7 +465,7 @@ var consentSettingsDelete = cli.Command{
 }
 
 func handleConsentSettingsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -504,7 +504,7 @@ func handleConsentSettingsList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleConsentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -543,7 +543,7 @@ func handleConsentSettingsCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleConsentSettingsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -585,7 +585,7 @@ func handleConsentSettingsRetrieve(ctx context.Context, cmd *cli.Command) error 
 }
 
 func handleConsentSettingsReplace(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -606,7 +606,7 @@ func handleConsentSettingsReplace(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ConsentSettingReplaceParams{}
+	params := oursprivacy.ConsentSettingReplaceParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -634,7 +634,7 @@ func handleConsentSettingsReplace(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleConsentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -655,7 +655,7 @@ func handleConsentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ConsentSettingUpdateParams{}
+	params := oursprivacy.ConsentSettingUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -683,7 +683,7 @@ func handleConsentSettingsUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleConsentSettingsDelete(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])

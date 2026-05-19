@@ -109,6 +109,16 @@ func init() {
 				},
 			},
 			{
+				Name:     "default-mappings",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&defaultMappingsList,
+					&defaultMappingsRetrieve,
+					&defaultMappingsReplace,
+				},
+			},
+			{
 				Name:     "destinations",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -118,6 +128,7 @@ func init() {
 					&destinationsRetrieve,
 					&destinationsUpdate,
 					&destinationsDelete,
+					&destinationsTypes,
 				},
 			},
 			{
@@ -160,6 +171,7 @@ func init() {
 					&experimentsResume,
 					&experimentsResults,
 					&experimentsResultsTimeSeries,
+					&experimentsSessionReplays,
 				},
 			},
 			{
@@ -175,6 +187,26 @@ func init() {
 				},
 			},
 			{
+				Name:     "heatmap-pages",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&heatmapPagesList,
+					&heatmapPagesSummary,
+				},
+			},
+			{
+				Name:     "locations",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&locationsList,
+					&locationsCreate,
+					&locationsUpdate,
+					&locationsEmbedCode,
+				},
+			},
+			{
 				Name:     "mappings",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -184,6 +216,11 @@ func init() {
 					&mappingsRetrieve,
 					&mappingsUpdate,
 					&mappingsDelete,
+					&mappingsReorder,
+					&mappingsTemplates,
+					&mappingsDefaultVariables,
+					&mappingsCustomVariables,
+					&mappingsModifications,
 				},
 			},
 			{
@@ -223,6 +260,31 @@ func init() {
 					&versionsPublish,
 					&versionsSnapshot,
 					&versionsDiff,
+				},
+			},
+			{
+				Name:     "web-scanner-rules",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&webScannerRulesList,
+					&webScannerRulesCreate,
+					&webScannerRulesRetrieve,
+					&webScannerRulesUpdate,
+					&webScannerRulesDelete,
+				},
+			},
+			{
+				Name:     "web-scanners",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&webScannersList,
+					&webScannersCreate,
+					&webScannersRetrieve,
+					&webScannersUpdate,
+					&webScannersDelete,
+					&webScannersTrigger,
 				},
 			},
 			{

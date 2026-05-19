@@ -124,7 +124,7 @@ var experimentsCreate = requestflag.WithInnerFlags(cli.Command{
 	"targeting-rules": {
 		&requestflag.InnerFlag[[]string]{
 			Name:       "targeting-rules.url-patterns",
-			Usage:      "Glob-style URL patterns that must match for the experiment to be eligible. Up to 200 patterns; each pattern up to 2000 characters. An empty array (or omitting the field) matches all URLs — equivalent to `[\"**\"]`.",
+			Usage:      "Glob-style URL patterns that must match for the experiment to be eligible. Up to 200 patterns; each pattern up to 2000 characters. An empty array (or omitting the field) matches all URLs — equivalent to `['**']`. The host(s) targeted here must also appear in the parent experiment settings' `whitelistDomains` — that allowlist is what limits which domains can load your experiments (see `GET /experiment-settings`). If the host is missing, the SDK refuses to load there and the experiment never runs, even after `POST /experiments/{id}/start` succeeds.",
 			InnerField: "urlPatterns",
 		},
 		&requestflag.InnerFlag[*string]{
@@ -229,7 +229,7 @@ var experimentsUpdate = requestflag.WithInnerFlags(cli.Command{
 	"targeting-rules": {
 		&requestflag.InnerFlag[[]string]{
 			Name:       "targeting-rules.url-patterns",
-			Usage:      "Glob-style URL patterns that must match for the experiment to be eligible. Up to 200 patterns; each pattern up to 2000 characters. An empty array (or omitting the field) matches all URLs — equivalent to `[\"**\"]`.",
+			Usage:      "Glob-style URL patterns that must match for the experiment to be eligible. Up to 200 patterns; each pattern up to 2000 characters. An empty array (or omitting the field) matches all URLs — equivalent to `['**']`. The host(s) targeted here must also appear in the parent experiment settings' `whitelistDomains` — that allowlist is what limits which domains can load your experiments (see `GET /experiment-settings`). If the host is missing, the SDK refuses to load there and the experiment never runs, even after `POST /experiments/{id}/start` succeeds.",
 			InnerField: "urlPatterns",
 		},
 		&requestflag.InnerFlag[*string]{
@@ -272,7 +272,7 @@ var experimentsDelete = cli.Command{
 
 var experimentsStart = cli.Command{
 	Name:    "start",
-	Usage:   "Start an experiment. The request body is optional — send `{}` to use defaults.\nRequires scope: experiment:start",
+	Usage:   "Start an experiment. By default also publishes the experiment and its variants\natomically as a new version, making them live for end users — this is the\ncanonical publish path for experiment changes. They do NOT flow through\n`POST /rest/v1/versions`. Pass `{ \"publishAfterStart\": false }` only if a\nseparate publish is desired (e.g. bundling with non-experiment edits via a\nmanual `POST /rest/v1/versions` afterwards). The request body is optional — send\n`{}` to use defaults. Requires scope: experiment:start",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -282,7 +282,7 @@ var experimentsStart = cli.Command{
 		},
 		&requestflag.Flag[bool]{
 			Name:     "publish-after-start",
-			Usage:    "When true (default on the REST surface), publish the current draft version immediately after starting the experiment. Any other unpublished changes in the same account version are included in that publish. Pass `false` explicitly to stage the change without publishing; the response will report `pending_publish`.",
+			Usage:    "When true (the default), atomically publish the experiment and its variants as a new version after starting — this is the canonical publish path for experiment changes. Any other unpublished non-experiment changes (destinations, mappings, settings, etc.) currently in draft are included in the same publish. Pass `false` explicitly to stage the change without publishing; the response will report `pending_publish` and a separate `POST /rest/v1/versions` call is then required.",
 			BodyPath: "publishAfterStart",
 		},
 	},
@@ -400,8 +400,38 @@ var experimentsResultsTimeSeries = cli.Command{
 	HideHelpCommand: true,
 }
 
+var experimentsSessionReplays = cli.Command{
+	Name:    "session-replays",
+	Usage:   "List session replays for sessions in which the `$experiment_impression` event\nfired for this experiment. Each row is one session with the variant the visitor\nwas assigned for that impression. Sessions are ordered newest first by session\nstart. Filter to one variant with `variant_id`. Cursor pagination via `limit`\n(1–100, default 25) and `cursor`; malformed cursors return 400. Requires scope:\nexperiment:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of items to return. Defaults to 25; values below 1 are clamped to 1 and values above 100 are clamped to 100.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[string]{
+			Name:      "variant-id",
+			Usage:     "Optional filter to a single variant ID. Returns sessions for all variants when omitted.",
+			QueryPath: "variant_id",
+		},
+	},
+	Action:          handleExperimentsSessionReplays,
+	HideHelpCommand: true,
+}
+
 func handleExperimentsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -419,7 +449,7 @@ func handleExperimentsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentListParams{}
+	params := oursprivacy.ExperimentListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -456,7 +486,7 @@ func handleExperimentsList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -474,7 +504,7 @@ func handleExperimentsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentNewParams{}
+	params := oursprivacy.ExperimentNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -497,7 +527,7 @@ func handleExperimentsCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -539,7 +569,7 @@ func handleExperimentsRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -560,7 +590,7 @@ func handleExperimentsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentUpdateParams{}
+	params := oursprivacy.ExperimentUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -588,7 +618,7 @@ func handleExperimentsUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsDelete(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -630,7 +660,7 @@ func handleExperimentsDelete(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsStart(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -651,7 +681,7 @@ func handleExperimentsStart(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentStartParams{}
+	params := oursprivacy.ExperimentStartParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -679,7 +709,7 @@ func handleExperimentsStart(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsStop(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -700,7 +730,7 @@ func handleExperimentsStop(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentStopParams{}
+	params := oursprivacy.ExperimentStopParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -728,7 +758,7 @@ func handleExperimentsStop(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsPause(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -749,7 +779,7 @@ func handleExperimentsPause(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentPauseParams{}
+	params := oursprivacy.ExperimentPauseParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -777,7 +807,7 @@ func handleExperimentsPause(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsResume(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -798,7 +828,7 @@ func handleExperimentsResume(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentResumeParams{}
+	params := oursprivacy.ExperimentResumeParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -826,7 +856,7 @@ func handleExperimentsResume(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsResults(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -847,7 +877,7 @@ func handleExperimentsResults(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentResultsParams{}
+	params := oursprivacy.ExperimentResultsParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -875,7 +905,7 @@ func handleExperimentsResults(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleExperimentsResultsTimeSeries(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -896,7 +926,7 @@ func handleExperimentsResultsTimeSeries(ctx context.Context, cmd *cli.Command) e
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.ExperimentResultsTimeSeriesParams{}
+	params := oursprivacy.ExperimentResultsTimeSeriesParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -919,6 +949,55 @@ func handleExperimentsResultsTimeSeries(ctx context.Context, cmd *cli.Command) e
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "experiments results-time-series",
+		Transform:      transform,
+	})
+}
+
+func handleExperimentsSessionReplays(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.ExperimentSessionReplaysParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Experiments.SessionReplays(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "experiments session-replays",
 		Transform:      transform,
 	})
 }

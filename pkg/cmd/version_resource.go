@@ -55,7 +55,7 @@ var versionsList = cli.Command{
 
 var versionsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Publish the current draft (i.e. all unpublished entity changes) as a new\nversion. Returns the full Version on success. Returns HTTP 409 with the reason\nin the response `error` field when there are no draft changes to publish, when\nanother publish is already in flight, or when the action otherwise conflicts\nwith current state. To re-publish an existing version, use POST\n/rest/v1/versions/{id}/publish instead. Requires scope: version:publish",
+	Usage:   "Publish the current draft of non-experiment entities (destinations, mappings,\nexperiment settings, governance rules, etc.) as a new version. Newly created or\nmodified DRAFT experiments and experiment variants are NOT shipped here — call\n`POST /rest/v1/experiments/{id}/start` instead, which atomically publishes the\nexperiment and its variants by default (`publishAfterStart: true`). Returns the\nfull Version on success. Returns HTTP 409 with the reason in the response\n`error` field when there are no draft changes to publish, when another publish\nis already in flight, or when the action otherwise conflicts with current state.\nTo re-publish an existing version, use POST /rest/v1/versions/{id}/publish\ninstead.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[any]{
@@ -240,7 +240,7 @@ var versionsDiff = cli.Command{
 }
 
 func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -258,7 +258,7 @@ func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionListParams{}
+	params := oursprivacy.VersionListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -295,7 +295,7 @@ func handleVersionsList(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
 	if len(unusedArgs) > 0 {
@@ -313,7 +313,7 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionNewParams{}
+	params := oursprivacy.VersionNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -336,7 +336,7 @@ func handleVersionsCreate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -378,7 +378,7 @@ func handleVersionsRetrieve(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -399,7 +399,7 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionUpdateParams{}
+	params := oursprivacy.VersionUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
@@ -427,7 +427,7 @@ func handleVersionsUpdate(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsPublish(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -469,7 +469,7 @@ func handleVersionsPublish(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsSnapshot(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -511,7 +511,7 @@ func handleVersionsSnapshot(ctx context.Context, cmd *cli.Command) error {
 }
 
 func handleVersionsDiff(ctx context.Context, cmd *cli.Command) error {
-	client := githubcomwithoursplatformsdkgo.NewClient(getDefaultRequestOptions(cmd)...)
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
 		cmd.Set("id", unusedArgs[0])
@@ -532,13 +532,13 @@ func handleVersionsDiff(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := githubcomwithoursplatformsdkgo.VersionDiffParams{}
+	params := oursprivacy.VersionDiffParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
 	_, err = client.Versions.Diff(
 		ctx,
-		githubcomwithoursplatformsdkgo.VersionDiffParamsID(cmd.Value("id").(string)),
+		oursprivacy.VersionDiffParamsID(cmd.Value("id").(string)),
 		params,
 		options...,
 	)
