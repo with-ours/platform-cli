@@ -214,6 +214,7 @@ func init() {
 					&mappingsRetrieve,
 					&mappingsUpdate,
 					&mappingsDelete,
+					&mappingsReorder,
 				},
 			},
 			{
@@ -278,6 +279,24 @@ func init() {
 					&webScannersUpdate,
 					&webScannersDelete,
 					&webScannersTrigger,
+				},
+			},
+			{
+				Name:     "mapping-templates",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&mappingTemplatesList,
+				},
+			},
+			{
+				Name:     "default-mappings",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&defaultMappingsList,
+					&defaultMappingsRetrieve,
+					&defaultMappingsReplace,
 				},
 			},
 			{
