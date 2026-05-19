@@ -109,6 +109,16 @@ func init() {
 				},
 			},
 			{
+				Name:     "default-mappings",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&defaultMappingsList,
+					&defaultMappingsRetrieve,
+					&defaultMappingsReplace,
+				},
+			},
+			{
 				Name:     "destination-types",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -205,6 +215,14 @@ func init() {
 				},
 			},
 			{
+				Name:     "mapping-templates",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&mappingTemplatesList,
+				},
+			},
+			{
 				Name:     "mappings",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -279,24 +297,6 @@ func init() {
 					&webScannersUpdate,
 					&webScannersDelete,
 					&webScannersTrigger,
-				},
-			},
-			{
-				Name:     "mapping-templates",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&mappingTemplatesList,
-				},
-			},
-			{
-				Name:     "default-mappings",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&defaultMappingsList,
-					&defaultMappingsRetrieve,
-					&defaultMappingsReplace,
 				},
 			},
 			{
