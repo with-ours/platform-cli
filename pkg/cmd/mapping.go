@@ -44,25 +44,97 @@ var mappingsList = cli.Command{
 	HideHelpCommand: true,
 }
 
-var mappingsCreate = cli.Command{
+var mappingsCreate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "create",
-	Usage:   "Create a new mapping. Requires scope: mapping:create",
+	Usage:   "Create a mapping. Two body shapes are accepted:",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "allowed-event-id",
-			Required: true,
+			Usage:    "Quick-create variant: allowed event to bind the new mapping to. Required together with `destinationId`. Mutually exclusive with `templateId`/`entityId`.",
 			BodyPath: "allowedEventId",
 		},
 		&requestflag.Flag[string]{
 			Name:     "destination-id",
-			Required: true,
+			Usage:    "Quick-create variant: destination that should receive events matched by this mapping. Required together with `allowedEventId`.",
 			BodyPath: "destinationId",
+		},
+		&requestflag.Flag[string]{
+			Name:     "entity-id",
+			Usage:    "Template fat-create variant: destination or source id this mapping belongs to. Required together with `templateId`.",
+			BodyPath: "entityId",
+		},
+		&requestflag.Flag[int64]{
+			Name:     "insert-after-idx",
+			Usage:    "Template fat-create only. Zero-based position in the destination/source priority order to insert this mapping after. Omit to append at the end.",
+			BodyPath: "insertAfterIdx",
+		},
+		&requestflag.Flag[bool]{
+			Name:     "is-enabled",
+			Usage:    "Template fat-create only. Initial enabled state. Defaults to `true`.",
+			BodyPath: "isEnabled",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "logic",
+			Usage:    "Condition tree gating when this mapping fires. A node is either a leaf `condition` or a combinator (`AND`, `OR`, `NOT`). Combinator children are themselves `MappingLogic` nodes, so trees nest arbitrarily. Example leaf: `{ \"condition\": { \"property\": \"$event.event\", \"operator\": \"Is\", \"value\": \"page_view\" } }`. Example combinator: `{ \"AND\": [{ \"condition\": ... }, { \"OR\": [...] }] }`.",
+			BodyPath: "logic",
+		},
+		&requestflag.Flag[[]map[string]any]{
+			Name:     "mapping",
+			Usage:    "Template fat-create only. Optional initial property mappings. When omitted the mapping is seeded with template defaults for sources and non-default destination templates, and with `[]` for default destination templates.",
+			BodyPath: "mappings",
+		},
+		&requestflag.Flag[*string]{
+			Name:     "name",
+			Usage:    "Template fat-create only. Override the auto-generated mapping name.",
+			BodyPath: "name",
+		},
+		&requestflag.Flag[string]{
+			Name:     "template-id",
+			Usage:    "Template fat-create variant: template id from `GET /rest/v1/mapping-templates`. Picks the property descriptor set used to validate `mappings[].property`. Required together with `entityId`.",
+			BodyPath: "templateId",
 		},
 	},
 	Action:          handleMappingsCreate,
 	HideHelpCommand: true,
-}
+}, map[string][]requestflag.HasOuterFlag{
+	"logic": {
+		&requestflag.InnerFlag[any]{
+			Name:       "logic.and",
+			Usage:      "All child nodes must match. Each child is a `MappingLogic` node.",
+			InnerField: "AND",
+		},
+		&requestflag.InnerFlag[map[string]any]{
+			Name:       "logic.condition",
+			InnerField: "condition",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "logic.not",
+			Usage:      "Negates a single child `MappingLogic` node.",
+			InnerField: "NOT",
+		},
+		&requestflag.InnerFlag[any]{
+			Name:       "logic.or",
+			Usage:      "Any child node must match. Each child is a `MappingLogic` node.",
+			InnerField: "OR",
+		},
+	},
+	"mapping": {
+		&requestflag.InnerFlag[string]{
+			Name:       "mapping.map",
+			InnerField: "map",
+		},
+		&requestflag.InnerFlag[string]{
+			Name:       "mapping.property",
+			InnerField: "property",
+		},
+		&requestflag.InnerFlag[*string]{
+			Name:       "mapping.modification",
+			Usage:      `Allowed values: "CamelCase", "DmaIP", "DomainOnly", "DomainPathOnly", "DomainPathUTMs", "DomainUTMs", "FakeDomain", "FakeDomainRealPath", "FakeIP", "FullUrl", "Hash", "HashMD5", "HashedCountry", "HashedDateOfBirth", "HashedGender", "HashedNormalized", "HashedNormalizedNoSpecialChars", "HashedPhone", "HashedState", "HashedZip", "KebabCase", "LowerCase", "None", "Null", "Redacted", "RegionalIP", "SnakeCase", "StartCase", "UpperCase".`,
+			InnerField: "modification",
+		},
+	},
+})
 
 var mappingsRetrieve = cli.Command{
 	Name:    "retrieve",
@@ -81,13 +153,18 @@ var mappingsRetrieve = cli.Command{
 
 var mappingsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a mapping. Only the fields you send are changed. Requires\nscope: mapping:update",
+	Usage:   "Partially update a mapping. Only the fields you send are changed. Send\n`isEnabled: false` to pause the mapping without changing other fields (mirrors\n`status` on destinations). `mappings[]` is replaced wholesale when sent.\nRequires scope: mapping:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "id",
 			Required:  true,
 			PathParam: "id",
+		},
+		&requestflag.Flag[*bool]{
+			Name:     "is-enabled",
+			Usage:    "Flip the mapping on/off without changing other fields. `null` is treated as omitted.",
+			BodyPath: "isEnabled",
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "logic",
@@ -156,6 +233,22 @@ var mappingsDelete = cli.Command{
 		},
 	},
 	Action:          handleMappingsDelete,
+	HideHelpCommand: true,
+}
+
+var mappingsReorder = cli.Command{
+	Name:    "reorder",
+	Usage:   "Reassign `priority` for a set of mappings. Pass `{ uuids: [...] }` with the\nmapping ids in their new order — index 0 becomes the highest-priority mapping.\nAll ids must belong to the same parent entity (source or destination); mixing\nentities returns 400. Requires scope: mapping:update",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[[]string]{
+			Name:     "uuid",
+			Usage:    "Mapping ids in their new priority order, low priority index first. All ids must belong to the same parent entity (source or destination).",
+			Required: true,
+			BodyPath: "uuids",
+		},
+	},
+	Action:          handleMappingsReorder,
 	HideHelpCommand: true,
 }
 
@@ -384,6 +477,47 @@ func handleMappingsDelete(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "mappings delete",
+		Transform:      transform,
+	})
+}
+
+func handleMappingsReorder(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.MappingReorderParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Mappings.Reorder(ctx, params, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "mappings reorder",
 		Transform:      transform,
 	})
 }
