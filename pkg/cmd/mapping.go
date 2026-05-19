@@ -252,6 +252,49 @@ var mappingsReorder = cli.Command{
 	HideHelpCommand: true,
 }
 
+var mappingsTemplates = cli.Command{
+	Name:    "templates",
+	Usage:   "Discover every mapping template available for a destination or source, with full\nproperty descriptors inlined. Use the returned `id` as `templateId` when calling\n`POST /rest/v1/mappings` (template fat-create variant), and use each entry under\n`mappings[]` to learn the valid `property`, `kind`, `modificationOptions`, and\nany enforced `options`. The `isDefault: true` entry is the destination's\nbuilt-in default template (the one stored at `MAPPER#{destinationId}` when\nconfigured via `PUT /rest/v1/default-mappings/{destinationId}`). Requires scope:\nmapping:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "entity-id",
+			Usage:     "Destination or source id. Required.",
+			Required:  true,
+			QueryPath: "entityId",
+		},
+	},
+	Action:          handleMappingsTemplates,
+	HideHelpCommand: true,
+}
+
+var mappingsDefaultVariables = cli.Command{
+	Name:            "default-variables",
+	Usage:           "Lists the platform-provided variables that any mapping `value` can reference\n(e.g. `event.email`, `event.request_context.ip`, `visitor.id`). Account-agnostic\ndiscovery — use these paths as the right-hand side of a mapping field. Requires\nscope: variables:find-default",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleMappingsDefaultVariables,
+	HideHelpCommand: true,
+}
+
+var mappingsCustomVariables = cli.Command{
+	Name:            "custom-variables",
+	Usage:           "Lists the custom variables observed in this account’s recent event stream (last\n14 days). These are dot-paths under `event.event_properties.*` that callers can\ntarget in mapping `value` fields. The result is cached for 10 minutes; an empty\nlist means no custom properties have been seen yet for this account. Requires\nscope: variables:find-custom",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleMappingsCustomVariables,
+	HideHelpCommand: true,
+}
+
+var mappingsModifications = cli.Command{
+	Name:            "modifications",
+	Usage:           "Lists every value accepted on a mapping field’s `modification` property, with a\nhuman-readable label and one-sentence description. Account-agnostic. Use this\nalongside `GET /rest/v1/mapping-templates` to render a labelled modification\npicker without hardcoding the enum. Requires scope: variables:find-default",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleMappingsModifications,
+	HideHelpCommand: true,
+}
+
 func handleMappingsList(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -518,6 +561,164 @@ func handleMappingsReorder(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "mappings reorder",
+		Transform:      transform,
+	})
+}
+
+func handleMappingsTemplates(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.MappingTemplatesParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Mappings.Templates(ctx, params, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "mappings templates",
+		Transform:      transform,
+	})
+}
+
+func handleMappingsDefaultVariables(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Mappings.DefaultVariables(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "mappings default-variables",
+		Transform:      transform,
+	})
+}
+
+func handleMappingsCustomVariables(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Mappings.CustomVariables(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "mappings custom-variables",
+		Transform:      transform,
+	})
+}
+
+func handleMappingsModifications(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Mappings.Modifications(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "mappings modifications",
 		Transform:      transform,
 	})
 }

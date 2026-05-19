@@ -207,3 +207,44 @@ func TestMappingsReorder(t *testing.T) {
 		)
 	})
 }
+
+func TestMappingsTemplates(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"mappings", "templates",
+			"--entity-id", "00000000-0000-0000-0000-000000000000",
+		)
+	})
+}
+
+func TestMappingsDefaultVariables(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"mappings", "default-variables",
+		)
+	})
+}
+
+func TestMappingsCustomVariables(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"mappings", "custom-variables",
+		)
+	})
+}
+
+func TestMappingsModifications(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"mappings", "modifications",
+		)
+	})
+}

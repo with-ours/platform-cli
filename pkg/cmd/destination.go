@@ -65,7 +65,7 @@ var destinationsCreate = cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "settings",
-			Usage:    "Per-type configuration keys and values. Call GET /rest/v1/destination-types/{id} to get the valid keys for your destination type.",
+			Usage:    "Per-type configuration keys and values. Call GET /rest/v1/destinations/types to get the valid keys for your destination type.",
 			BodyPath: "settings",
 		},
 	},
@@ -112,7 +112,7 @@ var destinationsUpdate = cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "settings",
-			Usage:    "Per-type configuration keys and values. Call GET /rest/v1/destination-types/{id} to get the valid keys for your destination type.",
+			Usage:    "Per-type configuration keys and values. Call GET /rest/v1/destinations/types to get the valid keys for your destination type.",
 			BodyPath: "settings",
 		},
 		&requestflag.Flag[*string]{
@@ -137,6 +137,15 @@ var destinationsDelete = cli.Command{
 		},
 	},
 	Action:          handleDestinationsDelete,
+	HideHelpCommand: true,
+}
+
+var destinationsTypes = cli.Command{
+	Name:            "types",
+	Usage:           "Lists every destination type the platform supports, with its human-readable\nlabel, capability flags (oauth, listsAccounts, supportsRenamedEvents), and the\nsettings descriptor used to configure a destination of that type.\nAccount-agnostic — the response is the same for every API key. Filter\nclient-side to find a specific type (e.g. `Klaviyo`, `Facebook`). Requires\nscope: destination:list",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleDestinationsTypes,
 	HideHelpCommand: true,
 }
 
@@ -365,6 +374,45 @@ func handleDestinationsDelete(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "destinations delete",
+		Transform:      transform,
+	})
+}
+
+func handleDestinationsTypes(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Destinations.Types(ctx, options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "destinations types",
 		Transform:      transform,
 	})
 }
