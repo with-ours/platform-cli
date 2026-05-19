@@ -103,3 +103,13 @@ func TestDestinationsDelete(t *testing.T) {
 		)
 	})
 }
+
+func TestDestinationsTypes(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"destinations", "types",
+		)
+	})
+}
