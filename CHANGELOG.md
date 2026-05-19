@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.11.0 (2026-05-19)
+
+Full Changelog: [v1.10.0...v1.11.0](https://github.com/with-ours/platform-cli/compare/v1.10.0...v1.11.0)
+
+### Features
+
+* **api:** api update ([34ea1d1](https://github.com/with-ours/platform-cli/commit/34ea1d136e16a61788cc5e9802d9de263b163472))
+* **api:** api update ([1769bb1](https://github.com/with-ours/platform-cli/commit/1769bb15854201c8f7b272bf541fbd7cce7d519a))
+* **api:** api update ([26717ab](https://github.com/with-ours/platform-cli/commit/26717ab2ba59b28307e8d2c7a1bad908b8f0d674))
+* **api:** api update ([cc96711](https://github.com/with-ours/platform-cli/commit/cc96711ef40e503a39c4eeb7ce1e5494e66414ca))
+* **api:** api update ([8ef0370](https://github.com/with-ours/platform-cli/commit/8ef03708af853b7afd64493e6ef3e744fc69cd4e))
+* **api:** api update ([d569466](https://github.com/with-ours/platform-cli/commit/d569466798da08c976989f047201d5555d30a280))
+* **api:** api update ([53f1553](https://github.com/with-ours/platform-cli/commit/53f1553d133af776a80bc03188e35966c5c095ee))
+* **api:** api update ([1263818](https://github.com/with-ours/platform-cli/commit/1263818c451af3ff25521f92198cc16688e0a89a))
+* **api:** locations resource declaration ([4d0b0f2](https://github.com/with-ours/platform-cli/commit/4d0b0f2e596c1ec93046ae9d0409cfd0f16d22b8))
+* **api:** manual updates ([00b7f63](https://github.com/with-ours/platform-cli/commit/00b7f63c51a96d175e18c73381c17236d71401ae))
+* **api:** manual updates ([8513e5a](https://github.com/with-ours/platform-cli/commit/8513e5a93e7e7f5b669a57a429018755920b10ec))
+* **api:** manual updates ([3ec5ecc](https://github.com/with-ours/platform-cli/commit/3ec5ecc9f37fcb989959edede7f8317276ecad3b))
+* **api:** manual updates ([023bfc2](https://github.com/with-ours/platform-cli/commit/023bfc2bfb50ff4ec5b41793e48c6fd8c7e41ae8))
+
+
+### Chores
+
+* **internal:** codegen related update ([83f3d55](https://github.com/with-ours/platform-cli/commit/83f3d55be8a9fc1734cbaee6d031e618b1faefac))
+* remove custom code ([be7c388](https://github.com/with-ours/platform-cli/commit/be7c3887d07b5e4b42f6b883d5dbc9b913953e6f))
+
 ## 1.10.0 (2026-05-08)
 
 Full Changelog: [v1.9.0...v1.10.0](https://github.com/with-ours/platform-cli/compare/v1.9.0...v1.10.0)
