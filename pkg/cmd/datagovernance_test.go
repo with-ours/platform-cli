@@ -9,12 +9,12 @@ import (
 	"github.com/with-ours/platform-cli/internal/requestflag"
 )
 
-func TestGlobalDispatchCentersList(t *testing.T) {
+func TestDataGovernanceList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "list",
+			"data-governance", "list",
 			"--max-items", "10",
 			"--cursor", "cursor",
 			"--limit", "25",
@@ -22,12 +22,12 @@ func TestGlobalDispatchCentersList(t *testing.T) {
 	})
 }
 
-func TestGlobalDispatchCentersCreate(t *testing.T) {
+func TestDataGovernanceCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "create",
+			"data-governance", "create",
 			"--is-enabled=true",
 			"--name", "name",
 			"--notes", "notes",
@@ -43,30 +43,30 @@ func TestGlobalDispatchCentersCreate(t *testing.T) {
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"global-dispatch-centers", "create",
+			"data-governance", "create",
 		)
 	})
 }
 
-func TestGlobalDispatchCentersRetrieve(t *testing.T) {
+func TestDataGovernanceRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "retrieve",
+			"data-governance", "retrieve",
 			"--id", "id",
 		)
 	})
 }
 
-func TestGlobalDispatchCentersUpdate(t *testing.T) {
+func TestDataGovernanceUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "update",
+			"data-governance", "update",
 			"--id", "id",
-			"--category", "[{description: description, destinationIds: [string], logic: {}, name: name, priority: 0}]",
+			"--category", "[{description: description, destinationIds: [string], logic: {AND: [{}], condition: {operator: Is, property: property, value: value}, NOT: {}, OR: [{}]}, name: name, priority: 0}]",
 			"--is-enabled=true",
 			"--name", "name",
 			"--notes", "notes",
@@ -75,17 +75,17 @@ func TestGlobalDispatchCentersUpdate(t *testing.T) {
 
 	t.Run("inner flags", func(t *testing.T) {
 		// Check that inner flags have been set up correctly
-		requestflag.CheckInnerFlags(globalDispatchCentersUpdate)
+		requestflag.CheckInnerFlags(dataGovernanceUpdate)
 
 		// Alternative argument passing style using inner flags
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "update",
+			"data-governance", "update",
 			"--id", "id",
 			"--category.description", "description",
 			"--category.destination-ids", "[string]",
-			"--category.logic", "{}",
+			"--category.logic", "{AND: [{}], condition: {operator: Is, property: property, value: value}, NOT: {}, OR: [{}]}",
 			"--category.name", "name",
 			"--category.priority", "0",
 			"--is-enabled=true",
@@ -101,7 +101,16 @@ func TestGlobalDispatchCentersUpdate(t *testing.T) {
 			"  - description: description\n" +
 			"    destinationIds:\n" +
 			"      - string\n" +
-			"    logic: {}\n" +
+			"    logic:\n" +
+			"      AND:\n" +
+			"        - {}\n" +
+			"      condition:\n" +
+			"        operator: Is\n" +
+			"        property: property\n" +
+			"        value: value\n" +
+			"      NOT: {}\n" +
+			"      OR:\n" +
+			"        - {}\n" +
 			"    name: name\n" +
 			"    priority: 0\n" +
 			"isEnabled: true\n" +
@@ -110,18 +119,18 @@ func TestGlobalDispatchCentersUpdate(t *testing.T) {
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"global-dispatch-centers", "update",
+			"data-governance", "update",
 			"--id", "id",
 		)
 	})
 }
 
-func TestGlobalDispatchCentersDelete(t *testing.T) {
+func TestDataGovernanceDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"global-dispatch-centers", "delete",
+			"data-governance", "delete",
 			"--id", "id",
 		)
 	})
