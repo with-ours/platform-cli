@@ -92,7 +92,16 @@ func init() {
 					&allowedEventsList,
 					&allowedEventsCreate,
 					&allowedEventsRetrieve,
+					&allowedEventsUpdate,
 					&allowedEventsDelete,
+				},
+			},
+			{
+				Name:     "consent-analytics",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&consentAnalyticsList,
 				},
 			},
 			{
@@ -106,6 +115,21 @@ func init() {
 					&consentSettingsReplace,
 					&consentSettingsUpdate,
 					&consentSettingsDelete,
+					&consentSettingsAnalytics,
+					&consentSettingsPageAnalysis,
+					&consentSettingsAnalyticsByRegion,
+				},
+			},
+			{
+				Name:     "data-governance",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&dataGovernanceList,
+					&dataGovernanceCreate,
+					&dataGovernanceRetrieve,
+					&dataGovernanceUpdate,
+					&dataGovernanceDelete,
 				},
 			},
 			{
@@ -172,18 +196,6 @@ func init() {
 					&experimentsResults,
 					&experimentsResultsTimeSeries,
 					&experimentsSessionReplays,
-				},
-			},
-			{
-				Name:     "global-dispatch-centers",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&globalDispatchCentersList,
-					&globalDispatchCentersCreate,
-					&globalDispatchCentersRetrieve,
-					&globalDispatchCentersUpdate,
-					&globalDispatchCentersDelete,
 				},
 			},
 			{

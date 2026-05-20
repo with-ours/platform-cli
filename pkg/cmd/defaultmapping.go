@@ -66,10 +66,12 @@ var defaultMappingsReplace = requestflag.WithInnerFlags(cli.Command{
 	"mapping": {
 		&requestflag.InnerFlag[string]{
 			Name:       "mapping.map",
+			Usage:      "Source expression sent to the destination for this `property`. Use `{{...}}` template syntax to substitute values from the event/visitor record: `{{event.event}}`, `{{event.event_properties.value}}`, `{{visitor.email}}`. Bare strings (no `{{}}`) are sent verbatim. Note: `{{...}}` template syntax belongs HERE, NOT in `logic.condition.property` — logic conditions use bare dotted paths like `$event.event_properties.value`.",
 			InnerField: "map",
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "mapping.property",
+			Usage:      "Destination-side field name. Comes from the destination template — discover the valid set via `GET /rest/v1/mapping-templates?entityId=...`.",
 			InnerField: "property",
 		},
 		&requestflag.InnerFlag[*string]{
