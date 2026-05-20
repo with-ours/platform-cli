@@ -76,7 +76,7 @@ var mappingsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "logic",
-			Usage:    "Condition tree gating when this mapping fires. A node is either a leaf `condition` or a combinator (`AND`, `OR`, `NOT`). Combinator children are themselves `MappingLogic` nodes, so trees nest arbitrarily. Example leaf: `{ \"condition\": { \"property\": \"$event.event\", \"operator\": \"Is\", \"value\": \"page_view\" } }`. Example combinator: `{ \"AND\": [{ \"condition\": ... }, { \"OR\": [...] }] }`.",
+			Usage:    "Condition tree gating when this mapping fires. A node is either a leaf `condition` or a combinator (`AND`, `OR`, `NOT`). Combinator children are themselves logic nodes, so trees nest arbitrarily.\n\nExample leaf: `{ \"condition\": { \"property\": \"$event.event\", \"operator\": \"Is\", \"value\": \"page_view\" } }`.\n\nExample combinator: `{ \"AND\": [{ \"condition\": ... }, { \"OR\": [...] }] }`.",
 			BodyPath: "logic",
 		},
 		&requestflag.Flag[[]map[string]any]{
@@ -101,7 +101,7 @@ var mappingsCreate = requestflag.WithInnerFlags(cli.Command{
 	"logic": {
 		&requestflag.InnerFlag[any]{
 			Name:       "logic.and",
-			Usage:      "All child nodes must match. Each child is a `MappingLogic` node.",
+			Usage:      "All child nodes must match. Each child is itself a logic node (leaf `condition` or combinator).",
 			InnerField: "AND",
 		},
 		&requestflag.InnerFlag[map[string]any]{
@@ -110,22 +110,24 @@ var mappingsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "logic.not",
-			Usage:      "Negates a single child `MappingLogic` node.",
+			Usage:      "Negates a single child logic node.",
 			InnerField: "NOT",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "logic.or",
-			Usage:      "Any child node must match. Each child is a `MappingLogic` node.",
+			Usage:      "Any child node must match. Each child is itself a logic node (leaf `condition` or combinator).",
 			InnerField: "OR",
 		},
 	},
 	"mapping": {
 		&requestflag.InnerFlag[string]{
 			Name:       "mapping.map",
+			Usage:      "Source expression sent to the destination for this `property`. Use `{{...}}` template syntax to substitute values from the event/visitor record: `{{event.event}}`, `{{event.event_properties.value}}`, `{{visitor.email}}`. Bare strings (no `{{}}`) are sent verbatim. Note: `{{...}}` template syntax belongs HERE, NOT in `logic.condition.property` — logic conditions use bare dotted paths like `$event.event_properties.value`.",
 			InnerField: "map",
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "mapping.property",
+			Usage:      "Destination-side field name. Comes from the destination template — discover the valid set via `GET /rest/v1/mapping-templates?entityId=...`.",
 			InnerField: "property",
 		},
 		&requestflag.InnerFlag[*string]{
@@ -168,7 +170,7 @@ var mappingsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "logic",
-			Usage:    "Condition tree gating when this mapping fires. A node is either a leaf `condition` or a combinator (`AND`, `OR`, `NOT`). Combinator children are themselves `MappingLogic` nodes, so trees nest arbitrarily. Example leaf: `{ \"condition\": { \"property\": \"$event.event\", \"operator\": \"Is\", \"value\": \"page_view\" } }`. Example combinator: `{ \"AND\": [{ \"condition\": ... }, { \"OR\": [...] }] }`.",
+			Usage:    "Condition tree gating when this mapping fires. A node is either a leaf `condition` or a combinator (`AND`, `OR`, `NOT`). Combinator children are themselves logic nodes, so trees nest arbitrarily.\n\nExample leaf: `{ \"condition\": { \"property\": \"$event.event\", \"operator\": \"Is\", \"value\": \"page_view\" } }`.\n\nExample combinator: `{ \"AND\": [{ \"condition\": ... }, { \"OR\": [...] }] }`.",
 			BodyPath: "logic",
 		},
 		&requestflag.Flag[[]map[string]any]{
@@ -186,7 +188,7 @@ var mappingsUpdate = requestflag.WithInnerFlags(cli.Command{
 	"logic": {
 		&requestflag.InnerFlag[any]{
 			Name:       "logic.and",
-			Usage:      "All child nodes must match. Each child is a `MappingLogic` node.",
+			Usage:      "All child nodes must match. Each child is itself a logic node (leaf `condition` or combinator).",
 			InnerField: "AND",
 		},
 		&requestflag.InnerFlag[map[string]any]{
@@ -195,22 +197,24 @@ var mappingsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "logic.not",
-			Usage:      "Negates a single child `MappingLogic` node.",
+			Usage:      "Negates a single child logic node.",
 			InnerField: "NOT",
 		},
 		&requestflag.InnerFlag[any]{
 			Name:       "logic.or",
-			Usage:      "Any child node must match. Each child is a `MappingLogic` node.",
+			Usage:      "Any child node must match. Each child is itself a logic node (leaf `condition` or combinator).",
 			InnerField: "OR",
 		},
 	},
 	"mapping": {
 		&requestflag.InnerFlag[string]{
 			Name:       "mapping.map",
+			Usage:      "Source expression sent to the destination for this `property`. Use `{{...}}` template syntax to substitute values from the event/visitor record: `{{event.event}}`, `{{event.event_properties.value}}`, `{{visitor.email}}`. Bare strings (no `{{}}`) are sent verbatim. Note: `{{...}}` template syntax belongs HERE, NOT in `logic.condition.property` — logic conditions use bare dotted paths like `$event.event_properties.value`.",
 			InnerField: "map",
 		},
 		&requestflag.InnerFlag[string]{
 			Name:       "mapping.property",
+			Usage:      "Destination-side field name. Comes from the destination template — discover the valid set via `GET /rest/v1/mapping-templates?entityId=...`.",
 			InnerField: "property",
 		},
 		&requestflag.InnerFlag[*string]{
