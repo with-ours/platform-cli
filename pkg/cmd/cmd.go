@@ -97,6 +97,14 @@ func init() {
 				},
 			},
 			{
+				Name:     "consent-analytics",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&consentAnalyticsList,
+				},
+			},
+			{
 				Name:     "consent-settings",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -110,6 +118,18 @@ func init() {
 					&consentSettingsAnalytics,
 					&consentSettingsPageAnalysis,
 					&consentSettingsAnalyticsByRegion,
+				},
+			},
+			{
+				Name:     "data-governance",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&dataGovernanceList,
+					&dataGovernanceCreate,
+					&dataGovernanceRetrieve,
+					&dataGovernanceUpdate,
+					&dataGovernanceDelete,
 				},
 			},
 			{
@@ -277,26 +297,6 @@ func init() {
 					&webScannersUpdate,
 					&webScannersDelete,
 					&webScannersTrigger,
-				},
-			},
-			{
-				Name:     "consent-analytics",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&consentAnalyticsList,
-				},
-			},
-			{
-				Name:     "data-governance",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&dataGovernanceList,
-					&dataGovernanceCreate,
-					&dataGovernanceRetrieve,
-					&dataGovernanceUpdate,
-					&dataGovernanceDelete,
 				},
 			},
 			{
