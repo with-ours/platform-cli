@@ -14,9 +14,9 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var globalDispatchCentersList = cli.Command{
+var dataGovernanceList = cli.Command{
 	Name:    "list",
-	Usage:   "List global dispatch centers for this account. Supports cursor pagination via\n`limit` and `cursor`. Requires scope: globalDispatch:list",
+	Usage:   "List the data-governance record(s) on this account. Each account has at most one\nrecord, so this list returns either an empty array or a single entity. Cursor\npagination is exposed for consistency with other list endpoints but is rarely\nmeaningful here. Data governance is the second stage of the dispatch flow\n(Source → Allowed Events → Data Governance → Mappings → Destination) — it\nevaluates each event against the configured category logic and stops dispatch to\nthe destinations on any matching category. Requires scope: globalDispatch:list",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -34,23 +34,23 @@ var globalDispatchCentersList = cli.Command{
 			Usage: "The maximum number of items to return (use -1 for unlimited).",
 		},
 	},
-	Action:          handleGlobalDispatchCentersList,
+	Action:          handleDataGovernanceList,
 	HideHelpCommand: true,
 }
 
-var globalDispatchCentersCreate = cli.Command{
+var dataGovernanceCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new global dispatch center. Requires scope: globalDispatch:create",
+	Usage:   "Create the data-governance record for this account. Each account may have at\nmost one — a second POST returns 409. Body is optional; defaults are\n`isEnabled: false` and no categories. Categories are added later via PATCH.\nRequires scope: globalDispatch:create",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[*bool]{
 			Name:     "is-enabled",
-			Usage:    "Whether the center starts enabled. Defaults to false — opt in by setting true here or via PATCH later.",
+			Usage:    "Whether the record starts enabled. Defaults to false — opt in by setting true here or via PATCH later. When disabled, every category is bypassed and inbound events flow through to destinations regardless of consent state.",
 			BodyPath: "isEnabled",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
-			Usage:    `Display name for the new center. Defaults to "Consent Dispatch Center".`,
+			Usage:    `Display name for the new record. Defaults to "Data Governance".`,
 			BodyPath: "name",
 		},
 		&requestflag.Flag[*string]{
@@ -59,13 +59,13 @@ var globalDispatchCentersCreate = cli.Command{
 			BodyPath: "notes",
 		},
 	},
-	Action:          handleGlobalDispatchCentersCreate,
+	Action:          handleDataGovernanceCreate,
 	HideHelpCommand: true,
 }
 
-var globalDispatchCentersRetrieve = cli.Command{
+var dataGovernanceRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single global dispatch center by ID. Requires scope: globalDispatch:find",
+	Usage:   "Fetch the data-governance record by id, including its categories (logic,\ndestinations, priority). Returns 404 when no record matches. Requires scope:\nglobalDispatch:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -74,13 +74,13 @@ var globalDispatchCentersRetrieve = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleGlobalDispatchCentersRetrieve,
+	Action:          handleDataGovernanceRetrieve,
 	HideHelpCommand: true,
 }
 
-var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
+var dataGovernanceUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a global dispatch center. Only the fields you send are changed.\nRequires scope: globalDispatch:update",
+	Usage:   "Partially update the data-governance record. Top-level fields (`name`, `notes`,\n`isEnabled`) follow the standard PATCH semantic — only the fields you send are\nchanged.",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -90,17 +90,17 @@ var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[any]{
 			Name:     "category",
-			Usage:    "Full replacement of the categories list. Categories are sorted by priority on write and re-stamped 1..N — see the priority field. Omit to leave existing categories untouched.",
+			Usage:    "Full replacement of the categories list. The sent array becomes the new state — there is no partial-merge semantic for categories. Categories are sorted by priority on write and re-stamped 1..N. Omit to leave existing categories untouched.",
 			BodyPath: "categories",
 		},
 		&requestflag.Flag[*bool]{
 			Name:     "is-enabled",
-			Usage:    "Toggle the dispatch center on/off without changing any other config.",
+			Usage:    "Toggle data governance on/off without changing any other config.",
 			BodyPath: "isEnabled",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
-			Usage:    "New display name for the center.",
+			Usage:    "New display name for the record.",
 			BodyPath: "name",
 		},
 		&requestflag.Flag[*string]{
@@ -109,7 +109,7 @@ var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 			BodyPath: "notes",
 		},
 	},
-	Action:          handleGlobalDispatchCentersUpdate,
+	Action:          handleDataGovernanceUpdate,
 	HideHelpCommand: true,
 }, map[string][]requestflag.HasOuterFlag{
 	"category": {
@@ -121,13 +121,13 @@ var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.InnerFlag[any]{
 			Name:                  "category.destination-ids",
-			Usage:                 "Destinations that receive events matching this category. Stale IDs (deleted destinations or ones from another account) are silently filtered out at write time.",
+			Usage:                 "Destinations gated by this category. When the category logic evaluates to TRUE for an inbound event, dispatch to every destination on this list is stopped. Stale IDs (deleted destinations or destinations on another account) are silently filtered out at write time.",
 			InnerField:            "destinationIds",
 			OuterIsArrayOfObjects: true,
 		},
-		&requestflag.InnerFlag[any]{
+		&requestflag.InnerFlag[map[string]any]{
 			Name:                  "category.logic",
-			Usage:                 "Optional condition tree. When set, only matching events route to this category.",
+			Usage:                 "Condition tree evaluated against each inbound event. Write conditions that evaluate **TRUE for events you want to STOP**. A node is either a leaf `condition` or a combinator (`AND`, `OR`, `NOT`); combinator children are themselves logic nodes, so trees nest arbitrarily.\n\nDiscovery: `GET /rest/v1/mappings/default-variables` lists the canonical platform-provided `property` paths (visitor consent arrays, event fields, request context, identity fields). Custom `event.event_properties.*` paths are caller-defined.\n\nExample leaf (stop dispatch when the visitor rejected the `advertising` consent category): `{ \"condition\": { \"property\": \"visitor.consent.rejected_categories\", \"operator\": \"Contains\", \"value\": \"advertising\" } }`.\n\nExample combinator: `{ \"AND\": [{ \"condition\": { \"property\": \"visitor.consent.rejected_categories\", \"operator\": \"Contains\", \"value\": \"advertising\" } }, { \"OR\": [/* nested logic nodes */] }] }`.",
 			InnerField:            "logic",
 			OuterIsArrayOfObjects: true,
 		},
@@ -146,9 +146,9 @@ var globalDispatchCentersUpdate = requestflag.WithInnerFlags(cli.Command{
 	},
 })
 
-var globalDispatchCentersDelete = cli.Command{
+var dataGovernanceDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a global dispatch center. Requires scope: globalDispatch:delete",
+	Usage:   "Delete the data-governance record. After deletion, inbound events flow through\nto destinations without category-level gating. Create a new record with POST to\nreinstate governance. Requires scope: globalDispatch:delete",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -157,11 +157,11 @@ var globalDispatchCentersDelete = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleGlobalDispatchCentersDelete,
+	Action:          handleDataGovernanceDelete,
 	HideHelpCommand: true,
 }
 
-func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) error {
+func handleDataGovernanceList(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -180,7 +180,7 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 		return err
 	}
 
-	params := oursprivacy.GlobalDispatchCenterListParams{}
+	params := oursprivacy.DataGovernanceListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -188,7 +188,7 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 	if format == "raw" {
 		var res []byte
 		options = append(options, option.WithResponseBodyInto(&res))
-		_, err = client.GlobalDispatchCenters.List(ctx, params, options...)
+		_, err = client.DataGovernance.List(ctx, params, options...)
 		if err != nil {
 			return err
 		}
@@ -197,11 +197,11 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 			ExplicitFormat: explicitFormat,
 			Format:         format,
 			RawOutput:      cmd.Root().Bool("raw-output"),
-			Title:          "global-dispatch-centers list",
+			Title:          "data-governance list",
 			Transform:      transform,
 		})
 	} else {
-		iter := client.GlobalDispatchCenters.ListAutoPaging(ctx, params, options...)
+		iter := client.DataGovernance.ListAutoPaging(ctx, params, options...)
 		maxItems := int64(-1)
 		if cmd.IsSet("max-items") {
 			maxItems = cmd.Value("max-items").(int64)
@@ -210,13 +210,13 @@ func handleGlobalDispatchCentersList(ctx context.Context, cmd *cli.Command) erro
 			ExplicitFormat: explicitFormat,
 			Format:         format,
 			RawOutput:      cmd.Root().Bool("raw-output"),
-			Title:          "global-dispatch-centers list",
+			Title:          "data-governance list",
 			Transform:      transform,
 		})
 	}
 }
 
-func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) error {
+func handleDataGovernanceCreate(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -235,11 +235,11 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 		return err
 	}
 
-	params := oursprivacy.GlobalDispatchCenterNewParams{}
+	params := oursprivacy.DataGovernanceNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.GlobalDispatchCenters.New(ctx, params, options...)
+	_, err = client.DataGovernance.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -252,12 +252,12 @@ func handleGlobalDispatchCentersCreate(ctx context.Context, cmd *cli.Command) er
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "global-dispatch-centers create",
+		Title:          "data-governance create",
 		Transform:      transform,
 	})
 }
 
-func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleDataGovernanceRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -281,7 +281,7 @@ func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) 
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.GlobalDispatchCenters.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.DataGovernance.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -294,12 +294,12 @@ func handleGlobalDispatchCentersRetrieve(ctx context.Context, cmd *cli.Command) 
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "global-dispatch-centers retrieve",
+		Title:          "data-governance retrieve",
 		Transform:      transform,
 	})
 }
 
-func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleDataGovernanceUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -321,11 +321,11 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 		return err
 	}
 
-	params := oursprivacy.GlobalDispatchCenterUpdateParams{}
+	params := oursprivacy.DataGovernanceUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.GlobalDispatchCenters.Update(
+	_, err = client.DataGovernance.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -343,12 +343,12 @@ func handleGlobalDispatchCentersUpdate(ctx context.Context, cmd *cli.Command) er
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "global-dispatch-centers update",
+		Title:          "data-governance update",
 		Transform:      transform,
 	})
 }
 
-func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) error {
+func handleDataGovernanceDelete(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -372,7 +372,7 @@ func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) er
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.GlobalDispatchCenters.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.DataGovernance.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -385,7 +385,7 @@ func handleGlobalDispatchCentersDelete(ctx context.Context, cmd *cli.Command) er
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "global-dispatch-centers delete",
+		Title:          "data-governance delete",
 		Transform:      transform,
 	})
 }

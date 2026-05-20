@@ -464,6 +464,127 @@ var consentSettingsDelete = cli.Command{
 	HideHelpCommand: true,
 }
 
+var consentSettingsAnalytics = cli.Command{
+	Name:    "analytics",
+	Usage:   "Time-series consent analytics for a single consent settings record: banner\nviews, opt-ins, opt-outs, close-icon clicks, and derived opt-in/out rates per\nUTC day (or per UTC hour with `granularity=HOURLY`). The window is zero-filled\nso callers get a contiguous series, and rates are person-level\n(`COUNT(DISTINCT visitor_id)`). Use the optional `pagePath` and `region` filters\nto scope to one page or one visitor region; use `compareWithPreviousPeriod=true`\nto also receive the matching prior window. `DAILY` allows a 90-day window;\n`HOURLY` is capped at 14 days. Reuses the API-key scope `consentSettings:find`\nbecause the endpoint is identified by a consent settings `id`. Requires scope:\nconsentSettings:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:      "from",
+			Usage:     "Inclusive lower bound of the analytics window, as a UTC calendar day in `YYYY-MM-DD` format. The window between `from` and `to` must be 90 days or fewer (14 for `HOURLY` granularity).",
+			Required:  true,
+			QueryPath: "from",
+		},
+		&requestflag.Flag[string]{
+			Name:      "to",
+			Usage:     "Inclusive upper bound of the analytics window, as a UTC calendar day in `YYYY-MM-DD` format. The window between `from` and `to` must be 90 days or fewer (14 for `HOURLY` granularity).",
+			Required:  true,
+			QueryPath: "to",
+		},
+		&requestflag.Flag[bool]{
+			Name:      "compare-with-previous-period",
+			Usage:     "When `true`, each bucket also returns the matching bucket from the immediately preceding window of equal length (in `previous*` and `percentageChange*` fields). Defaults to `false`.",
+			QueryPath: "compareWithPreviousPeriod",
+		},
+		&requestflag.Flag[string]{
+			Name:      "granularity",
+			Usage:     "Bucket size for the time-series rollup. `DAILY` (default) buckets per UTC day; `HOURLY` buckets per UTC hour and limits the window to 14 days.",
+			QueryPath: "granularity",
+		},
+		&requestflag.Flag[string]{
+			Name:      "page-path",
+			Usage:     "Filter to events whose `default_properties.pathname` equals this value (exact match, case-sensitive). Use this to drill into a single page.",
+			QueryPath: "pagePath",
+		},
+		&requestflag.Flag[string]{
+			Name:      "regions",
+			Usage:     "Filter results to events whose `request_context.country_region_name` is in this set. Pass a single region (e.g. `California`) or a comma-separated list (`California,Texas`). Case-sensitive. Use `GET /rest/v1/consent-settings/{id}/analytics-by-region` to discover the region names available for an account.",
+			QueryPath: "regions",
+		},
+	},
+	Action:          handleConsentSettingsAnalytics,
+	HideHelpCommand: true,
+}
+
+var consentSettingsPageAnalysis = cli.Command{
+	Name:    "page-analysis",
+	Usage:   "Per-page consent breakdown for one consent settings record, ranked by opt-outs\n(descending). Each row bundles banner views, opt-outs, close-icon clicks, and\nthe derived opt-out rate. Documented exception to the cursor-pagination\nstandard: this is a derived read whose underlying GraphQL contract is\noffset/limit-based; cursors are not used. `search` is a substring match against\n`pathname`; `region` filters to one visitor region. Reuses the API-key scope\n`consentSettings:find`. Requires scope: consentSettings:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:      "from",
+			Usage:     "Inclusive lower bound of the analytics window, as a UTC calendar day in `YYYY-MM-DD` format. The window between `from` and `to` must be 90 days or fewer (14 for `HOURLY` granularity).",
+			Required:  true,
+			QueryPath: "from",
+		},
+		&requestflag.Flag[string]{
+			Name:      "to",
+			Usage:     "Inclusive upper bound of the analytics window, as a UTC calendar day in `YYYY-MM-DD` format. The window between `from` and `to` must be 90 days or fewer (14 for `HOURLY` granularity).",
+			Required:  true,
+			QueryPath: "to",
+		},
+		&requestflag.Flag[int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of pages to return. Defaults to 50.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "offset",
+			Usage:     "Skip this many top-ranked pages before returning. Use together with `limit` for load-more pagination.",
+			QueryPath: "offset",
+		},
+		&requestflag.Flag[string]{
+			Name:      "regions",
+			Usage:     "Filter results to events whose `request_context.country_region_name` is in this set. Pass a single region (e.g. `California`) or a comma-separated list (`California,Texas`). Case-sensitive. Use `GET /rest/v1/consent-settings/{id}/analytics-by-region` to discover the region names available for an account.",
+			QueryPath: "regions",
+		},
+		&requestflag.Flag[string]{
+			Name:      "search",
+			Usage:     "Case-sensitive substring match against `default_properties.pathname`. Wrapped in `%...%` server-side.",
+			QueryPath: "search",
+		},
+	},
+	Action:          handleConsentSettingsPageAnalysis,
+	HideHelpCommand: true,
+}
+
+var consentSettingsAnalyticsByRegion = cli.Command{
+	Name:    "analytics-by-region",
+	Usage:   "Region-grouped consent totals for the window: banner views, opt-ins, opt-outs,\nclose-icon clicks, and derived rates per visitor `country_region_name`, ranked\nby banner views (descending). Visitors whose region cannot be resolved (e.g. bot\ntraffic, IP geo failure) are bucketed under the literal `Unknown` so per-region\ncounts always sum to the global totals. Use this to discover the region names\nyou can later pass to the `region` filter on\n`GET /rest/v1/consent-settings/{id}/analytics`. Reuses the API-key scope\n`consentSettings:find`. Requires scope: consentSettings:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:      "from",
+			Usage:     "Inclusive lower bound of the analytics window, as a UTC calendar day in `YYYY-MM-DD` format. The window between `from` and `to` must be 90 days or fewer (14 for `HOURLY` granularity).",
+			Required:  true,
+			QueryPath: "from",
+		},
+		&requestflag.Flag[string]{
+			Name:      "to",
+			Usage:     "Inclusive upper bound of the analytics window, as a UTC calendar day in `YYYY-MM-DD` format. The window between `from` and `to` must be 90 days or fewer (14 for `HOURLY` granularity).",
+			Required:  true,
+			QueryPath: "to",
+		},
+	},
+	Action:          handleConsentSettingsAnalyticsByRegion,
+	HideHelpCommand: true,
+}
+
 func handleConsentSettingsList(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -720,6 +841,153 @@ func handleConsentSettingsDelete(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "consent-settings delete",
+		Transform:      transform,
+	})
+}
+
+func handleConsentSettingsAnalytics(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.ConsentSettingAnalyticsParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.ConsentSettings.Analytics(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "consent-settings analytics",
+		Transform:      transform,
+	})
+}
+
+func handleConsentSettingsPageAnalysis(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.ConsentSettingPageAnalysisParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.ConsentSettings.PageAnalysis(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "consent-settings page-analysis",
+		Transform:      transform,
+	})
+}
+
+func handleConsentSettingsAnalyticsByRegion(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.ConsentSettingAnalyticsByRegionParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.ConsentSettings.AnalyticsByRegion(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "consent-settings analytics-by-region",
 		Transform:      transform,
 	})
 }

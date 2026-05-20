@@ -350,3 +350,50 @@ func TestConsentSettingsDelete(t *testing.T) {
 		)
 	})
 }
+
+func TestConsentSettingsAnalytics(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"consent-settings", "analytics",
+			"--id", "id",
+			"--from", "2026-04-01",
+			"--to", "2026-04-30",
+			"--compare-with-previous-period=true",
+			"--granularity", "DAILY",
+			"--page-path", "/pricing",
+			"--regions", "California",
+		)
+	})
+}
+
+func TestConsentSettingsPageAnalysis(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"consent-settings", "page-analysis",
+			"--id", "id",
+			"--from", "2026-04-01",
+			"--to", "2026-04-30",
+			"--limit", "1",
+			"--offset", "0",
+			"--regions", "California",
+			"--search", "/checkout",
+		)
+	})
+}
+
+func TestConsentSettingsAnalyticsByRegion(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"consent-settings", "analytics-by-region",
+			"--id", "id",
+			"--from", "2026-04-01",
+			"--to", "2026-04-30",
+		)
+	})
+}
