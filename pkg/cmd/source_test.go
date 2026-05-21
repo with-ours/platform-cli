@@ -14,6 +14,12 @@ func TestSourcesList(t *testing.T) {
 			t,
 			"--api-key", "string",
 			"sources", "list",
+			"--max-items", "10",
+			"--cursor", "cursor",
+			"--limit", "25",
+			"--name-contains", "nameContains",
+			"--status", "Disabled",
+			"--type", "AlchemerWebhook",
 		)
 	})
 }
@@ -60,7 +66,6 @@ func TestSourcesUpdate(t *testing.T) {
 			"--api-key", "string",
 			"sources", "update",
 			"--id", "id",
-			"--status", "Disabled",
 			"--bot-control-mode", "botControlMode",
 			"--bot-score-threshold", "0",
 			"--exclude-request-context=true",
@@ -69,6 +74,7 @@ func TestSourcesUpdate(t *testing.T) {
 			"--project-api-key", "projectAPIKey",
 			"--redirect-url", "redirectUrl",
 			"--selected-account-id", "selectedAccountId",
+			"--status", "status",
 			"--whitelist-domain", "[string]",
 			"--whitelist-ip", "[string]",
 		)
@@ -77,7 +83,6 @@ func TestSourcesUpdate(t *testing.T) {
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"status: Disabled\n" +
 			"botControlMode: botControlMode\n" +
 			"botScoreThreshold: 0\n" +
 			"excludeRequestContext: true\n" +
@@ -86,6 +91,7 @@ func TestSourcesUpdate(t *testing.T) {
 			"projectAPIKey: projectAPIKey\n" +
 			"redirectUrl: redirectUrl\n" +
 			"selectedAccountId: selectedAccountId\n" +
+			"status: status\n" +
 			"whitelistDomains:\n" +
 			"  - string\n" +
 			"whitelistIps:\n" +

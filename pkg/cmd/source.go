@@ -15,17 +15,47 @@ import (
 )
 
 var sourcesList = cli.Command{
-	Name:            "list",
-	Usage:           "List all sources. Requires scope: source:list",
-	Suggest:         true,
-	Flags:           []cli.Flag{},
+	Name:    "list",
+	Usage:   "List all sources for this account. Supports cursor pagination and optional\nfilters for `type`, `status`, and `nameContains`. Results are sorted by creation\ndate descending. Requires scope: source:list",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "cursor",
+			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
+			QueryPath: "cursor",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of items to return. Defaults to 25; values below 1 are clamped to 1 and values above 100 are clamped to 100.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[string]{
+			Name:      "name-contains",
+			Usage:     "Case-insensitive substring filter on the source name.",
+			QueryPath: "nameContains",
+		},
+		&requestflag.Flag[string]{
+			Name:      "status",
+			Usage:     "Filter by source status.",
+			QueryPath: "status",
+		},
+		&requestflag.Flag[string]{
+			Name:      "type",
+			Usage:     "Filter by source type.",
+			QueryPath: "type",
+		},
+		&requestflag.Flag[int64]{
+			Name:  "max-items",
+			Usage: "The maximum number of items to return (use -1 for unlimited).",
+		},
+	},
 	Action:          handleSourcesList,
 	HideHelpCommand: true,
 }
 
 var sourcesCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new source. Requires scope: source:create",
+	Usage:   "Create a new source. Returns the full source entity (same shape as GET\n/sources/{id}) so callers can read all server-assigned fields without a\nfollow-up GET. Requires scope: source:create",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -60,19 +90,13 @@ var sourcesRetrieve = cli.Command{
 
 var sourcesUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a source. Only the fields you send are changed. Requires scope:\nsource:update",
+	Usage:   "Partially update a source. Only the fields you send are changed; omitted fields\nare unchanged. Send explicit `null` to clear a nullable field. Returns the full\nsource entity after the update. Requires scope: source:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "id",
 			Required:  true,
 			PathParam: "id",
-		},
-		&requestflag.Flag[string]{
-			Name:     "status",
-			Usage:    `Allowed values: "Disabled", "Enabled".`,
-			Required: true,
-			BodyPath: "status",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "bot-control-mode",
@@ -106,6 +130,10 @@ var sourcesUpdate = cli.Command{
 			Name:     "selected-account-id",
 			BodyPath: "selectedAccountId",
 		},
+		&requestflag.Flag[*string]{
+			Name:     "status",
+			BodyPath: "status",
+		},
 		&requestflag.Flag[any]{
 			Name:     "whitelist-domain",
 			BodyPath: "whitelistDomains",
@@ -136,7 +164,7 @@ var sourcesDelete = cli.Command{
 
 var sourcesTokens = cli.Command{
 	Name:    "tokens",
-	Usage:   "Fetch install tokens and snippets for a source. Requires scope: source:view",
+	Usage:   "Returns the install or ingest tokens for a source. Pixel sources (WebSource,\nPixelImage, HTTPApiSource) return\n`{ sourceType: \"pixel\", token, testToken, installScript, testInstallScript }`.\nWebhook sources (Webhook, CallRail, Formstack, Healthie, etc.) return\n`{ sourceType: \"webhook\", token, testToken, ingestUrl, testIngestUrl, sampleCurl }`.\nRequires scope: source:view",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -168,24 +196,40 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	var res []byte
-	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.List(ctx, options...)
-	if err != nil {
-		return err
-	}
+	params := oursprivacy.SourceListParams{}
 
-	obj := gjson.ParseBytes(res)
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
 	transform := cmd.Root().String("transform")
-	return ShowJSON(obj, ShowJSONOpts{
-		ExplicitFormat: explicitFormat,
-		Format:         format,
-		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources list",
-		Transform:      transform,
-	})
+	if format == "raw" {
+		var res []byte
+		options = append(options, option.WithResponseBodyInto(&res))
+		_, err = client.Sources.List(ctx, params, options...)
+		if err != nil {
+			return err
+		}
+		obj := gjson.ParseBytes(res)
+		return ShowJSON(obj, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "sources list",
+			Transform:      transform,
+		})
+	} else {
+		iter := client.Sources.ListAutoPaging(ctx, params, options...)
+		maxItems := int64(-1)
+		if cmd.IsSet("max-items") {
+			maxItems = cmd.Value("max-items").(int64)
+		}
+		return ShowJSONIterator(iter, maxItems, ShowJSONOpts{
+			ExplicitFormat: explicitFormat,
+			Format:         format,
+			RawOutput:      cmd.Root().Bool("raw-output"),
+			Title:          "sources list",
+			Transform:      transform,
+		})
+	}
 }
 
 func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
