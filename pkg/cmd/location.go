@@ -304,7 +304,7 @@ var locationsUpdate = requestflag.WithInnerFlags(cli.Command{
 
 var locationsEmbedCode = cli.Command{
 	Name:    "embed-code",
-	Usage:   "Generate the paste-ready HTML embed snippet for a location. The response is a\nsingle self-contained HTML string (a `<style>` block + `<div>` wrapping an\n`<iframe>` pointed at the maps CDN for the current stage, plus an optional\nJSON-LD `<script>`). Customize the render with the optional query params\n(`color`, `theme`, `colorScheme`, `mapStyle`, `includeAddressBox`, `zoom`,\n`includeControls`, `includeSEOSchema`); all have sane defaults. Requires scope:\nmaps:find",
+	Usage:   "Generate the paste-ready HTML embed snippet for a location. The response is a\nsingle self-contained HTML string (a `<style>` block + `<div>` wrapping an\n`<iframe>` pointed at the Ours Privacy maps CDN, plus an optional JSON-LD\n`<script>`). Customize the render with the optional query params (`color`,\n`theme`, `colorScheme`, `mapStyle`, `includeAddressBox`, `zoom`,\n`includeControls`, `includeSEOSchema`); all have sane defaults. Requires scope:\nmaps:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

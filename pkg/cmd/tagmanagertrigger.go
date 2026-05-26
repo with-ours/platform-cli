@@ -74,13 +74,13 @@ var tagManagerTriggersCreate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "trigger",
-			Usage:    "Trigger implementation identifier (typically equals `type`).",
+			Usage:    "Must equal `type` — send the same string in both fields. The server rejects any divergent value.",
 			Required: true,
 			BodyPath: "Trigger",
 		},
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Trigger type discriminator.",
+			Usage:    "Trigger type discriminator. Pick from `GET /tag-manager-triggers/types` for the canonical set (e.g. `PageView`, `CustomEvent`, `AllElementsClick`).",
 			Required: true,
 			BodyPath: "type",
 		},
@@ -140,12 +140,12 @@ var tagManagerTriggersUpdate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "trigger",
-			Usage:    "Updated trigger implementation identifier.",
+			Usage:    "Must equal `type`. Omit both fields, or send both with the same value — the server rejects any divergence.",
 			BodyPath: "Trigger",
 		},
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Updated trigger type.",
+			Usage:    "Updated trigger type. Pick from `GET /tag-manager-triggers/types`. When changing `type`, send the new value in `Trigger` as well (they must match).",
 			BodyPath: "type",
 		},
 	},

@@ -16,7 +16,7 @@ import (
 
 var consentAnalyticsList = cli.Command{
 	Name:    "list",
-	Usage:   "Account-wide blocking stats from the Global Consent Center for the window: how\nmany dispatches were attempted, how many were blocked, and a per-category\nbreakdown of the blocks (with `percentageBlocked` = share of `totalDispatches`).\nNot scoped to a single consent settings record — this aggregates across every\ndestination in the account. The endpoint is identified by query params rather\nthan a path id because the report is account-scoped; this is a documented\nderived-read exception. Reuses the API-key scope `consentSettings:list` because\nthe report crosses every consent setting. Requires scope: consentSettings:list",
+	Usage:   "Account-wide blocking stats from the Global Consent Center for the window: how\nmany dispatches were attempted, how many were blocked, and a per-category\nbreakdown of the blocks (with `percentageBlocked` = share of `totalDispatches`).\nNot scoped to a single consent settings record — this aggregates across every\ndestination in the account. The endpoint is identified by query params rather\nthan a path id because the report is account-scoped; this is a documented\nderived-read exception. Requires the API-key scope\n`report:global-consent-center-analytics` (this is the account-wide consent\nanalytics report and is gated separately from consent-settings list). Requires\nscope: report:global-consent-center-analytics",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

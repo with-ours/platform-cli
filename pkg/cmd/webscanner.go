@@ -136,7 +136,7 @@ var webScannersDelete = cli.Command{
 
 var webScannersTrigger = cli.Command{
 	Name:    "trigger",
-	Usage:   "Manually kick off a new scan for this web scanner. The request body is empty (or\n`{}`). A successful response means the enqueue request was accepted; because the\nscan starts asynchronously, the returned entity may still reflect pre-trigger\nvalues for fields like `scanStatus` and `lastScanStartedAt`. The trigger is\nrate-limited: a 409 is returned if another scan is already in flight, the\nper-account cooldown has not elapsed, or the trigger backend rejects the\nrequest; the reason is in the response `error` field. Requires scope:\nwebScanner:trigger",
+	Usage:   "Manually kick off a new scan for this web scanner. The request body is empty (or\n`{}`). A successful response means the request was accepted; because the scan\nstarts asynchronously, the returned entity may still reflect pre-trigger values\nfor fields like `scanStatus` and `lastScanStartedAt`. The trigger is\nrate-limited: a 409 is returned if another scan is already in flight, the\nper-account cooldown has not elapsed, or the request was otherwise rejected; the\nreason is in the response `error` field. Requires scope: webScanner:trigger",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
