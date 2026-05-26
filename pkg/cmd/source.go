@@ -164,7 +164,7 @@ var sourcesDelete = cli.Command{
 
 var sourcesTokens = cli.Command{
 	Name:    "tokens",
-	Usage:   "Returns the install or ingest tokens for a source. Pixel sources (WebSource,\nPixelImage, HTTPApiSource) return\n`{ sourceType: \"pixel\", token, testToken, installScript, testInstallScript }`.\nWebhook sources (Webhook, CallRail, Formstack, Healthie, etc.) return\n`{ sourceType: \"webhook\", token, testToken, ingestUrl, testIngestUrl, sampleCurl }`.\nRequires scope: source:view",
+	Usage:   "Returns the install or ingest tokens for a source. The response is a\ndiscriminated union on `sourceType`: pixel sources return\n`{ sourceType: \"pixel\", token, testToken, installScript, testInstallScript }`,\nand webhook sources return\n`{ sourceType: \"webhook\", token, testToken, ingestUrl, testIngestUrl, sampleCurl }`.\nInspect the source's `type` field (`GET /rest/v1/sources/{id}`) to know which\nvariant to expect. Requires scope: source:view",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

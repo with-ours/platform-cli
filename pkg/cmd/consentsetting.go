@@ -466,7 +466,7 @@ var consentSettingsDelete = cli.Command{
 
 var consentSettingsAnalytics = cli.Command{
 	Name:    "analytics",
-	Usage:   "Time-series consent analytics for a single consent settings record: banner\nviews, opt-ins, opt-outs, close-icon clicks, and derived opt-in/out rates per\nUTC day (or per UTC hour with `granularity=HOURLY`). The window is zero-filled\nso callers get a contiguous series, and rates are person-level\n(`COUNT(DISTINCT visitor_id)`). Use the optional `pagePath` and `region` filters\nto scope to one page or one visitor region; use `compareWithPreviousPeriod=true`\nto also receive the matching prior window. `DAILY` allows a 90-day window;\n`HOURLY` is capped at 14 days. Reuses the API-key scope `consentSettings:find`\nbecause the endpoint is identified by a consent settings `id`. Requires scope:\nconsentSettings:find",
+	Usage:   "Time-series consent analytics for a single consent settings record: banner\nviews, opt-ins, opt-outs, close-icon clicks, and derived opt-in/out rates per\nUTC day (or per UTC hour with `granularity=HOURLY`). The window is zero-filled\nso callers get a contiguous series, and rates are person-level\n(`COUNT(DISTINCT visitor_id)`). Use the optional `pagePath` and `region` filters\nto scope to one page or one visitor region; use `compareWithPreviousPeriod=true`\nto also receive the matching prior window. `DAILY` allows a 90-day window;\n`HOURLY` is capped at 14 days. Requires the API-key scope\n`report:consent-analytics` (this endpoint returns consent analytics report data,\nwhich is PHI-bearing and gated separately from consent-settings management).\nRequires scope: report:consent-analytics",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -513,7 +513,7 @@ var consentSettingsAnalytics = cli.Command{
 
 var consentSettingsPageAnalysis = cli.Command{
 	Name:    "page-analysis",
-	Usage:   "Per-page consent breakdown for one consent settings record, ranked by opt-outs\n(descending). Each row bundles banner views, opt-outs, close-icon clicks, and\nthe derived opt-out rate. Documented exception to the cursor-pagination\nstandard: this is a derived read whose underlying GraphQL contract is\noffset/limit-based; cursors are not used. `search` is a substring match against\n`pathname`; `region` filters to one visitor region. Reuses the API-key scope\n`consentSettings:find`. Requires scope: consentSettings:find",
+	Usage:   "Per-page consent breakdown for one consent settings record, ranked by opt-outs\n(descending). Each row bundles banner views, opt-outs, close-icon clicks, and\nthe derived opt-out rate. Documented exception to the cursor-pagination\nstandard: this is a derived read whose underlying GraphQL contract is\noffset/limit-based; cursors are not used. `search` is a substring match against\n`pathname`; `region` filters to one visitor region. Requires the API-key scope\n`report:consent-page-analysis` (PHI-bearing report data). Requires scope:\nreport:consent-page-analysis",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -560,7 +560,7 @@ var consentSettingsPageAnalysis = cli.Command{
 
 var consentSettingsAnalyticsByRegion = cli.Command{
 	Name:    "analytics-by-region",
-	Usage:   "Region-grouped consent totals for the window: banner views, opt-ins, opt-outs,\nclose-icon clicks, and derived rates per visitor `country_region_name`, ranked\nby banner views (descending). Visitors whose region cannot be resolved (e.g. bot\ntraffic, IP geo failure) are bucketed under the literal `Unknown` so per-region\ncounts always sum to the global totals. Use this to discover the region names\nyou can later pass to the `region` filter on\n`GET /rest/v1/consent-settings/{id}/analytics`. Reuses the API-key scope\n`consentSettings:find`. Requires scope: consentSettings:find",
+	Usage:   "Region-grouped consent totals for the window: banner views, opt-ins, opt-outs,\nclose-icon clicks, and derived rates per visitor `country_region_name`, ranked\nby banner views (descending). Visitors whose region cannot be resolved (e.g. bot\ntraffic, IP geo failure) are bucketed under the literal `Unknown` so per-region\ncounts always sum to the global totals. Use this to discover the region names\nyou can later pass to the `region` filter on\n`GET /rest/v1/consent-settings/{id}/analytics`. Requires the API-key scope\n`report:consent-analytics` (PHI-bearing report data). Requires scope:\nreport:consent-analytics",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

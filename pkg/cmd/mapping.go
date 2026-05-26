@@ -258,7 +258,7 @@ var mappingsReorder = cli.Command{
 
 var mappingsTemplates = cli.Command{
 	Name:    "templates",
-	Usage:   "Discover every mapping template available for a destination or source, with full\nproperty descriptors inlined. Use the returned `id` as `templateId` when calling\n`POST /rest/v1/mappings` (template fat-create variant), and use each entry under\n`mappings[]` to learn the valid `property`, `kind`, `modificationOptions`, and\nany enforced `options`. The `isDefault: true` entry is the destination's\nbuilt-in default template (the one stored at `MAPPER#{destinationId}` when\nconfigured via `PUT /rest/v1/default-mappings/{destinationId}`). Requires scope:\nmapping:find",
+	Usage:   "Discover every mapping template available for a destination or source, with full\nproperty descriptors inlined. Use the returned `id` as `templateId` when calling\n`POST /rest/v1/mappings` (template fat-create variant), and use each entry under\n`mappings[]` to learn the valid `property`, `kind`, `modificationOptions`, and\nany enforced `options`. The `isDefault: true` entry is the destination's\nbuilt-in default template, configured via\n`PUT /rest/v1/default-mappings/{destinationId}`. Requires scope: mapping:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -283,7 +283,7 @@ var mappingsDefaultVariables = cli.Command{
 
 var mappingsCustomVariables = cli.Command{
 	Name:            "custom-variables",
-	Usage:           "Lists the custom variables observed in this account’s recent event stream (last\n14 days). These are dot-paths under `event.event_properties.*` that callers can\ntarget in mapping `value` fields. The result is cached for 10 minutes; an empty\nlist means no custom properties have been seen yet for this account. Requires\nscope: variables:find-custom",
+	Usage:           "Lists the custom variables observed in this account’s recent event stream (last\n14 days). These are dot-paths under `event.event_properties.*` that callers can\ntarget in mapping `value` fields. Newly seen properties may take a few minutes\nto appear; an empty list means no custom properties have been observed yet for\nthis account. Requires scope: variables:find-custom",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleMappingsCustomVariables,

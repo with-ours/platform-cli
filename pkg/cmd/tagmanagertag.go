@@ -69,7 +69,7 @@ var tagManagerTagsCreate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "tag",
-			Usage:    "Tag implementation identifier (typically equals `type`).",
+			Usage:    "Must equal `type` — send the same string in both fields. The server rejects any divergent value.",
 			Required: true,
 			BodyPath: "Tag",
 		},
@@ -81,7 +81,7 @@ var tagManagerTagsCreate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Tag type discriminator (e.g. `GA4Event`).",
+			Usage:    "Tag type discriminator. Pick from `GET /tag-manager-tags/types` for the canonical set (e.g. `OursTrackTag`, `OursInitTag`, `CustomHtmlTag`). Names like `GA4Event` are not valid ids.",
 			Required: true,
 			BodyPath: "type",
 		},
@@ -162,12 +162,12 @@ var tagManagerTagsUpdate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "tag",
-			Usage:    "Updated tag implementation identifier.",
+			Usage:    "Must equal `type`. Omit both fields, or send both with the same value — the server rejects any divergence.",
 			BodyPath: "Tag",
 		},
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Updated tag type.",
+			Usage:    "Updated tag type. Pick from `GET /tag-manager-tags/types`. When changing `type`, send the new value in `Tag` as well (they must match).",
 			BodyPath: "type",
 		},
 	},
