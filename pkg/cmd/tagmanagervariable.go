@@ -68,13 +68,13 @@ var tagManagerVariablesCreate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Variable type discriminator.",
+			Usage:    "Variable type discriminator. Pick from `GET /tag-manager-variables/types` for the canonical set (e.g. `DataLayer`, `Constant`, `Cookie`, `Url`).",
 			Required: true,
 			BodyPath: "type",
 		},
 		&requestflag.Flag[string]{
 			Name:     "variable",
-			Usage:    "Variable implementation identifier (typically equals `type`).",
+			Usage:    "Must equal `type` — send the same string in both fields. The server rejects any divergent value.",
 			Required: true,
 			BodyPath: "Variable",
 		},
@@ -149,12 +149,12 @@ var tagManagerVariablesUpdate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Updated variable type.",
+			Usage:    "Updated variable type. Pick from `GET /tag-manager-variables/types`. When changing `type`, send the new value in `Variable` as well (they must match).",
 			BodyPath: "type",
 		},
 		&requestflag.Flag[string]{
 			Name:     "variable",
-			Usage:    "Updated variable implementation identifier.",
+			Usage:    "Must equal `type`. Omit both fields, or send both with the same value — the server rejects any divergence.",
 			BodyPath: "Variable",
 		},
 	},
