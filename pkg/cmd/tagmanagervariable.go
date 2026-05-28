@@ -72,12 +72,6 @@ var tagManagerVariablesCreate = cli.Command{
 			Required: true,
 			BodyPath: "type",
 		},
-		&requestflag.Flag[string]{
-			Name:     "variable",
-			Usage:    "Must equal `type` — send the same string in both fields. The server rejects any divergent value.",
-			Required: true,
-			BodyPath: "Variable",
-		},
 		&requestflag.Flag[map[string]any]{
 			Name:     "default-value",
 			Usage:    "Optional default value. JSON value of any type.",
@@ -114,7 +108,7 @@ var tagManagerVariablesRetrieve = cli.Command{
 
 var tagManagerVariablesUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a variable. Only the fields you send are changed. Name\ncollisions with other variables in the same tag manager return 409 with the\nreason in the response `error` field. Requires scope: tagManagers:update",
+	Usage:   "Partially update a variable. Only the fields you send are changed. Name\ncollisions with other variables in the same tag manager return 409 with the\nreason in the response `error` field. To assign a variable to a folder, use\n`POST /rest/v1/tag-manager-asset-folders`. Requires scope: tagManagers:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -149,13 +143,8 @@ var tagManagerVariablesUpdate = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Updated variable type. Pick from `GET /tag-manager-variables/types`. When changing `type`, send the new value in `Variable` as well (they must match).",
+			Usage:    "Updated variable type. Pick from `GET /tag-manager-variables/types`.",
 			BodyPath: "type",
-		},
-		&requestflag.Flag[string]{
-			Name:     "variable",
-			Usage:    "Must equal `type`. Omit both fields, or send both with the same value — the server rejects any divergence.",
-			BodyPath: "Variable",
 		},
 	},
 	Action:          handleTagManagerVariablesUpdate,

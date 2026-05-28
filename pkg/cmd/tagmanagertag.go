@@ -46,7 +46,7 @@ var tagManagerTagsList = cli.Command{
 
 var tagManagerTagsCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new tag inside a tag manager. `tagManagerId` is required in the body.\nNewly created tags are not assigned to any folder — use the GraphQL\n`assignTagManagerAssetToFolder` mutation to place them. Requires scope:\ntagManagers:update",
+	Usage:   "Create a new tag inside a tag manager. `tagManagerId` is required in the body.\nNewly created tags are not assigned to any folder — assign after creation via\nPATCH with `folderId`. Requires scope: tagManagers:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[[]string]{
@@ -66,12 +66,6 @@ var tagManagerTagsCreate = cli.Command{
 			Usage:    "Type-specific JSON configuration. Send `{}` for a placeholder.",
 			Required: true,
 			BodyPath: "parameters",
-		},
-		&requestflag.Flag[string]{
-			Name:     "tag",
-			Usage:    "Must equal `type` — send the same string in both fields. The server rejects any divergent value.",
-			Required: true,
-			BodyPath: "Tag",
 		},
 		&requestflag.Flag[string]{
 			Name:     "tag-manager-id",
@@ -122,7 +116,7 @@ var tagManagerTagsRetrieve = cli.Command{
 
 var tagManagerTagsUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a tag. Only the fields you send are changed. `folderId` is\nread-only here; change folder membership via the GraphQL\n`assignTagManagerAssetToFolder` mutation. Tags cannot be moved between tag\nmanagers (omit `tagManagerId` on patch). Requires scope: tagManagers:update",
+	Usage:   "Partially update a tag. Only the fields you send are changed. Tags cannot be\nmoved between tag managers. To assign a tag to a folder, use\n`POST /rest/v1/tag-manager-asset-folders`. Requires scope: tagManagers:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -161,13 +155,8 @@ var tagManagerTagsUpdate = cli.Command{
 			BodyPath: "priority",
 		},
 		&requestflag.Flag[string]{
-			Name:     "tag",
-			Usage:    "Must equal `type`. Omit both fields, or send both with the same value — the server rejects any divergence.",
-			BodyPath: "Tag",
-		},
-		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Updated tag type. Pick from `GET /tag-manager-tags/types`. When changing `type`, send the new value in `Tag` as well (they must match).",
+			Usage:    "Updated tag type. Pick from `GET /tag-manager-tags/types`.",
 			BodyPath: "type",
 		},
 	},
