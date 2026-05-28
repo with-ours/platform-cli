@@ -14,11 +14,17 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var sourcesList = cli.Command{
+var tagManagerVariablesList = cli.Command{
 	Name:    "list",
-	Usage:   "List all sources for this account. Supports cursor pagination and optional\nfilters for `type`, `status`, and `nameContains`. Results are sorted by creation\ndate descending. Requires scope: source:list",
+	Usage:   "List variables inside a single tag manager. Requires the `tagManagerId` query\nparameter — variables are always scoped to one parent container. Supports cursor\npagination via `limit` and `cursor`; the limit clamp is 1000 so a single request\ncan return the full set (the web-app workspace renders all variables in one\nshot). Requires scope: tagManagers:find",
 	Suggest: true,
 	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "tag-manager-id",
+			Usage:     "Parent tag manager whose variables should be returned.",
+			Required:  true,
+			QueryPath: "tagManagerId",
+		},
 		&requestflag.Flag[string]{
 			Name:      "cursor",
 			Usage:     "Opaque pagination cursor from pagination.nextCursor in the previous response. Do not decode or modify it. Malformed cursors return 400 Bad Request.",
@@ -26,130 +32,128 @@ var sourcesList = cli.Command{
 		},
 		&requestflag.Flag[*int64]{
 			Name:      "limit",
-			Usage:     "Maximum number of items to return. Defaults to 25; values below 1 are clamped to 1 and values above 100 are clamped to 100.",
+			Usage:     "Maximum number of variables to return. Defaults to 25; values below 1 are clamped to 1 and values above 1000 are clamped to 1000. The web-app passes 1000 to render the full workspace in one request.",
 			QueryPath: "limit",
-		},
-		&requestflag.Flag[string]{
-			Name:      "name-contains",
-			Usage:     "Case-insensitive substring filter on the source name.",
-			QueryPath: "nameContains",
-		},
-		&requestflag.Flag[string]{
-			Name:      "status",
-			Usage:     "Filter by source status.",
-			QueryPath: "status",
-		},
-		&requestflag.Flag[string]{
-			Name:      "type",
-			Usage:     "Filter by source type.",
-			QueryPath: "type",
 		},
 		&requestflag.Flag[int64]{
 			Name:  "max-items",
 			Usage: "The maximum number of items to return (use -1 for unlimited).",
 		},
 	},
-	Action:          handleSourcesList,
+	Action:          handleTagManagerVariablesList,
 	HideHelpCommand: true,
 }
 
-var sourcesCreate = cli.Command{
+var tagManagerVariablesCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new source. Returns the full source entity (same shape as GET\n/sources/{id}) so callers can read all server-assigned fields without a\nfollow-up GET. Requires scope: source:create",
+	Usage:   "Create a new variable inside a tag manager. `tagManagerId` is required in the\nbody. Known input failures (e.g. duplicate variable name within the tag manager)\nare returned as HTTP 409 with the reason in the response `error` field. Requires\nscope: tagManagers:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
+			Name:     "name",
+			Required: true,
+			BodyPath: "name",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "parameters",
+			Usage:    "Type-specific JSON configuration.",
+			Required: true,
+			BodyPath: "parameters",
+		},
+		&requestflag.Flag[string]{
+			Name:     "tag-manager-id",
+			Usage:    "Parent tag manager that will own the new variable.",
+			Required: true,
+			BodyPath: "tagManagerId",
+		},
+		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    `Allowed values: "AlchemerWebhook", "AndroidNativeApi", "CSharpApi", "CalComWebhooks", "CalendlyWebhook", "CallRail", "CallTrackingMetrics", "DotNetApi", "FacebookLeadAds", "FormsortWebhooks", "Formstack", "GoLangApi", "HTTPApiSource", "Healthie", "HubspotAppActions", "HubspotFormWebhook", "JotFormWebhooks", "KotlinApi", "NodejsApi", "PHPApi", "PixelImage", "PythonApi", "ReactNativeApi", "RedirectSource", "RubyApi", "SegmentWebPlugin", "TypeformWebhooks", "WebSource", "Webhook", "WhatConverts", "iOSNativeApi".`,
+			Usage:    "Variable type discriminator. Pick from `GET /tag-manager-variables/types` for the canonical set (e.g. `DataLayer`, `Constant`, `Cookie`, `Url`).",
 			Required: true,
 			BodyPath: "type",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "name",
-			BodyPath: "name",
-		},
-	},
-	Action:          handleSourcesCreate,
-	HideHelpCommand: true,
-}
-
-var sourcesRetrieve = cli.Command{
-	Name:    "retrieve",
-	Usage:   "Find a single source by ID. Requires scope: source:view",
-	Suggest: true,
-	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:      "id",
-			Required:  true,
-			PathParam: "id",
-		},
-	},
-	Action:          handleSourcesRetrieve,
-	HideHelpCommand: true,
-}
-
-var sourcesUpdate = cli.Command{
-	Name:    "update",
-	Usage:   "Partially update a source. Only the fields you send are changed; omitted fields\nare unchanged. Send explicit `null` to clear a nullable field. Returns the full\nsource entity after the update. Requires scope: source:update",
-	Suggest: true,
-	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:      "id",
-			Required:  true,
-			PathParam: "id",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "bot-control-mode",
-			BodyPath: "botControlMode",
-		},
-		&requestflag.Flag[*float64]{
-			Name:     "bot-score-threshold",
-			BodyPath: "botScoreThreshold",
+		&requestflag.Flag[map[string]any]{
+			Name:     "default-value",
+			Usage:    "Optional default value. JSON value of any type.",
+			BodyPath: "defaultValue",
 		},
 		&requestflag.Flag[*bool]{
-			Name:     "exclude-request-context",
-			BodyPath: "excludeRequestContext",
+			Name:     "enabled",
+			BodyPath: "enabled",
 		},
-		&requestflag.Flag[*string]{
+		&requestflag.Flag[map[string]any]{
+			Name:     "look-up-table",
+			Usage:    "Optional lookup table for `LookUpTable` variables.",
+			BodyPath: "lookUpTable",
+		},
+	},
+	Action:          handleTagManagerVariablesCreate,
+	HideHelpCommand: true,
+}
+
+var tagManagerVariablesRetrieve = cli.Command{
+	Name:    "retrieve",
+	Usage:   "Find a single tag manager variable by ID. Requires scope: tagManagers:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleTagManagerVariablesRetrieve,
+	HideHelpCommand: true,
+}
+
+var tagManagerVariablesUpdate = cli.Command{
+	Name:    "update",
+	Usage:   "Partially update a variable. Only the fields you send are changed. Name\ncollisions with other variables in the same tag manager return 409 with the\nreason in the response `error` field. To assign a variable to a folder, use\n`POST /rest/v1/tag-manager-asset-folders`. Requires scope: tagManagers:update",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "default-value",
+			Usage:    "Updated default value. JSON value of any type.",
+			BodyPath: "defaultValue",
+		},
+		&requestflag.Flag[*bool]{
+			Name:     "enabled",
+			Usage:    "Pause/resume the variable without changing other fields.",
+			BodyPath: "enabled",
+		},
+		&requestflag.Flag[map[string]any]{
+			Name:     "look-up-table",
+			Usage:    "Updated lookup table payload.",
+			BodyPath: "lookUpTable",
+		},
+		&requestflag.Flag[string]{
 			Name:     "name",
+			Usage:    "Updated variable name.",
 			BodyPath: "name",
 		},
-		&requestflag.Flag[any]{
-			Name:     "probabilistic-identity",
-			BodyPath: "probabilisticIdentity",
+		&requestflag.Flag[map[string]any]{
+			Name:     "parameters",
+			Usage:    "Updated type-specific JSON configuration.",
+			BodyPath: "parameters",
 		},
-		&requestflag.Flag[*string]{
-			Name:     "project-api-key",
-			BodyPath: "projectAPIKey",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "redirect-url",
-			BodyPath: "redirectUrl",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "selected-account-id",
-			BodyPath: "selectedAccountId",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "status",
-			BodyPath: "status",
-		},
-		&requestflag.Flag[any]{
-			Name:     "whitelist-domain",
-			BodyPath: "whitelistDomains",
-		},
-		&requestflag.Flag[any]{
-			Name:     "whitelist-ip",
-			BodyPath: "whitelistIps",
+		&requestflag.Flag[string]{
+			Name:     "type",
+			Usage:    "Updated variable type. Pick from `GET /tag-manager-variables/types`.",
+			BodyPath: "type",
 		},
 	},
-	Action:          handleSourcesUpdate,
+	Action:          handleTagManagerVariablesUpdate,
 	HideHelpCommand: true,
 }
 
-var sourcesDelete = cli.Command{
+var tagManagerVariablesDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a source. Requires scope: source:delete",
+	Usage:   "Delete a tag manager variable. Requires scope: tagManagers:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -158,26 +162,20 @@ var sourcesDelete = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleSourcesDelete,
+	Action:          handleTagManagerVariablesDelete,
 	HideHelpCommand: true,
 }
 
-var sourcesTokens = cli.Command{
-	Name:    "tokens",
-	Usage:   "Returns the install or ingest tokens for a source. The response is a\ndiscriminated union on `sourceType`: pixel sources return\n`{ sourceType: \"pixel\", token, testToken, installScript, testInstallScript }`,\nand webhook sources return\n`{ sourceType: \"webhook\", token, testToken, ingestUrl, testIngestUrl, sampleCurl }`.\nInspect the source's `type` field (`GET /rest/v1/sources/{id}`) to know which\nvariant to expect. Requires scope: source:view",
-	Suggest: true,
-	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:      "id",
-			Required:  true,
-			PathParam: "id",
-		},
-	},
-	Action:          handleSourcesTokens,
+var tagManagerVariablesTypes = cli.Command{
+	Name:            "types",
+	Usage:           "Lists every variable template the platform supports — what `type` discriminator\nto send on create/patch, the shape of the type-specific `parameters` payload,\nand `supportsVariables` (whether the variable's own parameter fields may\nreference `{{OtherVariable}}` at runtime). Account-agnostic: the response is the\nsame for every API key. Requires scope: tagManagers:find",
+	Suggest:         true,
+	Flags:           []cli.Flag{},
+	Action:          handleTagManagerVariablesTypes,
 	HideHelpCommand: true,
 }
 
-func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
+func handleTagManagerVariablesList(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -196,7 +194,7 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := oursprivacy.SourceListParams{}
+	params := oursprivacy.TagManagerVariableListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -204,7 +202,7 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 	if format == "raw" {
 		var res []byte
 		options = append(options, option.WithResponseBodyInto(&res))
-		_, err = client.Sources.List(ctx, params, options...)
+		_, err = client.TagManagerVariables.List(ctx, params, options...)
 		if err != nil {
 			return err
 		}
@@ -213,11 +211,11 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 			ExplicitFormat: explicitFormat,
 			Format:         format,
 			RawOutput:      cmd.Root().Bool("raw-output"),
-			Title:          "sources list",
+			Title:          "tag-manager-variables list",
 			Transform:      transform,
 		})
 	} else {
-		iter := client.Sources.ListAutoPaging(ctx, params, options...)
+		iter := client.TagManagerVariables.ListAutoPaging(ctx, params, options...)
 		maxItems := int64(-1)
 		if cmd.IsSet("max-items") {
 			maxItems = cmd.Value("max-items").(int64)
@@ -226,13 +224,13 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 			ExplicitFormat: explicitFormat,
 			Format:         format,
 			RawOutput:      cmd.Root().Bool("raw-output"),
-			Title:          "sources list",
+			Title:          "tag-manager-variables list",
 			Transform:      transform,
 		})
 	}
 }
 
-func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
+func handleTagManagerVariablesCreate(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -251,11 +249,11 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := oursprivacy.SourceNewParams{}
+	params := oursprivacy.TagManagerVariableNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.New(ctx, params, options...)
+	_, err = client.TagManagerVariables.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -268,12 +266,12 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources create",
+		Title:          "tag-manager-variables create",
 		Transform:      transform,
 	})
 }
 
-func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleTagManagerVariablesRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -297,7 +295,7 @@ func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.TagManagerVariables.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -310,12 +308,12 @@ func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources retrieve",
+		Title:          "tag-manager-variables retrieve",
 		Transform:      transform,
 	})
 }
 
-func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleTagManagerVariablesUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -337,11 +335,11 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := oursprivacy.SourceUpdateParams{}
+	params := oursprivacy.TagManagerVariableUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.Update(
+	_, err = client.TagManagerVariables.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -359,12 +357,12 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources update",
+		Title:          "tag-manager-variables update",
 		Transform:      transform,
 	})
 }
 
-func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
+func handleTagManagerVariablesDelete(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -388,7 +386,7 @@ func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.TagManagerVariables.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -401,18 +399,15 @@ func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources delete",
+		Title:          "tag-manager-variables delete",
 		Transform:      transform,
 	})
 }
 
-func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
+func handleTagManagerVariablesTypes(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
-	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
-		cmd.Set("id", unusedArgs[0])
-		unusedArgs = unusedArgs[1:]
-	}
+
 	if len(unusedArgs) > 0 {
 		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
 	}
@@ -430,7 +425,7 @@ func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.Tokens(ctx, cmd.Value("id").(string), options...)
+	_, err = client.TagManagerVariables.Types(ctx, options...)
 	if err != nil {
 		return err
 	}
@@ -443,7 +438,7 @@ func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources tokens",
+		Title:          "tag-manager-variables types",
 		Transform:      transform,
 	})
 }
