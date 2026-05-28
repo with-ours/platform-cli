@@ -25,7 +25,7 @@ var tagManagersList = cli.Command{
 
 var tagManagersCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new tag manager. The server seeds three default triggers\n(`Initialization`, `PageView`, `DomReady`) and one `OursInitTag` so the\ncontainer is immediately usable — call\n`GET /tag-manager-triggers?tagManagerId={id}` right after create to grab their\nserver-assigned ids so you can reuse them in `fireTriggerIds` instead of\nredundantly creating a second `PageView`/`DomReady`/`Initialization`. Returns\nthe bare entity. Accounts have a per-account tag manager limit — exceeding it\nreturns 409 with the reason in the response `error` field. Requires scope:\ntagManagers:create",
+	Usage:   "Create a new tag manager. The server seeds three default triggers\n(`Initialization`, `PageView`, `DomReady`) and one `OursInitTag` so the\ncontainer is immediately usable — call\n`GET /tag-manager-triggers?tagManagerId={id}` right after create to grab their\nserver-assigned ids so you can reuse them in `fireTriggerIds` instead of\nredundantly creating a second `PageView`/`DomReady`/`Initialization`. Returns\nthe bare entity. Requires scope: tagManagers:create",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
