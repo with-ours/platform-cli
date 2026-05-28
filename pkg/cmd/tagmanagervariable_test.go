@@ -32,7 +32,6 @@ func TestTagManagerVariablesCreate(t *testing.T) {
 			"--parameters", "{foo: bar}",
 			"--tag-manager-id", "x",
 			"--type", "type",
-			"--variable", "Variable",
 			"--default-value", "{foo: bar}",
 			"--enabled=true",
 			"--look-up-table", "{foo: bar}",
@@ -47,7 +46,6 @@ func TestTagManagerVariablesCreate(t *testing.T) {
 			"  foo: bar\n" +
 			"tagManagerId: x\n" +
 			"type: type\n" +
-			"Variable: Variable\n" +
 			"defaultValue:\n" +
 			"  foo: bar\n" +
 			"enabled: true\n" +
@@ -85,7 +83,6 @@ func TestTagManagerVariablesUpdate(t *testing.T) {
 			"--name", "name",
 			"--parameters", "{foo: bar}",
 			"--type", "type",
-			"--variable", "Variable",
 		)
 	})
 
@@ -100,8 +97,7 @@ func TestTagManagerVariablesUpdate(t *testing.T) {
 			"name: name\n" +
 			"parameters:\n" +
 			"  foo: bar\n" +
-			"type: type\n" +
-			"Variable: Variable\n")
+			"type: type\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",

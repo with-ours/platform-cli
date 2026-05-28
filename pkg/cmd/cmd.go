@@ -363,6 +363,14 @@ func init() {
 				},
 			},
 			{
+				Name:     "tag-manager-asset-folders",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&tagManagerAssetFoldersCreate,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "oursprivacy @manpages [-o oursprivacy.1] [--gzip]",

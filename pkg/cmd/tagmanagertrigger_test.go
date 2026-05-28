@@ -32,7 +32,6 @@ func TestTagManagerTriggersCreate(t *testing.T) {
 			"--name", "name",
 			"--parameters", "{foo: bar}",
 			"--tag-manager-id", "x",
-			"--trigger", "Trigger",
 			"--type", "type",
 			"--enabled=true",
 		)
@@ -47,7 +46,6 @@ func TestTagManagerTriggersCreate(t *testing.T) {
 			"parameters:\n" +
 			"  foo: bar\n" +
 			"tagManagerId: x\n" +
-			"Trigger: Trigger\n" +
 			"type: type\n" +
 			"enabled: true\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
@@ -80,7 +78,6 @@ func TestTagManagerTriggersUpdate(t *testing.T) {
 			"--enabled=true",
 			"--name", "name",
 			"--parameters", "{foo: bar}",
-			"--trigger", "Trigger",
 			"--type", "type",
 		)
 	})
@@ -94,7 +91,6 @@ func TestTagManagerTriggersUpdate(t *testing.T) {
 			"name: name\n" +
 			"parameters:\n" +
 			"  foo: bar\n" +
-			"Trigger: Trigger\n" +
 			"type: type\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,

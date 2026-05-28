@@ -513,7 +513,7 @@ var consentSettingsAnalytics = cli.Command{
 
 var consentSettingsPageAnalysis = cli.Command{
 	Name:    "page-analysis",
-	Usage:   "Per-page consent breakdown for one consent settings record, ranked by opt-outs\n(descending). Each row bundles banner views, opt-outs, close-icon clicks, and\nthe derived opt-out rate. Documented exception to the cursor-pagination\nstandard: this is a derived read whose underlying GraphQL contract is\noffset/limit-based; cursors are not used. `search` is a substring match against\n`pathname`; `region` filters to one visitor region. Requires the API-key scope\n`report:consent-page-analysis` (PHI-bearing report data). Requires scope:\nreport:consent-page-analysis",
+	Usage:   "Per-page consent breakdown for one consent settings record, ranked by opt-outs\n(descending). Each row bundles banner views, opt-outs, close-icon clicks, and\nthe derived opt-out rate. Documented exception to the cursor-pagination\nstandard: this endpoint paginates with `limit` and `offset` rather than\n`cursor`. `search` is a substring match against `pathname`; `region` filters to\none visitor region. Requires the API-key scope `report:consent-page-analysis`\n(PHI-bearing report data). Requires scope: report:consent-page-analysis",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

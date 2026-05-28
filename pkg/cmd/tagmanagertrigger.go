@@ -73,12 +73,6 @@ var tagManagerTriggersCreate = cli.Command{
 			BodyPath: "tagManagerId",
 		},
 		&requestflag.Flag[string]{
-			Name:     "trigger",
-			Usage:    "Must equal `type` — send the same string in both fields. The server rejects any divergent value.",
-			Required: true,
-			BodyPath: "Trigger",
-		},
-		&requestflag.Flag[string]{
 			Name:     "type",
 			Usage:    "Trigger type discriminator. Pick from `GET /tag-manager-triggers/types` for the canonical set (e.g. `PageView`, `CustomEvent`, `AllElementsClick`).",
 			Required: true,
@@ -110,7 +104,7 @@ var tagManagerTriggersRetrieve = cli.Command{
 
 var tagManagerTriggersUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a trigger. Only the fields you send are changed. `conditions`\nis replaced wholesale when sent. Requires scope: tagManagers:update",
+	Usage:   "Partially update a trigger. Only the fields you send are changed. `conditions`\nis replaced wholesale when sent. To assign a trigger to a folder, use\n`POST /rest/v1/tag-manager-asset-folders`. Requires scope: tagManagers:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -139,13 +133,8 @@ var tagManagerTriggersUpdate = cli.Command{
 			BodyPath: "parameters",
 		},
 		&requestflag.Flag[string]{
-			Name:     "trigger",
-			Usage:    "Must equal `type`. Omit both fields, or send both with the same value — the server rejects any divergence.",
-			BodyPath: "Trigger",
-		},
-		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Updated trigger type. Pick from `GET /tag-manager-triggers/types`. When changing `type`, send the new value in `Trigger` as well (they must match).",
+			Usage:    "Updated trigger type. Pick from `GET /tag-manager-triggers/types`.",
 			BodyPath: "type",
 		},
 	},
