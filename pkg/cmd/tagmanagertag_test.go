@@ -31,7 +31,6 @@ func TestTagManagerTagsCreate(t *testing.T) {
 			"--fire-trigger-id", "string",
 			"--name", "name",
 			"--parameters", "{foo: bar}",
-			"--tag", "Tag",
 			"--tag-manager-id", "x",
 			"--type", "type",
 			"--block-trigger-id", "[string]",
@@ -48,7 +47,6 @@ func TestTagManagerTagsCreate(t *testing.T) {
 			"name: name\n" +
 			"parameters:\n" +
 			"  foo: bar\n" +
-			"Tag: Tag\n" +
 			"tagManagerId: x\n" +
 			"type: type\n" +
 			"blockTriggerIds:\n" +
@@ -87,7 +85,6 @@ func TestTagManagerTagsUpdate(t *testing.T) {
 			"--name", "name",
 			"--parameters", "{foo: bar}",
 			"--priority", "0",
-			"--tag", "Tag",
 			"--type", "type",
 		)
 	})
@@ -104,7 +101,6 @@ func TestTagManagerTagsUpdate(t *testing.T) {
 			"parameters:\n" +
 			"  foo: bar\n" +
 			"priority: 0\n" +
-			"Tag: Tag\n" +
 			"type: type\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
