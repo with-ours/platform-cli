@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.15.0 (2026-05-29)
+
+Full Changelog: [v1.14.0...v1.15.0](https://github.com/with-ours/platform-cli/compare/v1.14.0...v1.15.0)
+
+### Features
+
+* **api:** api update ([9779751](https://github.com/with-ours/platform-cli/commit/97797516551cc74408b89b3ba70e0505a266e4f8))
+
+
+### Chores
+
+* **internal:** codegen related update ([7244755](https://github.com/with-ours/platform-cli/commit/7244755d86dc19589caaf629e4ded61b77af81db))
+
 ## 1.14.0 (2026-05-28)
 
 Full Changelog: [v1.13.0...v1.14.0](https://github.com/with-ours/platform-cli/compare/v1.13.0...v1.14.0)
