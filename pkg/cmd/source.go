@@ -60,7 +60,7 @@ var sourcesCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    `Allowed values: "AlchemerWebhook", "AndroidNativeApi", "CSharpApi", "CalComWebhooks", "CalendlyWebhook", "CallRail", "CallTrackingMetrics", "DotNetApi", "FacebookLeadAds", "FormsortWebhooks", "Formstack", "GoLangApi", "HTTPApiSource", "Healthie", "HubspotAppActions", "HubspotFormWebhook", "JotFormWebhooks", "KotlinApi", "NodejsApi", "PHPApi", "PixelImage", "PythonApi", "ReactNativeApi", "RedirectSource", "RubyApi", "SegmentWebPlugin", "TypeformWebhooks", "WebSource", "Webhook", "WhatConverts", "iOSNativeApi".`,
+			Usage:    `Allowed values: "AlchemerWebhook", "AndroidNativeApi", "Branch", "CSharpApi", "CalComWebhooks", "CalendlyWebhook", "CallRail", "CallTrackingMetrics", "DotNetApi", "FacebookLeadAds", "FormsortWebhooks", "Formstack", "GoLangApi", "HTTPApiSource", "Healthie", "HubspotAppActions", "HubspotFormWebhook", "JotFormWebhooks", "KotlinApi", "NodejsApi", "PHPApi", "PixelImage", "PythonApi", "ReactNativeApi", "RedirectSource", "RubyApi", "SegmentWebPlugin", "TypeformWebhooks", "WebSource", "Webhook", "WhatConverts", "iOSNativeApi".`,
 			Required: true,
 			BodyPath: "type",
 		},
