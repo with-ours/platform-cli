@@ -315,7 +315,7 @@ var locationsEmbedCode = cli.Command{
 		&requestflag.Flag[string]{
 			Name:      "color",
 			Usage:     "Brand color used in the embedded map UI. Any CSS color string.",
-			Default:   "#B33E3E",
+			Default:   "#007EA8",
 			QueryPath: "color",
 		},
 		&requestflag.Flag[string]{

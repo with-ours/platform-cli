@@ -235,7 +235,7 @@ func TestLocationsEmbedCode(t *testing.T) {
 			"--api-key", "string",
 			"locations", "embed-code",
 			"--id", "id",
-			"--color", "#B33E3E",
+			"--color", "#007EA8",
 			"--color-scheme", "light",
 			"--include-address-box=true",
 			"--include-controls", "yes",
