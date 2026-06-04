@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.16.0 (2026-06-04)
+
+Full Changelog: [v1.15.0...v1.16.0](https://github.com/with-ours/platform-cli/compare/v1.15.0...v1.16.0)
+
+### Features
+
+* **api:** api update ([026a2f3](https://github.com/with-ours/platform-cli/commit/026a2f3d360610b9b2650327eec4b251fca0a6d6))
+* **api:** api update ([01e1847](https://github.com/with-ours/platform-cli/commit/01e18479538b6d46040206ca57fd2018925ed9cd))
+* **api:** api update ([94a8bd2](https://github.com/with-ours/platform-cli/commit/94a8bd2025f2ddbb148385b87e9c570558317a31))
+
 ## 1.15.0 (2026-05-29)
 
 Full Changelog: [v1.14.0...v1.15.0](https://github.com/with-ours/platform-cli/compare/v1.14.0...v1.15.0)

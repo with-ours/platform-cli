@@ -33,6 +33,7 @@ func TestExperimentsCreate(t *testing.T) {
 			"experiments", "create",
 			"--experiment-settings-id", "settings_01HZX9BB73EY2Q37VGK5A0VW7A",
 			"--name", "Homepage Hero Headline Test",
+			"--control-weight", "34",
 			"--description", "description",
 			"--include-query-string=true",
 			"--key", "homepage-hero-headline-test",
@@ -54,6 +55,7 @@ func TestExperimentsCreate(t *testing.T) {
 			"experiments", "create",
 			"--experiment-settings-id", "settings_01HZX9BB73EY2Q37VGK5A0VW7A",
 			"--name", "Homepage Hero Headline Test",
+			"--control-weight", "34",
 			"--description", "description",
 			"--include-query-string=true",
 			"--key", "homepage-hero-headline-test",
@@ -74,6 +76,7 @@ func TestExperimentsCreate(t *testing.T) {
 		pipeData := []byte("" +
 			"experimentSettingsId: settings_01HZX9BB73EY2Q37VGK5A0VW7A\n" +
 			"name: Homepage Hero Headline Test\n" +
+			"controlWeight: 34\n" +
 			"description: description\n" +
 			"includeQueryString: true\n" +
 			"key: homepage-hero-headline-test\n" +

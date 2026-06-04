@@ -63,7 +63,7 @@ var experimentVariantsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[int64]{
 			Name:     "weight",
-			Usage:    "Traffic weight to assign to this variant. Weights are relative shares; the runtime normalizes by their sum. Must be a positive integer in the range 1..1_000_000.",
+			Usage:    "Traffic weight for this variant as a percentage (0–100). Treatment weights are percentages of the split and must total 99% or less to leave room for the control; the control variant is the remainder (100 − Σ treatment weights, always ≥ 1%) and is maintained automatically.",
 			Required: true,
 			BodyPath: "weight",
 		},
@@ -74,7 +74,7 @@ var experimentVariantsCreate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*bool]{
 			Name:     "is-control",
-			Usage:    "Mark this variant as the experiment control. Defaults to `false`. The API rejects the request with 409 if the experiment already has a control variant — to swap controls, first PATCH the existing control to clear `isControl`, then create or PATCH the new one with `isControl: true`. The auto-generated control variant created with each new experiment can be replaced this way. DELETE on the control returns 409.",
+			Usage:    "Mark this variant as the experiment control. Defaults to `false`. The API rejects the request with 409 if the experiment already has a control variant. Every experiment keeps exactly one control whose weight is the auto-derived remainder of the split, so the control cannot be cleared while it would leave the treatments at 100% (no room for a control). DELETE on the control returns 409.",
 			BodyPath: "isControl",
 		},
 		&requestflag.Flag[*string]{
@@ -157,7 +157,7 @@ var experimentVariantsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*bool]{
 			Name:     "is-control",
-			Usage:    "Promote or demote this variant as the control. Promoting a second variant while another already has `isControl: true` is rejected with 409 — clear the existing control first.",
+			Usage:    "Promote or demote this variant as the control. Promoting a second variant while another already has `isControl: true` is rejected with 409. Demoting the control (`isControl: false`) is rejected when it would leave the treatments at 100% — there must always be room for a control.",
 			BodyPath: "isControl",
 		},
 		&requestflag.Flag[*string]{
@@ -177,7 +177,7 @@ var experimentVariantsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*int64]{
 			Name:     "weight",
-			Usage:    "Updated traffic weight relative to other variants. Must be a positive integer in the range 1..1_000_000.",
+			Usage:    "Updated traffic weight as a percentage (0–100). The control variant weight is derived from the treatments (it is the remainder of the split) and cannot be set directly.",
 			BodyPath: "weight",
 		},
 	},
