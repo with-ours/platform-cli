@@ -368,6 +368,9 @@ func init() {
 					&webScannersUpdate,
 					&webScannersDelete,
 					&webScannersTrigger,
+					&webScannersFindings,
+					&webScannersCookies,
+					&webScannersSummary,
 				},
 			},
 			{

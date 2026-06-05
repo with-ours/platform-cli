@@ -120,3 +120,43 @@ func TestWebScannersTrigger(t *testing.T) {
 		)
 	})
 }
+
+func TestWebScannersFindings(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"web-scanners", "findings",
+			"--id", "id",
+			"--date", "'2026-05-15T00:00:00Z'",
+			"--limit", "1",
+			"--offset", "0",
+		)
+	})
+}
+
+func TestWebScannersCookies(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"web-scanners", "cookies",
+			"--id", "id",
+			"--date", "'2026-05-15T00:00:00Z'",
+			"--limit", "1",
+			"--offset", "0",
+		)
+	})
+}
+
+func TestWebScannersSummary(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"web-scanners", "summary",
+			"--id", "id",
+			"--date", "'2026-05-15T00:00:00Z'",
+		)
+	})
+}
