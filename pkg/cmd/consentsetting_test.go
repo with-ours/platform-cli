@@ -55,6 +55,7 @@ func TestConsentSettingsReplace(t *testing.T) {
 			"--status", "Disabled",
 			"--consent-cookie-name", "consentCookieName",
 			"--custom-domain", "customDomain",
+			"--device-id-cookie-name", "deviceIdCookieName",
 			"--revision", "0",
 			"--skip-blocking-class-name", "[string]",
 			"--web-sdk-token", "webSDKToken",
@@ -99,6 +100,7 @@ func TestConsentSettingsReplace(t *testing.T) {
 			"--status", "Disabled",
 			"--consent-cookie-name", "consentCookieName",
 			"--custom-domain", "customDomain",
+			"--device-id-cookie-name", "deviceIdCookieName",
 			"--revision", "0",
 			"--skip-blocking-class-name", "[string]",
 			"--web-sdk-token", "webSDKToken",
@@ -175,6 +177,7 @@ func TestConsentSettingsReplace(t *testing.T) {
 			"status: Disabled\n" +
 			"consentCookieName: consentCookieName\n" +
 			"customDomain: customDomain\n" +
+			"deviceIdCookieName: deviceIdCookieName\n" +
 			"revision: 0\n" +
 			"skipBlockingClassNames:\n" +
 			"  - string\n" +
@@ -201,6 +204,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"--consent-cookie-name", "consentCookieName",
 			"--custom-domain", "customDomain",
 			"--default", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: en, mode: opt_in, translations: [{language: en, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
+			"--device-id-cookie-name", "deviceIdCookieName",
 			"--name", "name",
 			"--region", "{regionCode: US-CA, rule: {categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: en, mode: opt_in, translations: [{language: en, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}, additionalRegions: [string]}",
 			"--revision", "0",
@@ -239,6 +243,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"--default.gui-options", "{}",
 			"--default.hide-from-bots=true",
 			"--default.show-vendors-in-preferences=true",
+			"--device-id-cookie-name", "deviceIdCookieName",
 			"--name", "name",
 			"--region.region-code", "US-CA",
 			"--region.rule", "{categories: [{key: key, value: {enabled: true, autoDisableOnGPC: true, readOnly: true, reloadPage: true}}], language: en, mode: opt_in, translations: [{language: en, value: {consentModal: {}, preferencesModal: {}}}], autoblockUnknown: true, autoShow: true, autoShowDismissConfig: {}, autoShowDismissMode: autoShowDismissMode, disablePageInteraction: true, guiOptions: {}, hideFromBots: true, showVendorsInPreferences: true}",
@@ -288,6 +293,7 @@ func TestConsentSettingsUpdate(t *testing.T) {
 			"  guiOptions: {}\n" +
 			"  hideFromBots: true\n" +
 			"  showVendorsInPreferences: true\n" +
+			"deviceIdCookieName: deviceIdCookieName\n" +
 			"name: name\n" +
 			"regions:\n" +
 			"  - regionCode: US-CA\n" +
