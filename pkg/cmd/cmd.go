@@ -343,6 +343,8 @@ func init() {
 					&versionsPublish,
 					&versionsSnapshot,
 					&versionsDiff,
+					&versionsRevert,
+					&versionsAbandon,
 				},
 			},
 			{
