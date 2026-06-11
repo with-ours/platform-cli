@@ -149,6 +149,86 @@ var webScannersTrigger = cli.Command{
 	HideHelpCommand: true,
 }
 
+var webScannersFindings = cli.Command{
+	Name:    "findings",
+	Usage:   "List the third-party trackers (requests) found on a scan run, with their risk,\ncategory, the pages they were seen on, and whether each host is already covered\nby a CMP consent service. Defaults to the latest run; pass `date` (an ISO-8601\ntimestamp; only the calendar day is used to select the run) to read an earlier\nrun. Documented exception to the cursor-pagination standard: paginates with\n`limit` and `offset` because each run is an immutable snapshot. A host that is\nneither covered (`coveredByCmp: false`) nor matched by a suppression rule still\nneeds a triage decision — resolve it by adding the host to a CMP consent service\nor by creating a suppression rule with `POST /rest/v1/web-scanner-rules`. Use\n`GET /rest/v1/web-scanners/{id}/summary` for the rolled-up counts. Requires\nscope: webScanner:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[any]{
+			Name:      "date",
+			Usage:     "Which scan run to read, as an ISO-8601 timestamp. Only the UTC calendar day is used to select the run; the time component is ignored. Defaults to the most recent run when omitted.",
+			QueryPath: "date",
+		},
+		&requestflag.Flag[int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of findings to return. Defaults to 25; clamped to 1–100.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "offset",
+			Usage:     "Skip this many findings before returning. Use with `limit` for load-more paging.",
+			QueryPath: "offset",
+		},
+	},
+	Action:          handleWebScannersFindings,
+	HideHelpCommand: true,
+}
+
+var webScannersCookies = cli.Command{
+	Name:    "cookies",
+	Usage:   "List the cookies and local-storage entries observed on a scan run. Defaults to\nthe latest run; pass `date` (an ISO-8601 timestamp; only the calendar day is\nused to select the run) to read an earlier run. Cookies paginate with `limit`\nand `offset` (a documented exception to the cursor-pagination standard, since\neach run is an immutable snapshot); local-storage entries are returned in full.\nRequires scope: webScanner:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[any]{
+			Name:      "date",
+			Usage:     "Which scan run to read, as an ISO-8601 timestamp. Only the UTC calendar day is used to select the run; the time component is ignored. Defaults to the most recent run when omitted.",
+			QueryPath: "date",
+		},
+		&requestflag.Flag[int64]{
+			Name:      "limit",
+			Usage:     "Maximum number of findings to return. Defaults to 25; clamped to 1–100.",
+			QueryPath: "limit",
+		},
+		&requestflag.Flag[*int64]{
+			Name:      "offset",
+			Usage:     "Skip this many findings before returning. Use with `limit` for load-more paging.",
+			QueryPath: "offset",
+		},
+	},
+	Action:          handleWebScannersCookies,
+	HideHelpCommand: true,
+}
+
+var webScannersSummary = cli.Command{
+	Name:    "summary",
+	Usage:   "Compliance summary for a scan run — the rolled-up \"what does this site look\nlike, and what still needs a decision\" view, assembled server-side so you do not\nhave to page every finding. Includes total host/vendor/cookie counts, a\nbreakdown by risk and by category, coverage (how many hosts are already covered\nby a CMP consent service or a suppression rule vs. how many still need a\ndecision), the new/removed host delta versus the previous run, and up to 10\nhighest-risk hosts that still need a decision. Defaults to the latest run; pass\n`date` (an ISO-8601 timestamp; only the calendar day is used to select the run)\nto read an earlier run. Clear a host that needs a decision by adding it to a CMP\nconsent service or creating a suppression rule with\n`POST /rest/v1/web-scanner-rules`. When the scanner has no completed runs, every\ncount is 0 and `runDate` is null. Requires scope: webScanner:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[any]{
+			Name:      "date",
+			Usage:     "Which scan run to read, as an ISO-8601 timestamp. Only the UTC calendar day is used to select the run; the time component is ignored. Defaults to the most recent run when omitted.",
+			QueryPath: "date",
+		},
+	},
+	Action:          handleWebScannersSummary,
+	HideHelpCommand: true,
+}
+
 func handleWebScannersList(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -400,6 +480,153 @@ func handleWebScannersTrigger(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "web-scanners trigger",
+		Transform:      transform,
+	})
+}
+
+func handleWebScannersFindings(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.WebScannerFindingsParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.WebScanners.Findings(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "web-scanners findings",
+		Transform:      transform,
+	})
+}
+
+func handleWebScannersCookies(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.WebScannerCookiesParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.WebScanners.Cookies(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "web-scanners cookies",
+		Transform:      transform,
+	})
+}
+
+func handleWebScannersSummary(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.WebScannerSummaryParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.WebScanners.Summary(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "web-scanners summary",
 		Transform:      transform,
 	})
 }

@@ -343,6 +343,8 @@ func init() {
 					&versionsPublish,
 					&versionsSnapshot,
 					&versionsDiff,
+					&versionsRevert,
+					&versionsAbandon,
 				},
 			},
 			{
@@ -368,6 +370,9 @@ func init() {
 					&webScannersUpdate,
 					&webScannersDelete,
 					&webScannersTrigger,
+					&webScannersFindings,
+					&webScannersCookies,
+					&webScannersSummary,
 				},
 			},
 			{

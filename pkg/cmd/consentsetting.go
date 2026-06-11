@@ -103,6 +103,11 @@ var consentSettingsReplace = requestflag.WithInnerFlags(cli.Command{
 			Usage:    "Custom CDN domain for serving the CMP script. Pass null to clear.",
 			BodyPath: "customDomain",
 		},
+		&requestflag.Flag[*string]{
+			Name:     "device-id-cookie-name",
+			Usage:    `Cookie/localStorage key for the visitor (device) ID. Must exactly match the web SDK's cookie_names.device_id (default "ours_device_id"). Pass null to clear.`,
+			BodyPath: "deviceIdCookieName",
+		},
 		&requestflag.Flag[*float64]{
 			Name:     "revision",
 			Usage:    "Revision counter. Bump to re-prompt users who already consented.",
@@ -280,6 +285,11 @@ var consentSettingsUpdate = requestflag.WithInnerFlags(cli.Command{
 			Name:     "default",
 			Usage:    "Replace the default rule wholesale. Omit to leave it untouched.",
 			BodyPath: "default",
+		},
+		&requestflag.Flag[*string]{
+			Name:     "device-id-cookie-name",
+			Usage:    `Cookie/localStorage key for the visitor (device) ID. Must exactly match the web SDK's cookie_names.device_id (default "ours_device_id"). Pass null to clear.`,
+			BodyPath: "deviceIdCookieName",
 		},
 		&requestflag.Flag[string]{
 			Name:     "name",

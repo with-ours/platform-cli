@@ -172,7 +172,7 @@ var experimentsRetrieve = cli.Command{
 
 var experimentsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Partially update an experiment. Only the fields you send are changed. Edits are\nonly accepted while the experiment is in `draft` status — running, paused, and\ncompleted experiments return 409 with\n`Experiment can only be edited in draft status`. Use the lifecycle endpoints\n(`/start`, `/pause`, `/resume`, `/stop`) to change status. Requires scope:\nexperiment:update",
+	Usage:   "Partially update an experiment. Only the fields you send are changed. Edits are\nallowed on draft, running, and paused experiments and are recorded in the change\nlog. Only completed experiments return 409 with\n`A completed experiment can no longer be edited`. Use the lifecycle endpoints\n(`/start`, `/pause`, `/resume`, `/stop`) to change status. Requires scope:\nexperiment:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

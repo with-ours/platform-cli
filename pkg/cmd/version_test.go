@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/with-ours/platform-cli/internal/mocktest"
+	"github.com/with-ours/platform-cli/internal/requestflag"
 )
 
 func TestVersionsList(t *testing.T) {
@@ -163,6 +164,58 @@ func TestVersionsDiff(t *testing.T) {
 			"versions", "diff",
 			"--id", "draft",
 			"--against", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+		)
+	})
+}
+
+func TestVersionsRevert(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"versions", "revert",
+			"--id", "draft",
+			"--entity", "{id: id, collection: allowedEvents}",
+		)
+	})
+
+	t.Run("inner flags", func(t *testing.T) {
+		// Check that inner flags have been set up correctly
+		requestflag.CheckInnerFlags(versionsRevert)
+
+		// Alternative argument passing style using inner flags
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"versions", "revert",
+			"--id", "draft",
+			"--entity.id", "id",
+			"--entity.collection", "allowedEvents",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("" +
+			"entities:\n" +
+			"  - id: id\n" +
+			"    collection: allowedEvents\n")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"versions", "revert",
+			"--id", "draft",
+		)
+	})
+}
+
+func TestVersionsAbandon(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"versions", "abandon",
+			"--id", "draft",
 		)
 	})
 }
