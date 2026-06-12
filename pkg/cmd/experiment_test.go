@@ -38,7 +38,7 @@ func TestExperimentsCreate(t *testing.T) {
 			"--include-query-string=true",
 			"--key", "homepage-hero-headline-test",
 			"--metrics", "{primary: {eventName: demo_requested, funnelId: funnelId}, secondary: [{eventName: demo_requested, funnelId: funnelId}]}",
-			"--targeting-rules", "{urlPatterns: [/pricing*, /enterprise], audienceId: audienceId, queryParams: [{key: utm_campaign, operator: contains, value: spring-launch}], visitorProperties: {}, visitorStatus: visitorStatus}",
+			"--targeting-rules", "{urlPatterns: [/pricing*, get.example.com/learn-more], audienceId: audienceId, queryParams: [{key: utm_campaign, operator: contains, value: spring-launch}], visitorProperties: {}, visitorStatus: visitorStatus}",
 			"--traffic-allocation", "100",
 			"--type", "ab",
 		)
@@ -61,7 +61,7 @@ func TestExperimentsCreate(t *testing.T) {
 			"--key", "homepage-hero-headline-test",
 			"--metrics.primary", "{eventName: demo_requested, funnelId: funnelId}",
 			"--metrics.secondary", "[{eventName: demo_requested, funnelId: funnelId}]",
-			"--targeting-rules.url-patterns", "[/pricing*, /enterprise]",
+			"--targeting-rules.url-patterns", "[/pricing*, get.example.com/learn-more]",
 			"--targeting-rules.audience-id", "audienceId",
 			"--targeting-rules.query-params", "[{key: utm_campaign, operator: contains, value: spring-launch}]",
 			"--targeting-rules.visitor-properties", "{}",
@@ -90,7 +90,7 @@ func TestExperimentsCreate(t *testing.T) {
 			"targetingRules:\n" +
 			"  urlPatterns:\n" +
 			"    - /pricing*\n" +
-			"    - /enterprise\n" +
+			"    - get.example.com/learn-more\n" +
 			"  audienceId: audienceId\n" +
 			"  queryParams:\n" +
 			"    - key: utm_campaign\n" +
@@ -131,7 +131,7 @@ func TestExperimentsUpdate(t *testing.T) {
 			"--key", "key",
 			"--metrics", "{primary: {eventName: demo_requested, funnelId: funnelId}, secondary: [{eventName: demo_requested, funnelId: funnelId}]}",
 			"--name", "name",
-			"--targeting-rules", "{urlPatterns: [/pricing*, /enterprise], audienceId: audienceId, queryParams: [{key: utm_campaign, operator: contains, value: spring-launch}], visitorProperties: {}, visitorStatus: visitorStatus}",
+			"--targeting-rules", "{urlPatterns: [/pricing*, get.example.com/learn-more], audienceId: audienceId, queryParams: [{key: utm_campaign, operator: contains, value: spring-launch}], visitorProperties: {}, visitorStatus: visitorStatus}",
 			"--traffic-allocation", "0",
 		)
 	})
@@ -152,7 +152,7 @@ func TestExperimentsUpdate(t *testing.T) {
 			"--metrics.primary", "{eventName: demo_requested, funnelId: funnelId}",
 			"--metrics.secondary", "[{eventName: demo_requested, funnelId: funnelId}]",
 			"--name", "name",
-			"--targeting-rules.url-patterns", "[/pricing*, /enterprise]",
+			"--targeting-rules.url-patterns", "[/pricing*, get.example.com/learn-more]",
 			"--targeting-rules.audience-id", "audienceId",
 			"--targeting-rules.query-params", "[{key: utm_campaign, operator: contains, value: spring-launch}]",
 			"--targeting-rules.visitor-properties", "{}",
@@ -178,7 +178,7 @@ func TestExperimentsUpdate(t *testing.T) {
 			"targetingRules:\n" +
 			"  urlPatterns:\n" +
 			"    - /pricing*\n" +
-			"    - /enterprise\n" +
+			"    - get.example.com/learn-more\n" +
 			"  audienceId: audienceId\n" +
 			"  queryParams:\n" +
 			"    - key: utm_campaign\n" +
