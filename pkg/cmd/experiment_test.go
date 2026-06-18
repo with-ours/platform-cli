@@ -237,6 +237,66 @@ func TestExperimentsStop(t *testing.T) {
 			"--api-key", "string",
 			"experiments", "stop",
 			"--id", "id",
+			"--rollout-variant-id", "var_01HZX8YJH3Z3W1R2Q4M5N6P7Q8",
+			"--winner-variant-id", "var_01HZX8YJH3Z3W1R2Q4M5N6P7Q8",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("" +
+			"rolloutVariantId: var_01HZX8YJH3Z3W1R2Q4M5N6P7Q8\n" +
+			"winnerVariantId: var_01HZX8YJH3Z3W1R2Q4M5N6P7Q8\n")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"experiments", "stop",
+			"--id", "id",
+		)
+	})
+}
+
+func TestExperimentsRollout(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"experiments", "rollout",
+			"--id", "id",
+			"--variant-id", "var_01HZX8YJH3Z3W1R2Q4M5N6P7Q8",
+		)
+	})
+
+	t.Run("piping data", func(t *testing.T) {
+		// Test piping YAML data over stdin
+		pipeData := []byte("variantId: var_01HZX8YJH3Z3W1R2Q4M5N6P7Q8")
+		mocktest.TestRunMockTestWithPipeAndFlags(
+			t, pipeData,
+			"--api-key", "string",
+			"experiments", "rollout",
+			"--id", "id",
+		)
+	})
+}
+
+func TestExperimentsEndRollout(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"experiments", "end-rollout",
+			"--id", "id",
+		)
+	})
+}
+
+func TestExperimentsWinner(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"experiments", "winner",
+			"--id", "id",
 			"--winner-variant-id", "var_01HZX8YJH3Z3W1R2Q4M5N6P7Q8",
 		)
 	})
@@ -247,7 +307,7 @@ func TestExperimentsStop(t *testing.T) {
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"experiments", "stop",
+			"experiments", "winner",
 			"--id", "id",
 		)
 	})
