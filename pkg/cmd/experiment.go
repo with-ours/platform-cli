@@ -297,7 +297,68 @@ var experimentsStart = cli.Command{
 
 var experimentsStop = cli.Command{
 	Name:    "stop",
-	Usage:   "Stop an experiment. The request body is optional — send `{}` to stop without\nrecording a winner. Requires scope: experiment:stop",
+	Usage:   "Stop an experiment. The request body is optional — send `{}` to stop without\nrecording a winner. Optionally pass `winnerVariantId` to record the winner\n(reporting only) and/or `rolloutVariantId` to keep that variant serving to all\ntraffic. Requires scope: experiment:stop",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:     "rollout-variant-id",
+			Usage:    "Optional variant to roll out to 100% of traffic immediately on stop — the explicit serving decision that keeps the winning experience live (a winning redirect becomes an ongoing redirect). Must be a non-control variant. Reverse later via `POST /experiments/{id}/end-rollout`.",
+			BodyPath: "rolloutVariantId",
+		},
+		&requestflag.Flag[string]{
+			Name:     "winner-variant-id",
+			Usage:    "Optional declared winner to record (reporting metadata only — does not change what visitors are served).",
+			BodyPath: "winnerVariantId",
+		},
+	},
+	Action:          handleExperimentsStop,
+	HideHelpCommand: true,
+}
+
+var experimentsRollout = cli.Command{
+	Name:    "rollout",
+	Usage:   "Roll a non-control variant out to 100% of targeted traffic on a completed\nexperiment — the explicit, reversible serving decision that makes a winning\nexperience the ongoing default. Publishes. Reverse with `/end-rollout`. Returns\n409 if the experiment is not completed or the variant is the control. Requires\nscope: experiment:stop",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+		&requestflag.Flag[string]{
+			Name:     "variant-id",
+			Usage:    "Non-control variant to roll out to 100% of targeted traffic. The runtime keeps serving it to every matching visitor — a winning redirect becomes an ongoing redirect. Reverse via `POST /experiments/{id}/end-rollout`. The experiment must be completed.",
+			Required: true,
+			BodyPath: "variantId",
+		},
+	},
+	Action:          handleExperimentsRollout,
+	HideHelpCommand: true,
+}
+
+var experimentsEndRollout = cli.Command{
+	Name:    "end-rollout",
+	Usage:   "End an active rollout: stop serving the rolled-out variant so every matching\nvisitor reverts to the original experience. The declared winner is left intact.\nPublishes. Returns 409 if the experiment is not currently rolled out. Requires\nscope: experiment:stop",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleExperimentsEndRollout,
+	HideHelpCommand: true,
+}
+
+var experimentsWinner = cli.Command{
+	Name:    "winner",
+	Usage:   "Declare, change, or clear the winning variant on a completed experiment.\nReporting metadata only — it does not change what visitors see and does not\nrepublish. Omit `winnerVariantId` to clear. To make the winner live, use\n`/rollout`. Requires scope: experiment:stop",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -307,11 +368,11 @@ var experimentsStop = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:     "winner-variant-id",
-			Usage:    "Optional winning variant ID to persist when completing the experiment.",
+			Usage:    "Variant to record as the declared winner (reporting metadata only — does not change what visitors are served). Omit to clear the declared winner. The experiment must be completed.",
 			BodyPath: "winnerVariantId",
 		},
 	},
-	Action:          handleExperimentsStop,
+	Action:          handleExperimentsWinner,
 	HideHelpCommand: true,
 }
 
@@ -758,6 +819,146 @@ func handleExperimentsStop(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "experiments stop",
+		Transform:      transform,
+	})
+}
+
+func handleExperimentsRollout(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.ExperimentRolloutParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Experiments.Rollout(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "experiments rollout",
+		Transform:      transform,
+	})
+}
+
+func handleExperimentsEndRollout(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Experiments.EndRollout(ctx, cmd.Value("id").(string), options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "experiments end-rollout",
+		Transform:      transform,
+	})
+}
+
+func handleExperimentsWinner(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		ApplicationJSON,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	params := oursprivacy.ExperimentWinnerParams{}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Experiments.Winner(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "experiments winner",
 		Transform:      transform,
 	})
 }
