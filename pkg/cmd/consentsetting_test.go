@@ -367,6 +367,8 @@ func TestConsentSettingsAnalytics(t *testing.T) {
 			"--from", "2026-04-01",
 			"--to", "2026-04-30",
 			"--compare-with-previous-period=true",
+			"--comparison-from", "2026-03-01",
+			"--comparison-to", "2026-03-14",
 			"--granularity", "DAILY",
 			"--page-path", "/pricing",
 			"--regions", "California",
