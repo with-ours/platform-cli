@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.20.0 (2026-07-03)
+
+Full Changelog: [v1.19.0...v1.20.0](https://github.com/with-ours/platform-cli/compare/v1.19.0...v1.20.0)
+
+### Features
+
+* **api:** api update ([13b1711](https://github.com/with-ours/platform-cli/commit/13b1711d6e42d0e21c3933893a082705a3a615a8))
+
 ## 1.19.0 (2026-06-18)
 
 Full Changelog: [v1.18.1...v1.19.0](https://github.com/with-ours/platform-cli/compare/v1.18.1...v1.19.0)
