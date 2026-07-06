@@ -502,6 +502,16 @@ var consentSettingsAnalytics = cli.Command{
 			QueryPath: "compareWithPreviousPeriod",
 		},
 		&requestflag.Flag[string]{
+			Name:      "comparison-from",
+			Usage:     "Optional custom comparison-window lower bound, as a UTC calendar day in `YYYY-MM-DD` format. Provide together with `comparisonTo`; the window between them must be the same length as `from`–`to` (a mismatch returns `400`). When omitted (with `compareWithPreviousPeriod=true`), the immediately preceding equal-length period is used.",
+			QueryPath: "comparisonFrom",
+		},
+		&requestflag.Flag[string]{
+			Name:      "comparison-to",
+			Usage:     "Optional custom comparison-window upper bound, as a UTC calendar day in `YYYY-MM-DD` format. Provide together with `comparisonFrom`; the window must match the `from`–`to` length. Ignored unless both comparison bounds are supplied.",
+			QueryPath: "comparisonTo",
+		},
+		&requestflag.Flag[string]{
 			Name:      "granularity",
 			Usage:     "Bucket size for the time-series rollup. `DAILY` (default) buckets per UTC day; `HOURLY` buckets per UTC hour and limits the window to 14 days.",
 			QueryPath: "granularity",
