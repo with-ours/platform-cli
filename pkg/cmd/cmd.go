@@ -379,6 +379,28 @@ func init() {
 				},
 			},
 			{
+				Name:     "attribution",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&attributionInitial,
+					&attributionLastTouch,
+					&attributionConversion,
+					&attributionAudienceConversion,
+					&attributionUtmComparison,
+				},
+			},
+			{
+				Name:     "funnels",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&funnelsList,
+					&funnelsRetrieve,
+					&funnelsResults,
+				},
+			},
+			{
 				Name:            "@manpages",
 				Usage:           "Generate documentation for 'man'",
 				UsageText:       "oursprivacy @manpages [-o oursprivacy.1] [--gzip]",
