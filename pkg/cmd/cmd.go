@@ -153,6 +153,7 @@ func init() {
 					&destinationsUpdate,
 					&destinationsDelete,
 					&destinationsTypes,
+					&destinationsHealth,
 				},
 			},
 			{
