@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.22.0 (2026-07-07)
+
+Full Changelog: [v1.21.0...v1.22.0](https://github.com/with-ours/platform-cli/compare/v1.21.0...v1.22.0)
+
+### Features
+
+* **api:** api update ([dbb432f](https://github.com/with-ours/platform-cli/commit/dbb432f11ba1fd482f5723bb4a4b1eb65782d49f))
+
 ## 1.21.0 (2026-07-07)
 
 Full Changelog: [v1.20.0...v1.21.0](https://github.com/with-ours/platform-cli/compare/v1.20.0...v1.21.0)
