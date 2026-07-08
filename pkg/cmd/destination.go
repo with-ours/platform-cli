@@ -149,6 +149,21 @@ var destinationsTypes = cli.Command{
 	HideHelpCommand: true,
 }
 
+var destinationsHealth = cli.Command{
+	Name:    "health",
+	Usage:   "Snapshot of dispatch health for this destination over the trailing 24 hours:\ncounts of succeeded, failed, and intentionally stopped/blocked dispatches, plus\na derived `status`. Requires scope: destination:find",
+	Suggest: true,
+	Flags: []cli.Flag{
+		&requestflag.Flag[string]{
+			Name:      "id",
+			Required:  true,
+			PathParam: "id",
+		},
+	},
+	Action:          handleDestinationsHealth,
+	HideHelpCommand: true,
+}
+
 func handleDestinationsList(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
@@ -413,6 +428,48 @@ func handleDestinationsTypes(ctx context.Context, cmd *cli.Command) error {
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
 		Title:          "destinations types",
+		Transform:      transform,
+	})
+}
+
+func handleDestinationsHealth(ctx context.Context, cmd *cli.Command) error {
+	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
+	unusedArgs := cmd.Args().Slice()
+	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
+		cmd.Set("id", unusedArgs[0])
+		unusedArgs = unusedArgs[1:]
+	}
+	if len(unusedArgs) > 0 {
+		return fmt.Errorf("Unexpected extra arguments: %v", unusedArgs)
+	}
+
+	options, err := flagOptions(
+		cmd,
+		apiquery.NestedQueryFormatBrackets,
+		apiquery.ArrayQueryFormatComma,
+		EmptyBody,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	var res []byte
+	options = append(options, option.WithResponseBodyInto(&res))
+	_, err = client.Destinations.Health(ctx, cmd.Value("id").(string), options...)
+	if err != nil {
+		return err
+	}
+
+	obj := gjson.ParseBytes(res)
+	format := cmd.Root().String("format")
+	explicitFormat := cmd.Root().IsSet("format")
+	transform := cmd.Root().String("transform")
+	return ShowJSON(obj, ShowJSONOpts{
+		ExplicitFormat: explicitFormat,
+		Format:         format,
+		RawOutput:      cmd.Root().Bool("raw-output"),
+		Title:          "destinations health",
 		Transform:      transform,
 	})
 }

@@ -113,3 +113,14 @@ func TestDestinationsTypes(t *testing.T) {
 		)
 	})
 }
+
+func TestDestinationsHealth(t *testing.T) {
+	t.Run("regular flags", func(t *testing.T) {
+		mocktest.TestRunMockTestWithFlags(
+			t,
+			"--api-key", "string",
+			"destinations", "health",
+			"--id", "id",
+		)
+	})
+}
