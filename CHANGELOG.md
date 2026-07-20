@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.23.0 (2026-07-18)
+
+Full Changelog: [v1.22.0...v1.23.0](https://github.com/with-ours/platform-cli/compare/v1.22.0...v1.23.0)
+
+### Features
+
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([5eab254](https://github.com/with-ours/platform-cli/commit/5eab2549bdd32d66e9db5fa140d6cd051b582fe7))
+
 ## 1.22.0 (2026-07-07)
 
 Full Changelog: [v1.21.0...v1.22.0](https://github.com/with-ours/platform-cli/compare/v1.21.0...v1.22.0)
