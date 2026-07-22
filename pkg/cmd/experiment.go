@@ -16,7 +16,7 @@ import (
 
 var experimentsList = cli.Command{
 	Name:    "list",
-	Usage:   "List experiments for this account. Supports cursor pagination and filtering by\n`status`, `type`, and free-text `search` matched against experiment id, name,\nand description. Combine filters with AND semantics. Requires scope:\nexperiment:list",
+	Usage:   "List experiments for this account. Each experiment includes its full `variants`\narray (redirect URLs and DOM modifications), so a single paginated call returns\na complete client-side experiment config. Supports cursor pagination and\nfiltering by `status`, `type`, and free-text `search` matched against experiment\nid, name, and description. Combine filters with AND semantics. Requires scope:\nexperiment:list",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
