@@ -97,6 +97,18 @@ func init() {
 				},
 			},
 			{
+				Name:     "attribution",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&attributionInitial,
+					&attributionLastTouch,
+					&attributionConversion,
+					&attributionAudienceConversion,
+					&attributionUtmComparison,
+				},
+			},
+			{
 				Name:     "consent-analytics",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -200,6 +212,16 @@ func init() {
 					&experimentsResults,
 					&experimentsResultsTimeSeries,
 					&experimentsSessionReplays,
+				},
+			},
+			{
+				Name:     "funnels",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&funnelsList,
+					&funnelsRetrieve,
+					&funnelsResults,
 				},
 			},
 			{
@@ -377,28 +399,6 @@ func init() {
 					&webScannersFindings,
 					&webScannersCookies,
 					&webScannersSummary,
-				},
-			},
-			{
-				Name:     "attribution",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&attributionInitial,
-					&attributionLastTouch,
-					&attributionConversion,
-					&attributionAudienceConversion,
-					&attributionUtmComparison,
-				},
-			},
-			{
-				Name:     "funnels",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&funnelsList,
-					&funnelsRetrieve,
-					&funnelsResults,
 				},
 			},
 			{
