@@ -274,6 +274,19 @@ func init() {
 				},
 			},
 			{
+				Name:     "short-links",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&shortLinksList,
+					&shortLinksCreate,
+					&shortLinksRetrieve,
+					&shortLinksUpdate,
+					&shortLinksDelete,
+					&shortLinksResults,
+				},
+			},
+			{
 				Name:     "sources",
 				Category: "API RESOURCE",
 				Suggest:  true,

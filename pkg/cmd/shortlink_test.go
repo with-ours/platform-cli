@@ -8,123 +8,114 @@ import (
 	"github.com/with-ours/platform-cli/internal/mocktest"
 )
 
-func TestSourcesList(t *testing.T) {
+func TestShortLinksList(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"sources", "list",
+			"short-links", "list",
 			"--max-items", "10",
 			"--cursor", "cursor",
 			"--limit", "25",
 			"--name-contains", "nameContains",
 			"--status", "Disabled",
-			"--type", "AlchemerWebhook",
 		)
 	})
 }
 
-func TestSourcesCreate(t *testing.T) {
+func TestShortLinksCreate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"sources", "create",
-			"--type", "AlchemerWebhook",
-			"--name", "name",
-			"--redirect-url", "redirectUrl",
+			"short-links", "create",
+			"--name", "Spring Sale QR",
+			"--qr", "{}",
+			"--redirect-url", "https://example.com/spring",
+			"--utm", "{}",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"type: AlchemerWebhook\n" +
-			"name: name\n" +
-			"redirectUrl: redirectUrl\n")
+			"name: Spring Sale QR\n" +
+			"qr: {}\n" +
+			"redirectUrl: https://example.com/spring\n" +
+			"utm: {}\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"sources", "create",
+			"short-links", "create",
 		)
 	})
 }
 
-func TestSourcesRetrieve(t *testing.T) {
+func TestShortLinksRetrieve(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"sources", "retrieve",
+			"short-links", "retrieve",
 			"--id", "id",
 		)
 	})
 }
 
-func TestSourcesUpdate(t *testing.T) {
+func TestShortLinksUpdate(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"sources", "update",
+			"short-links", "update",
 			"--id", "id",
-			"--bot-control-mode", "botControlMode",
-			"--bot-score-threshold", "0",
-			"--exclude-request-context=true",
 			"--name", "name",
-			"--probabilistic-identity", "{}",
-			"--project-api-key", "projectAPIKey",
+			"--qr", "{}",
 			"--redirect-url", "redirectUrl",
-			"--selected-account-id", "selectedAccountId",
 			"--status", "status",
-			"--whitelist-domain", "[string]",
-			"--whitelist-ip", "[string]",
+			"--utm", "{}",
 		)
 	})
 
 	t.Run("piping data", func(t *testing.T) {
 		// Test piping YAML data over stdin
 		pipeData := []byte("" +
-			"botControlMode: botControlMode\n" +
-			"botScoreThreshold: 0\n" +
-			"excludeRequestContext: true\n" +
 			"name: name\n" +
-			"probabilisticIdentity: {}\n" +
-			"projectAPIKey: projectAPIKey\n" +
+			"qr: {}\n" +
 			"redirectUrl: redirectUrl\n" +
-			"selectedAccountId: selectedAccountId\n" +
 			"status: status\n" +
-			"whitelistDomains:\n" +
-			"  - string\n" +
-			"whitelistIps:\n" +
-			"  - string\n")
+			"utm: {}\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
 			t, pipeData,
 			"--api-key", "string",
-			"sources", "update",
+			"short-links", "update",
 			"--id", "id",
 		)
 	})
 }
 
-func TestSourcesDelete(t *testing.T) {
+func TestShortLinksDelete(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"sources", "delete",
+			"short-links", "delete",
 			"--id", "id",
 		)
 	})
 }
 
-func TestSourcesTokens(t *testing.T) {
+func TestShortLinksResults(t *testing.T) {
 	t.Run("regular flags", func(t *testing.T) {
 		mocktest.TestRunMockTestWithFlags(
 			t,
 			"--api-key", "string",
-			"sources", "tokens",
+			"short-links", "results",
 			"--id", "id",
+			"--from", "2026-06-01",
+			"--to", "2026-06-30",
+			"--exclude-bots=true",
+			"--granularity", "DAILY",
 		)
 	})
 }
