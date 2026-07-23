@@ -14,9 +14,9 @@ import (
 	"github.com/with-ours/platform-sdk-go/option"
 )
 
-var sourcesList = cli.Command{
+var shortLinksList = cli.Command{
 	Name:    "list",
-	Usage:   "List all sources for this account. Supports cursor pagination and optional\nfilters for `type`, `status`, and `nameContains`. Results are sorted by creation\ndate descending. Requires scope: source:list",
+	Usage:   "List all short links (QR codes / redirects) for this account, newest first.\nSupports cursor pagination and optional `status` and `nameContains` filters.\nEach entity bundles the destination URL, the composed public `shortUrl`, and the\nQR/campaign design. Requires scope: source:list",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -31,56 +31,56 @@ var sourcesList = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "name-contains",
-			Usage:     "Case-insensitive substring filter on the source name.",
+			Usage:     "Case-insensitive substring filter on the short link name.",
 			QueryPath: "nameContains",
 		},
 		&requestflag.Flag[string]{
 			Name:      "status",
-			Usage:     "Filter by source status.",
+			Usage:     "Filter by short link status.",
 			QueryPath: "status",
-		},
-		&requestflag.Flag[string]{
-			Name:      "type",
-			Usage:     "Filter by source type.",
-			QueryPath: "type",
 		},
 		&requestflag.Flag[int64]{
 			Name:  "max-items",
 			Usage: "The maximum number of items to return (use -1 for unlimited).",
 		},
 	},
-	Action:          handleSourcesList,
+	Action:          handleShortLinksList,
 	HideHelpCommand: true,
 }
 
-var sourcesCreate = cli.Command{
+var shortLinksCreate = cli.Command{
 	Name:    "create",
-	Usage:   "Create a new source. Returns the full source entity (same shape as GET\n/sources/{id}) so callers can read all server-assigned fields without a\nfollow-up GET. Requires scope: source:create",
+	Usage:   "Create a short link (QR code / redirect) with its destination, campaign tags,\nand QR styling in a single call. The short code is generated automatically; the\nresponse `shortUrl` is the public URL the QR encodes. All body fields are\noptional — send `{}` to create an unconfigured link and fill it in later with\nPATCH. A newly created short link only resolves at the edge once a version is\npublished. Requires scope: source:create",
 	Suggest: true,
 	Flags: []cli.Flag{
-		&requestflag.Flag[string]{
-			Name:     "type",
-			Usage:    `Allowed values: "AlchemerWebhook", "AndroidNativeApi", "Branch", "CSharpApi", "CalComWebhooks", "CalendlyWebhook", "CallRail", "CallTrackingMetrics", "DotNetApi", "FacebookLeadAds", "FormsortWebhooks", "Formstack", "GoLangApi", "HTTPApiSource", "Healthie", "HubspotAppActions", "HubspotFormWebhook", "JotFormWebhooks", "KotlinApi", "NodejsApi", "PHPApi", "PixelImage", "PythonApi", "ReactNativeApi", "RedirectSource", "RubyApi", "SegmentWebPlugin", "TypeformWebhooks", "WebSource", "Webhook", "WhatConverts", "iOSNativeApi".`,
-			Required: true,
-			BodyPath: "type",
-		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
+			Usage:    "Human-readable name. Also sent as the tracked event name on every click/scan.",
 			BodyPath: "name",
+		},
+		&requestflag.Flag[any]{
+			Name:     "qr",
+			Usage:    "QR code visual styling.",
+			BodyPath: "qr",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "redirect-url",
-			Usage:    "Destination URL for a RedirectSource (short link). Ignored by other source types. Must be a valid http(s) URL.",
+			Usage:    "Destination URL the short link redirects to. Must be a valid URL.",
 			BodyPath: "redirectUrl",
 		},
+		&requestflag.Flag[any]{
+			Name:     "utm",
+			Usage:    "Campaign / UTM tags appended to the tracked short-link URL.",
+			BodyPath: "utm",
+		},
 	},
-	Action:          handleSourcesCreate,
+	Action:          handleShortLinksCreate,
 	HideHelpCommand: true,
 }
 
-var sourcesRetrieve = cli.Command{
+var shortLinksRetrieve = cli.Command{
 	Name:    "retrieve",
-	Usage:   "Find a single source by ID. Requires scope: source:view",
+	Usage:   "Fetch a single short link by id, including its destination, composed `shortUrl`,\nand QR/campaign design. Returns 404 when no short link matches the id or it\nbelongs to a different account. Requires scope: source:view",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -89,72 +89,50 @@ var sourcesRetrieve = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleSourcesRetrieve,
+	Action:          handleShortLinksRetrieve,
 	HideHelpCommand: true,
 }
 
-var sourcesUpdate = cli.Command{
+var shortLinksUpdate = cli.Command{
 	Name:    "update",
-	Usage:   "Partially update a source. Only the fields you send are changed; omitted fields\nare unchanged. Send explicit `null` to clear a nullable field. Returns the full\nsource entity after the update. Requires scope: source:update",
+	Usage:   "Partially update a short link. Only the fields you send are changed; omitted\nfields are unchanged. Send explicit `null` to clear `redirectUrl`. The `utm` and\n`qr` objects are replaced wholesale when sent. Returns the full short link\nentity after the update. Requires scope: source:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:      "id",
 			Required:  true,
 			PathParam: "id",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "bot-control-mode",
-			BodyPath: "botControlMode",
-		},
-		&requestflag.Flag[*float64]{
-			Name:     "bot-score-threshold",
-			BodyPath: "botScoreThreshold",
-		},
-		&requestflag.Flag[*bool]{
-			Name:     "exclude-request-context",
-			BodyPath: "excludeRequestContext",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "name",
 			BodyPath: "name",
 		},
 		&requestflag.Flag[any]{
-			Name:     "probabilistic-identity",
-			BodyPath: "probabilisticIdentity",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "project-api-key",
-			BodyPath: "projectAPIKey",
+			Name:     "qr",
+			BodyPath: "qr",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "redirect-url",
+			Usage:    "Destination URL the short link redirects to. Must be a valid URL. Send `null` to clear it.",
 			BodyPath: "redirectUrl",
-		},
-		&requestflag.Flag[*string]{
-			Name:     "selected-account-id",
-			BodyPath: "selectedAccountId",
 		},
 		&requestflag.Flag[*string]{
 			Name:     "status",
+			Usage:    "Whether the short link resolves at the edge. Send `Enabled` or `Disabled`; `null` is rejected since storage cannot represent it.",
 			BodyPath: "status",
 		},
 		&requestflag.Flag[any]{
-			Name:     "whitelist-domain",
-			BodyPath: "whitelistDomains",
-		},
-		&requestflag.Flag[any]{
-			Name:     "whitelist-ip",
-			BodyPath: "whitelistIps",
+			Name:     "utm",
+			BodyPath: "utm",
 		},
 	},
-	Action:          handleSourcesUpdate,
+	Action:          handleShortLinksUpdate,
 	HideHelpCommand: true,
 }
 
-var sourcesDelete = cli.Command{
+var shortLinksDelete = cli.Command{
 	Name:    "delete",
-	Usage:   "Delete a source. Requires scope: source:delete",
+	Usage:   "Delete a short link and its QR/campaign design. After deletion the short URL\nstops resolving on the next publish. Requires scope: source:delete",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -163,13 +141,13 @@ var sourcesDelete = cli.Command{
 			PathParam: "id",
 		},
 	},
-	Action:          handleSourcesDelete,
+	Action:          handleShortLinksDelete,
 	HideHelpCommand: true,
 }
 
-var sourcesTokens = cli.Command{
-	Name:    "tokens",
-	Usage:   "Returns the install or ingest tokens for a source. The response is a\ndiscriminated union on `sourceType`: pixel sources return\n`{ sourceType: \"pixel\", token, testToken, installScript, testInstallScript }`,\nand webhook sources return\n`{ sourceType: \"webhook\", token, testToken, ingestUrl, testIngestUrl, sampleCurl }`.\nInspect the source's `type` field (`GET /rest/v1/sources/{id}`) to know which\nvariant to expect. Requires scope: source:view",
+var shortLinksResults = cli.Command{
+	Name:    "results",
+	Usage:   "Aggregate click analytics for a short link over a date window: total and unique\nclicks, a time series (daily or hourly), and breakdowns by country, city, and\ndevice. QR scans are counted as clicks. Pass `from`/`to` as UTC calendar days\n(`YYYY-MM-DD`); set `granularity=HOURLY` for hourly buckets and\n`excludeBots=false` to include bot traffic. Requires the `shortlink:reporting`\nscope, which is gated separately because analytics data is PHI-bearing. Requires\nscope: shortlink:reporting",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -177,12 +155,34 @@ var sourcesTokens = cli.Command{
 			Required:  true,
 			PathParam: "id",
 		},
+		&requestflag.Flag[string]{
+			Name:      "from",
+			Usage:     "Inclusive lower bound of the report window, a UTC calendar day in `YYYY-MM-DD`.",
+			Required:  true,
+			QueryPath: "from",
+		},
+		&requestflag.Flag[string]{
+			Name:      "to",
+			Usage:     "Inclusive upper bound of the report window, a UTC calendar day in `YYYY-MM-DD`.",
+			Required:  true,
+			QueryPath: "to",
+		},
+		&requestflag.Flag[bool]{
+			Name:      "exclude-bots",
+			Usage:     "Exclude bot traffic from the counts. Defaults to `true`.",
+			QueryPath: "excludeBots",
+		},
+		&requestflag.Flag[string]{
+			Name:      "granularity",
+			Usage:     "Time-series bucket size. Defaults to `DAILY`.",
+			QueryPath: "granularity",
+		},
 	},
-	Action:          handleSourcesTokens,
+	Action:          handleShortLinksResults,
 	HideHelpCommand: true,
 }
 
-func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
+func handleShortLinksList(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -201,7 +201,7 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := oursprivacy.SourceListParams{}
+	params := oursprivacy.ShortLinkListParams{}
 
 	format := cmd.Root().String("format")
 	explicitFormat := cmd.Root().IsSet("format")
@@ -209,7 +209,7 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 	if format == "raw" {
 		var res []byte
 		options = append(options, option.WithResponseBodyInto(&res))
-		_, err = client.Sources.List(ctx, params, options...)
+		_, err = client.ShortLinks.List(ctx, params, options...)
 		if err != nil {
 			return err
 		}
@@ -218,11 +218,11 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 			ExplicitFormat: explicitFormat,
 			Format:         format,
 			RawOutput:      cmd.Root().Bool("raw-output"),
-			Title:          "sources list",
+			Title:          "short-links list",
 			Transform:      transform,
 		})
 	} else {
-		iter := client.Sources.ListAutoPaging(ctx, params, options...)
+		iter := client.ShortLinks.ListAutoPaging(ctx, params, options...)
 		maxItems := int64(-1)
 		if cmd.IsSet("max-items") {
 			maxItems = cmd.Value("max-items").(int64)
@@ -231,13 +231,13 @@ func handleSourcesList(ctx context.Context, cmd *cli.Command) error {
 			ExplicitFormat: explicitFormat,
 			Format:         format,
 			RawOutput:      cmd.Root().Bool("raw-output"),
-			Title:          "sources list",
+			Title:          "short-links list",
 			Transform:      transform,
 		})
 	}
 }
 
-func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
+func handleShortLinksCreate(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 
@@ -256,11 +256,11 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := oursprivacy.SourceNewParams{}
+	params := oursprivacy.ShortLinkNewParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.New(ctx, params, options...)
+	_, err = client.ShortLinks.New(ctx, params, options...)
 	if err != nil {
 		return err
 	}
@@ -273,12 +273,12 @@ func handleSourcesCreate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources create",
+		Title:          "short-links create",
 		Transform:      transform,
 	})
 }
 
-func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
+func handleShortLinksRetrieve(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -302,7 +302,7 @@ func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.Get(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ShortLinks.Get(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -315,12 +315,12 @@ func handleSourcesRetrieve(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources retrieve",
+		Title:          "short-links retrieve",
 		Transform:      transform,
 	})
 }
 
-func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
+func handleShortLinksUpdate(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -342,11 +342,11 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	params := oursprivacy.SourceUpdateParams{}
+	params := oursprivacy.ShortLinkUpdateParams{}
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.Update(
+	_, err = client.ShortLinks.Update(
 		ctx,
 		cmd.Value("id").(string),
 		params,
@@ -364,12 +364,12 @@ func handleSourcesUpdate(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources update",
+		Title:          "short-links update",
 		Transform:      transform,
 	})
 }
 
-func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
+func handleShortLinksDelete(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -393,7 +393,7 @@ func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.Delete(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ShortLinks.Delete(ctx, cmd.Value("id").(string), options...)
 	if err != nil {
 		return err
 	}
@@ -406,12 +406,12 @@ func handleSourcesDelete(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources delete",
+		Title:          "short-links delete",
 		Transform:      transform,
 	})
 }
 
-func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
+func handleShortLinksResults(ctx context.Context, cmd *cli.Command) error {
 	client := oursprivacy.NewClient(getDefaultRequestOptions(cmd)...)
 	unusedArgs := cmd.Args().Slice()
 	if !cmd.IsSet("id") && len(unusedArgs) > 0 {
@@ -433,9 +433,16 @@ func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
+	params := oursprivacy.ShortLinkResultsParams{}
+
 	var res []byte
 	options = append(options, option.WithResponseBodyInto(&res))
-	_, err = client.Sources.Tokens(ctx, cmd.Value("id").(string), options...)
+	_, err = client.ShortLinks.Results(
+		ctx,
+		cmd.Value("id").(string),
+		params,
+		options...,
+	)
 	if err != nil {
 		return err
 	}
@@ -448,7 +455,7 @@ func handleSourcesTokens(ctx context.Context, cmd *cli.Command) error {
 		ExplicitFormat: explicitFormat,
 		Format:         format,
 		RawOutput:      cmd.Root().Bool("raw-output"),
-		Title:          "sources tokens",
+		Title:          "short-links results",
 		Transform:      transform,
 	})
 }

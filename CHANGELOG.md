@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.25.0 (2026-07-22)
+
+Full Changelog: [v1.24.0...v1.25.0](https://github.com/with-ours/platform-cli/compare/v1.24.0...v1.25.0)
+
+### Features
+
+* **api:** manual updates ([f522d08](https://github.com/with-ours/platform-cli/commit/f522d08611ec61b91f9b7db5a4f6a5e94b2d7dbd))
+* **api:** manual updates ([eb40a31](https://github.com/with-ours/platform-cli/commit/eb40a31c865987d89eaa7ce5ffc23e7cb77abe27))
+* **api:** manual updates ([6ef4ef1](https://github.com/with-ours/platform-cli/commit/6ef4ef1d77f8b2a34eba2f5842d8e6c2489c4cb9))
+
 ## 1.24.0 (2026-07-21)
 
 Full Changelog: [v1.23.0...v1.24.0](https://github.com/with-ours/platform-cli/compare/v1.23.0...v1.24.0)

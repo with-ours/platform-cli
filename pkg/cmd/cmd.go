@@ -97,6 +97,18 @@ func init() {
 				},
 			},
 			{
+				Name:     "attribution",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&attributionInitial,
+					&attributionLastTouch,
+					&attributionConversion,
+					&attributionAudienceConversion,
+					&attributionUtmComparison,
+				},
+			},
+			{
 				Name:     "consent-analytics",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -203,6 +215,16 @@ func init() {
 				},
 			},
 			{
+				Name:     "funnels",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&funnelsList,
+					&funnelsRetrieve,
+					&funnelsResults,
+				},
+			},
+			{
 				Name:     "heatmap-pages",
 				Category: "API RESOURCE",
 				Suggest:  true,
@@ -249,6 +271,19 @@ func init() {
 					&replaySettingsRetrieve,
 					&replaySettingsUpdate,
 					&replaySettingsDelete,
+				},
+			},
+			{
+				Name:     "short-links",
+				Category: "API RESOURCE",
+				Suggest:  true,
+				Commands: []*cli.Command{
+					&shortLinksList,
+					&shortLinksCreate,
+					&shortLinksRetrieve,
+					&shortLinksUpdate,
+					&shortLinksDelete,
+					&shortLinksResults,
 				},
 			},
 			{
@@ -377,28 +412,6 @@ func init() {
 					&webScannersFindings,
 					&webScannersCookies,
 					&webScannersSummary,
-				},
-			},
-			{
-				Name:     "attribution",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&attributionInitial,
-					&attributionLastTouch,
-					&attributionConversion,
-					&attributionAudienceConversion,
-					&attributionUtmComparison,
-				},
-			},
-			{
-				Name:     "funnels",
-				Category: "API RESOURCE",
-				Suggest:  true,
-				Commands: []*cli.Command{
-					&funnelsList,
-					&funnelsRetrieve,
-					&funnelsResults,
 				},
 			},
 			{
