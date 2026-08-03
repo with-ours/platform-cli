@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.25.1 (2026-08-03)
+
+Full Changelog: [v1.25.0...v1.25.1](https://github.com/with-ours/platform-cli/compare/v1.25.0...v1.25.1)
+
+### Chores
+
+* add CODEOWNERS ([#30](https://github.com/with-ours/platform-cli/issues/30)) ([8b5a842](https://github.com/with-ours/platform-cli/commit/8b5a842f70927678bd2be3511a53b5d054281e50))
+
 ## 1.25.0 (2026-07-22)
 
 Full Changelog: [v1.24.0...v1.25.0](https://github.com/with-ours/platform-cli/compare/v1.24.0...v1.25.0)
