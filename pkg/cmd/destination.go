@@ -55,7 +55,7 @@ var destinationsCreate = cli.Command{
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
 			Name:     "type",
-			Usage:    "Event-dispatch destination type to create. Warehouse and cloud-storage destination types may appear on read responses but are not creatable through POST.",
+			Usage:    "Event-dispatch destination type to create. Warehouse, cloud-storage, and audience-sync destination types may appear on read responses but are not creatable through POST. Audience destinations receive audience membership from Audience Builder on a daily schedule and are configured in the dashboard.",
 			Required: true,
 			BodyPath: "type",
 		},
