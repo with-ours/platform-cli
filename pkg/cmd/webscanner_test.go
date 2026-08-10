@@ -28,6 +28,7 @@ func TestWebScannersCreate(t *testing.T) {
 			"--excluded-pattern", "[string]",
 			"--included-url", "[string]",
 			"--name", "name",
+			"--scan-schedule", "daily",
 			"--status", "Disabled",
 			"--url-limit", "0",
 		)
@@ -42,6 +43,7 @@ func TestWebScannersCreate(t *testing.T) {
 			"includedUrls:\n" +
 			"  - string\n" +
 			"name: name\n" +
+			"scanSchedule: daily\n" +
 			"status: Disabled\n" +
 			"urlLimit: 0\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
@@ -74,6 +76,7 @@ func TestWebScannersUpdate(t *testing.T) {
 			"--included-url", "[string]",
 			"--name", "name",
 			"--root-domain", "rootDomain",
+			"--scan-schedule", "daily",
 			"--status", "Disabled",
 			"--url-limit", "0",
 		)
@@ -88,6 +91,7 @@ func TestWebScannersUpdate(t *testing.T) {
 			"  - string\n" +
 			"name: name\n" +
 			"rootDomain: rootDomain\n" +
+			"scanSchedule: daily\n" +
 			"status: Disabled\n" +
 			"urlLimit: 0\n")
 		mocktest.TestRunMockTestWithPipeAndFlags(
