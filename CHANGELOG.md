@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.25.2 (2026-08-11)
+
+Full Changelog: [v1.25.1...v1.25.2](https://github.com/with-ours/platform-cli/compare/v1.25.1...v1.25.2)
+
+### Chores
+
+* **internal:** codegen related update ([de20576](https://github.com/with-ours/platform-cli/commit/de2057608dc8c3e9083ddf9837d73cda897e496a))
+
 ## 1.25.1 (2026-08-03)
 
 Full Changelog: [v1.25.0...v1.25.1](https://github.com/with-ours/platform-cli/compare/v1.25.0...v1.25.1)
