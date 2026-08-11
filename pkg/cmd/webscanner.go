@@ -49,6 +49,11 @@ var webScannersCreate = cli.Command{
 			BodyPath: "name",
 		},
 		&requestflag.Flag[string]{
+			Name:     "scan-schedule",
+			Usage:    "How often the scanner crawls this monitor on its own: `daily`, `weekly`, `monthly`, or `manual` to disable scheduled crawls and only run on demand. Defaults to `weekly`. Cadences advance on UTC calendar days from the last completed scan.",
+			BodyPath: "scanSchedule",
+		},
+		&requestflag.Flag[string]{
 			Name:     "status",
 			Usage:    `Allowed values: "Disabled", "Enabled".`,
 			BodyPath: "status",
@@ -104,6 +109,11 @@ var webScannersUpdate = cli.Command{
 			Name:     "root-domain",
 			Usage:    "Replace the scanner root domain. When provided, malformed values are rejected as HTTP 400 with the validation reason in `details`.",
 			BodyPath: "rootDomain",
+		},
+		&requestflag.Flag[string]{
+			Name:     "scan-schedule",
+			Usage:    "How often the scanner crawls this monitor on its own: `daily`, `weekly`, `monthly`, or `manual` to disable scheduled crawls and only run on demand. Defaults to `weekly`. Cadences advance on UTC calendar days from the last completed scan. Omit to leave the current cadence unchanged.",
+			BodyPath: "scanSchedule",
 		},
 		&requestflag.Flag[string]{
 			Name:     "status",
@@ -211,7 +221,7 @@ var webScannersCookies = cli.Command{
 
 var webScannersSummary = cli.Command{
 	Name:    "summary",
-	Usage:   "Compliance summary for a scan run — the rolled-up \"what does this site look\nlike, and what still needs a decision\" view, assembled server-side so you do not\nhave to page every finding. Includes total host/vendor/cookie counts, a\nbreakdown by risk and by category, coverage (how many hosts are already covered\nby a CMP consent service or a suppression rule vs. how many still need a\ndecision), the new/removed host delta versus the previous run, and up to 10\nhighest-risk hosts that still need a decision. Defaults to the latest run; pass\n`date` (an ISO-8601 timestamp; only the calendar day is used to select the run)\nto read an earlier run. Clear a host that needs a decision by adding it to a CMP\nconsent service or creating a suppression rule with\n`POST /rest/v1/web-scanner-rules`. When the scanner has no completed runs, every\ncount is 0 and `runDate` is null. Requires scope: webScanner:find",
+	Usage:   "Compliance summary for a scan run — the rolled-up \"what does this site look\nlike, and what still needs a decision\" view, assembled server-side so you do\nnot have to page every finding. Includes total host/vendor/cookie counts,\ncaptured privacy policies and host coverage, a breakdown by risk and by\ncategory, coverage (how many hosts are already covered by a CMP consent service\nor a suppression rule vs. how many still need a decision), the new/removed host\ndelta versus the previous run, and up to 10 highest-risk hosts that still need\na decision. A null privacyPolicyUrl means that no policy was captured for the\nhostname. Defaults to the latest run; pass `date` (an ISO-8601 timestamp; only\nthe calendar day is used to select the run) to read an earlier run. Clear a\nhost that needs a decision by adding it to a CMP consent service or creating a\nsuppression rule with `POST /rest/v1/web-scanner-rules`. When the scanner has\nno completed runs, every count is 0 and `runDate` is null. Requires scope:\nwebScanner:find",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{

@@ -16,7 +16,7 @@ import (
 
 var funnelsList = cli.Command{
 	Name:            "list",
-	Usage:           "List every funnel configured on this account. Each funnel includes its step\nconfiguration, funnel type, conversion window, and current processing status.\nThe available report date range (if any pre-computed reports exist) is returned\nin `reportDateRange`. Requires scope: web-analytics:view",
+	Usage:           "List every funnel configured on this account. Each funnel includes its step\nconfiguration, funnel type, and conversion window. Funnel results are computed\non demand, so `status` is always `READY` and `reportDateRange` is always `null`;\nboth fields are retained for backward compatibility and should not be used to\ndecide whether results are available. Requires scope: web-analytics:view",
 	Suggest:         true,
 	Flags:           []cli.Flag{},
 	Action:          handleFunnelsList,
@@ -40,7 +40,7 @@ var funnelsRetrieve = cli.Command{
 
 var funnelsResults = cli.Command{
 	Name:    "results",
-	Usage:   "Compute funnel step analytics for a funnel over a date window. Returns per-step\nvisitor counts, conversion rates, drop-off rates, average time to next step, and\nsample session IDs for replay. Funnel results are pre-computed daily from S3;\nreports outside the `reportDateRange` shown on the funnel config will return\nempty steps. Requires scope: web-analytics:view",
+	Usage:   "Compute funnel step analytics for a funnel over a date window. Returns per-step\nvisitor counts, conversion rates, drop-off rates, average time to next step, and\nsample session IDs for replay. Results are computed on demand from event data at\nrequest time, so any date window within the supported range returns current\nresults. `to` must be on or after `from`, and the window may span at most 31\ndays including both endpoints. Requires scope: web-analytics:view",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -50,55 +50,55 @@ var funnelsResults = cli.Command{
 		},
 		&requestflag.Flag[string]{
 			Name:      "from",
-			Usage:     "Inclusive lower bound of the analysis window, as a UTC calendar day in `YYYY-MM-DD` format.",
+			Usage:     "Inclusive lower bound of the analysis window, as a UTC calendar day in `YYYY-MM-DD` format. The window may span at most 31 days including both endpoints.",
 			Required:  true,
 			QueryPath: "from",
 		},
 		&requestflag.Flag[string]{
 			Name:      "to",
-			Usage:     "Inclusive upper bound of the analysis window, as a UTC calendar day in `YYYY-MM-DD` format.",
+			Usage:     "Inclusive upper bound of the analysis window, as a UTC calendar day in `YYYY-MM-DD` format. Must be on or after `from`, and the window may span at most 31 days including both endpoints.",
 			Required:  true,
 			QueryPath: "to",
 		},
 		&requestflag.Flag[string]{
 			Name:      "attribution-type",
-			Usage:     "Attribution type for UTM filter matching in funnel steps.",
+			Usage:     "Accepted for backward compatibility but NOT applied. Funnel sessions carry a single attribution set, so there is no initial vs. last-touch distinction to select between.",
 			QueryPath: "attributionType",
 		},
 		&requestflag.Flag[string]{
 			Name:      "device-type",
-			Usage:     "Filter funnel analytics to a specific device type. Defaults to `ALL`.",
+			Usage:     "Restrict the funnel to sessions on a device class. `MOBILE` matches phone sessions; `DESKTOP` matches every session that is not a phone, tablet, TV, console, wearable, XR, or embedded device. `ALL` (the default) applies no device filter.",
 			Default:   "ALL",
 			QueryPath: "deviceType",
 		},
 		&requestflag.Flag[string]{
 			Name:      "utm-campaign",
-			Usage:     "Filter by UTM campaign.",
+			Usage:     "Restrict the funnel to sessions whose `utm_campaign` exactly matches this value.",
 			QueryPath: "utmCampaign",
 		},
 		&requestflag.Flag[string]{
 			Name:      "utm-content",
-			Usage:     "Filter by UTM content.",
+			Usage:     "Restrict the funnel to sessions whose `utm_content` exactly matches this value.",
 			QueryPath: "utmContent",
 		},
 		&requestflag.Flag[string]{
 			Name:      "utm-medium",
-			Usage:     "Filter by UTM medium.",
+			Usage:     "Restrict the funnel to sessions whose `utm_medium` exactly matches this value.",
 			QueryPath: "utmMedium",
 		},
 		&requestflag.Flag[string]{
 			Name:      "utm-name",
-			Usage:     "Filter by UTM name.",
+			Usage:     "Accepted for backward compatibility but NOT applied — there is no campaign-name dimension on funnel sessions. Use `utmCampaign` instead.",
 			QueryPath: "utmName",
 		},
 		&requestflag.Flag[string]{
 			Name:      "utm-source",
-			Usage:     "Filter by UTM source.",
+			Usage:     "Restrict the funnel to sessions whose `utm_source` exactly matches this value.",
 			QueryPath: "utmSource",
 		},
 		&requestflag.Flag[string]{
 			Name:      "utm-term",
-			Usage:     "Filter by UTM term.",
+			Usage:     "Restrict the funnel to sessions whose `utm_term` exactly matches this value.",
 			QueryPath: "utmTerm",
 		},
 	},
