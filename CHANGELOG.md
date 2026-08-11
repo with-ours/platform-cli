@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.26.0 (2026-08-11)
+
+Full Changelog: [v1.25.2...v1.26.0](https://github.com/with-ours/platform-cli/compare/v1.25.2...v1.26.0)
+
+### Features
+
+* sync SDK with platform spec changes ([ac52a2c](https://github.com/with-ours/platform-cli/commit/ac52a2cf2c02ad8502dc6e7c67e0938ae7576e59))
+
 ## 1.25.2 (2026-08-11)
 
 Full Changelog: [v1.25.1...v1.25.2](https://github.com/with-ours/platform-cli/compare/v1.25.1...v1.25.2)
