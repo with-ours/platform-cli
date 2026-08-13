@@ -172,7 +172,7 @@ var experimentsRetrieve = cli.Command{
 
 var experimentsUpdate = requestflag.WithInnerFlags(cli.Command{
 	Name:    "update",
-	Usage:   "Partially update an experiment. Only the fields you send are changed. Edits are\nallowed on draft, running, and paused experiments and are recorded in the change\nlog. Only completed experiments return 409 with\n`A completed experiment can no longer be edited`. Use the lifecycle endpoints\n(`/start`, `/pause`, `/resume`, `/stop`) to change status. Requires scope:\nexperiment:update",
+	Usage:   "Partially update an experiment. Only the fields you send are changed, except\nrenaming a non-draft legacy experiment with no stored key preserves its current\nname-derived key. Edits are allowed on draft, running, and paused experiments\nand are recorded in the change log. Only completed experiments return 409 with\n`A completed experiment can no longer be edited`. Use the lifecycle endpoints\n(`/start`, `/pause`, `/resume`, `/stop`) to change status. Requires scope:\nexperiment:update",
 	Suggest: true,
 	Flags: []cli.Flag{
 		&requestflag.Flag[string]{
@@ -192,7 +192,7 @@ var experimentsUpdate = requestflag.WithInnerFlags(cli.Command{
 		},
 		&requestflag.Flag[*string]{
 			Name:     "key",
-			Usage:    "Updated stable code-facing key. When blank, the API falls back to a slugified key derived from the current experiment name.",
+			Usage:    "Updated stable code-facing key. When blank, the API falls back to a slugified key derived from the current experiment name. Renaming a non-draft legacy experiment with no stored key preserves its current name-derived key.",
 			BodyPath: "key",
 		},
 		&requestflag.Flag[map[string]any]{
