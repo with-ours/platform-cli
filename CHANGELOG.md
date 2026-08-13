@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.27.0 (2026-08-13)
+
+Full Changelog: [v1.26.0...v1.27.0](https://github.com/with-ours/platform-cli/compare/v1.26.0...v1.27.0)
+
+### Features
+
+* sync experiments with platform spec changes ([#35](https://github.com/with-ours/platform-cli/issues/35)) ([82a1bd7](https://github.com/with-ours/platform-cli/commit/82a1bd7a0b4108a96b27f629471170096e3f188f))
+
 ## 1.26.0 (2026-08-11)
 
 Full Changelog: [v1.25.2...v1.26.0](https://github.com/with-ours/platform-cli/compare/v1.25.2...v1.26.0)
