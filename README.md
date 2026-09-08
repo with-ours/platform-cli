@@ -1,18 +1,11 @@
 # Ours Privacy Platform CLI
 
-The official CLI for the [Ours Privacy Platform REST API](https://docs.oursprivacy.com/docs/api).
-
-It is generated with [Stainless](https://www.stainless.com/).
+> [!WARNING]
+> **Deprecated:** This CLI is no longer maintained and will not receive generated API updates. Existing releases remain available; new integrations should use the [Ours Privacy Platform REST API](https://docs.oursprivacy.com/docs/api) or Platform SDKs.
 
 <!-- x-release-please-start-version -->
 
 ## Installation
-
-### Installing with Homebrew
-
-```sh
-brew install with-ours/tap/oursprivacy
-```
 
 ### Installing with Go
 
